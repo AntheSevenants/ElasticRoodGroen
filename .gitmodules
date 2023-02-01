@@ -1,3 +1,6 @@
 [submodule "ElasticToolsR"]
 	path = ElasticToolsR
 	url = https://github.com/AntheSevenants/ElasticToolsR
+[submodule "DistributionalSemanticsR"]
+	path = DistributionalSemanticsR
+	url = https://github.com/AntheSevenants/DistributionalSemanticsR
