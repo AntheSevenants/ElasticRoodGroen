@@ -38,5 +38,8 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# Data files
-*.csv
+# No CSV files on the root
+/*.csv
+
+# No output files
+output/*
