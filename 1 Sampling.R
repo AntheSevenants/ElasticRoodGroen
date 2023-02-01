@@ -53,4 +53,4 @@ for (component in component_whitelist) {
 
 df_sample <- do.call("rbind", samples)
 
-write.csv(df_sample, "RoodGroenAnthe_sampled.csv", row.names = FALSE)
+write.csv(df_sample, "output/RoodGroenAnthe_sampled.csv", row.names = FALSE)

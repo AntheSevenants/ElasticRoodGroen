@@ -7,7 +7,7 @@ source("ElasticToolsR/Dataset.R")
 source("ElasticToolsR/ElasticNet.R")
 
 # Read sampled dataframe
-df <- read.csv("RoodGroenAnthe_sampled.csv")
+df <- read.csv("output/RoodGroenAnthe_sampled.csv")
 
 # Coerce the response variable column to a factor
 df$order <- factor(df$order, levels=c("green", "red"))
@@ -43,4 +43,4 @@ coefficients_with_labels <- net$attach_coefficients(
   output$fits[[lowest_loss_row[["X_id"]]]])
 
 # Export
-write.csv(coefficients_with_labels, "RoodGroenAnthe_coefficients.csv")
+write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv")
