@@ -42,5 +42,9 @@ lowest_loss_row
 coefficients_with_labels <- net$attach_coefficients(
   output$fits[[lowest_loss_row[["X_id"]]]])
 
+# Re-introduce lemma information
+coefficients_with_labels$lemma <- 
+  net$get_coupled_information(coefficients_with_labels, "participle_lemma")
+
 # Export
 write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv")
