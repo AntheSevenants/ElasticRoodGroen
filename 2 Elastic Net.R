@@ -29,12 +29,18 @@ feature_list <- ds$as_feature_list()
 # Elastic Net regression itself
 net <- elastic_net(ds=ds,
                    feature_matrix=feature_matrix)
+output <- net$do_cross_validation(k=10)
 
-# Test: ridge regression
-fit <- net$do_ridge_regression()
+output$results
 
+# Get the lowest loss from the results
+lowest_loss_row <- output$results[which.min(output$results$loss),]
+lowest_loss_row
+
+# Extract the coefficients from the model with the lowest loss
 # Attach features to the coefficients
-coefficients_with_labels <- net$attach_coefficients(fit)
+coefficients_with_labels <- net$attach_coefficients(
+  output$fits[[lowest_loss_row[["X_id"]]]])
 
 # Export
-write.csv(coefficients_with_labels, "RoodGroenAnthe_ridge.csv")
+write.csv(coefficients_with_labels, "RoodGroenAnthe_coefficients.csv")
