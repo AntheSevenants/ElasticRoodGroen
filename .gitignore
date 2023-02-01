@@ -43,3 +43,6 @@ vignettes/*.pdf
 
 # No output files
 output/*
+
+# Distributional vectors are too large to distribute
+data/dutch.gz
