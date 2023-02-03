@@ -70,27 +70,24 @@ fill_regression_data <- function(df, model, coefficient_name) {
   return(df)
 }
 
-df_filtered <- df[df$coefficient != 0,]
-df_filtered$class <-
-  as.factor(ifelse(df_filtered$coefficient < 0, "green", "red"))
+add_coordinate_regression_columns <- function(df, technique) {
+  df_filtered <- df[df$coefficient != 0,]
+  df_filtered$class <-
+    as.factor(ifelse(df_filtered$coefficient < 0, "green", "red"))
+  
+  model <- glm(as.formula(paste0("class ~ ", technique, ".x + ", technique, ".y")),
+               family=binomial(link='logit'),
+               data=df_filtered)
+  
+  df <- fill_regression_data(df, model, paste0(technique, ".x"))
+  df <- fill_regression_data(df, model, paste0(technique, ".y"))
+  
+  return(df)
+}
 
-# TODO: this needs tidying
-model_mds <- glm(class ~ mds.x + mds.y,
-                 family=binomial(link='logit'),
-                 data=df_filtered)
-model_tsne <- glm(class ~ tsne.x + tsne.y,
-                  family=binomial(link='logit'),
-                  data=df_filtered)
-model_umap <- glm(class ~ umap.x + umap.y,
-                  family=binomial(link='logit'),
-                  data=df_filtered)
-
-df <- fill_regression_data(df, model_mds, "mds.x")
-df <- fill_regression_data(df, model_mds, "mds.y")
-df <- fill_regression_data(df, model_tsne, "tsne.x")
-df <- fill_regression_data(df, model_tsne, "tsne.y")
-df <- fill_regression_data(df, model_umap, "umap.x")
-df <- fill_regression_data(df, model_umap, "umap.y")
+df <- add_coordinate_regression_columns(df, "mds")
+df <- add_coordinate_regression_columns(df, "tsne")
+df <- add_coordinate_regression_columns(df, "umap")
 
 # TODO: clustering (for another time)
 
