@@ -47,4 +47,5 @@ coefficients_with_labels$lemma <-
   net$get_coupled_information(coefficients_with_labels, "participle_lemma")
 
 # Export
-write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv")
+write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv",
+          row.names=FALSE)
