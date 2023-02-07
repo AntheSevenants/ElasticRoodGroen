@@ -12,8 +12,33 @@ get_component <- function(filename) {
 get_component <- Vectorize(get_component) 
 df$component <- get_component(df$file)
 
-# Which components are eligible for use?
+# Participles must appear at least ten times in order to be eligible
+MINIMUM_PARTICIPLE_THRESHOLD = 10
+
 crosstable <- as.table(xtabs(~ order + component, df))
+
+filtered <- c()
+# Filter out all items which do not fit minimum requirements
+for (component in dimnames(crosstable)$component) {
+  for (order in dimnames(crosstable)$order) {
+    # Filter the data frame for that component and order
+    df_component <- df[df$component == component & df$order == order,]
+    
+    # Build a frequency table so we know the participle counts
+    participle_counts <- table(df_component$participle)
+    
+    # Filter the data frame for participles having n > threshold
+    df_component <- subset(df_component,
+                           participle %in% names(participle_counts[participle_counts >= MINIMUM_PARTICIPLE_THRESHOLD]))
+    
+    # Append to list of filtered dataframes
+    filtered <- append(filtered, list(df_component))
+  }
+}
+df_filtered <- do.call("rbind", filtered)
+
+# Which components are eligible for use?
+crosstable <- as.table(xtabs(~ order + component, df_filtered))
 crosstable
 
 # How many samples do we want per component and per order, at least?
@@ -35,13 +60,15 @@ for (component in dimnames(crosstable)$component) {
   }
 }
 
+component_whitelist
+
 # Sampling time!
 samples <- c()
 # Loop over each component and order
 for (component in component_whitelist) {
   for (order in dimnames(crosstable)$order) {
     # Filter the data frame for that component and order
-    df_component <- df[df$component == component & df$order == order,]
+    df_component <- df_filtered[df_filtered$component == component & df_filtered$order == order,]
     # Sample the required rows
     df_component_sample <- df_component[sample(nrow(df_component),
                                                size = SAMPLE_PER_COMPONENT,
