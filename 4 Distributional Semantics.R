@@ -3,7 +3,6 @@
 # Use DistributionalSemanticsR scripts
 source("DistributionalSemanticsR/VectorSpace.R")
 source("DistributionalSemanticsR/DimensionReductionFactory.R")
-source("DistributionalSemanticsR/Clustering.R")
 
 # Read coefficients output
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
@@ -88,8 +87,6 @@ add_coordinate_regression_columns <- function(df, technique) {
 df <- add_coordinate_regression_columns(df, "mds")
 df <- add_coordinate_regression_columns(df, "tsne")
 df <- add_coordinate_regression_columns(df, "umap")
-
-# TODO: clustering (for another time)
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors.csv", 
           row.names=FALSE)
