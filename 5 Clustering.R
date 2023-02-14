@@ -75,3 +75,7 @@ for (mode in c("all", "non-zero", "zero")) {
   df <- do_clustering(df, "dbscan", "tsne", mode)
   df <- do_clustering(df, "dbscan", "umap", mode)
 }
+
+write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors_clusters.csv", 
+          row.names=FALSE)
+
