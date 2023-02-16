@@ -4,7 +4,7 @@
 source("DistributionalSemanticsR/Clustering.R")
 
 # Read coefficients output
-df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
+df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors_levenshtein.csv")
 
 # Define the clustering function
 do_clustering <- function(df,
@@ -76,6 +76,6 @@ for (mode in c("all", "non-zero", "zero")) {
   df <- do_clustering(df, "dbscan", "umap", mode)
 }
 
-write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors_clusters.csv", 
+write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors_levenshtein_clusters.csv", 
           row.names=FALSE)
 
