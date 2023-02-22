@@ -1,4 +1,4 @@
-source("1 Remove Hapaxes.R")
+source("1 Cleaning.R")
 source("2 Elastic Net.R")
 source("3 Infuse.R")
 source("4 Distributional Semantics.R")
