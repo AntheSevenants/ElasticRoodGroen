@@ -25,7 +25,8 @@ feature_list <- ds$as_feature_list()
 
 # Elastic Net regression itself
 net <- elastic_net(ds=ds)
-output <- net$do_cross_validation(k=10)
+gc()
+output <- net$do_cross_validation(k=10, cores_to_use=3)
 
 output$results
 
