@@ -4,3 +4,6 @@
 [submodule "DistributionalSemanticsR"]
 	path = DistributionalSemanticsR
 	url = https://github.com/AntheSevenants/DistributionalSemanticsR
+[submodule "naive-dt-fix"]
+	path = naive-dt-fix
+	url = https://github.com/AntheSevenants/naive-dt-fix.git
