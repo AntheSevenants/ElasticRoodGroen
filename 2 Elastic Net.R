@@ -19,17 +19,14 @@ ds <- dataset(df=df,
               response_variable_column="order",
               to_binary_column="participle")
 
-# Convert the dataset into a feature matrix
-feature_matrix <- ds$as_matrix()
-
 # Get the list of features
 # In our case, this is the list of participles
 feature_list <- ds$as_feature_list()
 
 # Elastic Net regression itself
-net <- elastic_net(ds=ds,
-                   feature_matrix=feature_matrix)
-output <- net$do_cross_validation(k=10)
+net <- elastic_net(ds=ds)
+gc()
+output <- net$do_cross_validation(k=10, cores_to_use=3)
 
 output$results
 
