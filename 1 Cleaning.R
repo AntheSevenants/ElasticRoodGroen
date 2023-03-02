@@ -8,12 +8,14 @@ df <- read.csv("RoodGroenAnthe.csv")
 original_items_count <- nrow(df)
 
 # Fix tokenisation errors
-df$participle <- gsub("[.»«]", "", df$participle)
+df$participle <- gsub("[().»«?-]", "", df$participle)
 df$participle <- tolower(df$participle)
 
 # Fix spelling errors
 df$participle <- gsub("gedomicileerd", "gedomicilieerd", df$participle)
 df$participle <- gsub("gedouched", "gedoucht", df$participle)
+df$participle <- gsub("dt$", "d", df$participle) # dt$ -> d$
+df$participle <- gsub("(\\w)\\1{2}", "\\1\\1", df$participle) # 3x -> 2x
 
 # Automatic dt fixing
 df <- fix_participle_dt(df, "participle")
@@ -42,4 +44,9 @@ df <- subset(df,
 difference <- original_items_count - nrow(df)
 print(difference)
 
+# For inspection
+write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
+          row.names=FALSE)
+
+# Write to file
 write.csv(df, "output/RoodGroenAnthe_sampled.csv", row.names = FALSE)
