@@ -8,8 +8,7 @@ df <- read.csv("RoodGroenAnthe.csv")
 original_items_count <- nrow(df)
 
 # Fix tokenisation errors
-df$participle <- gsub(".»", "", df$participle)
-df$participle <- gsub("»", "", df$participle)
+df$participle <- gsub("[.»«]", "", df$participle)
 df$participle <- tolower(df$participle)
 
 # Fix spelling errors
