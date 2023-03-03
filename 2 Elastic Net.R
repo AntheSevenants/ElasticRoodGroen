@@ -17,7 +17,7 @@ df$participle <- as.factor(df$participle)
 # Create an ElasticTools dataset
 ds <- dataset(df=df,
               response_variable_column="order",
-              to_binary_column="participle")
+              to_binary_columns=c("participle"))
 
 # Get the list of features
 # In our case, this is the list of participles
@@ -41,7 +41,7 @@ coefficients_with_labels <- net$attach_coefficients(
 
 # Re-introduce lemma information
 coefficients_with_labels$lemma <- 
-  net$get_coupled_information(coefficients_with_labels, "participle_lemma")
+  net$get_coupled_information(coefficients_with_labels, "participle", "participle_lemma")
 
 # Export
 write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv",
