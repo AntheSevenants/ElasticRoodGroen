@@ -42,7 +42,21 @@ df <- subset(df,
 
 # Compute the difference
 difference <- original_items_count - nrow(df)
-print(difference)
+print(paste("Removed", difference, "items"))
+
+# Extract the SoNaR components from the sentence IDs
+get_component <- function(filename) {
+  component <- gsub("(.*?)\\..*", "\\1", filename)
+  return(component)
+}
+get_component <- Vectorize(get_component) 
+df$component <- get_component(df$sentence_id)
+
+# Load Lassy Groot meta data and do a left join
+lassy_meta <- read.csv("data/LassyGrootMeta.csv")
+df <- merge(x=df, y=lassy_meta,
+            by.x="component", by.y="document",
+            all.x=TRUE)
 
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
