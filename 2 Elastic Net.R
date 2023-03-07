@@ -13,6 +13,9 @@ df <- read.csv("output/RoodGroenAnthe_sampled.csv")
 df$order <- factor(df$order, levels=c("green", "red"))
 # Coerce the lexical influence column to a factor
 df$participle <- as.factor(df$participle)
+
+# Prefix country values
+df$country <- gsub("(.*)", "_is_\\1", df$country)
 # Coerce the country column to a factor
 df$country <- as.factor(df$country)
 
