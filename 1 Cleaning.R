@@ -11,17 +11,59 @@ original_items_count <- nrow(df)
 df$participle <- gsub("[().»«?-]", "", df$participle)
 df$participle <- tolower(df$participle)
 
-# Fix spelling errors
-df$participle <- gsub("gedomicileerd", "gedomicilieerd", df$participle)
-df$participle <- gsub("gedouched", "gedoucht", df$participle)
-df$participle <- gsub("dt$", "d", df$participle) # dt$ -> d$
-df$participle <- gsub("(\\w)\\1{2}", "\\1\\1", df$participle) # 3x -> 2x
+# Remove duplicates
+df <- df[!duplicated(df[ , c("sentence", "participle")]),]
 
 # Automatic dt fixing
 df <- fix_participle_dt(df, "participle")
 
-# Fix random things
+# Fix spelling errors and other random things
+df$participle <- gsub("gedomicileerd", "gedomicilieerd", df$participle)
+df$participle <- gsub("gedouched", "gedoucht", df$participle)
+df$participle <- gsub("dt$", "d", df$participle) # dt$ -> d$
+df$participle <- gsub("(\\w)\\1{2}", "\\1\\1", df$participle) # 3x -> 2x
 df$participle <- gsub("gedefiniëerd", "gedefinieerd", df$participle)
+df$participle <- gsub("gewéést", "geweest", df$participle)
+df$participle <- gsub("gezién", "gezien", df$participle)
+df$participle <- gsub("gevráágd", "gevraagd", df$participle)
+df$participle <- gsub("gevreëen", "gevreeën", df$participle)
+df$participle <- gsub("geišnformeerd", "geïnformeerd", df$participle)
+df$participle <- gsub("geeindigd", "geëindigd", df$participle)
+df$participle <- gsub("gehád", "gehad", df$participle)
+df$participle <- gsub("gezégd", "gezegd", df$participle)
+df$participle <- gsub("gedáán", "gedaan", df$participle)
+df$participle <- gsub("geinformeerd", "geïnformeerd", df$participle)
+df$participle <- gsub("geiritteerd", "geïrriteerd", df$participle)
+df$participle <- gsub("gesmst", "ge-sms't", df$participle)
+df$participle <- gsub("geïnstaleerd", "geïnstalleerd", df$participle)
+df$participle <- gsub("geinspireerd", "geïnspireerd", df$participle)
+df$participle <- gsub("terrechtgekomen", "terechtgekomen", df$participle)
+df$participle <- gsub("gefitnesst", "gefitnest", df$participle)
+df$participle <- gsub("geplaats$", "geplaatst", df$participle)
+df$participle <- 
+  gsub("(geïntresseerd|geintresseerd|geinteresseerd|geïnteresserd|geinteresseerd|geinterseerd)",
+       "geïnteresseerd", df$participle)
+df$participle <- gsub("doogeschoten$", "doodgeschoten", df$participle)
+df$participle <- gsub("gepushed$", "gepusht", df$participle)
+df$participle <- gsub("gefinancieerd", "gefinancierd", df$participle)
+df$participle <- gsub("gesubsidiëerd", "gesubsidieerd", df$participle)
+df$participle <- gsub("gedefineerd", "gedefinieerd", df$participle)
+df$participle <- gsub("geintegreerd", "geïntegreerd", df$participle)
+df$participle <- gsub("enzgepost", "gepost", df$participle)
+df$participle <- gsub("gestummuleerd", "gestimuleerd", df$participle)
+df$participle <- gsub("geaprecieerd", "geapprecieerd", df$participle)
+df$participle <- gsub("vollediggewerkt", "gewerkt", df$participle)
+df$participle <- gsub("geschokeerd", "geshockeerd", df$participle)
+df$participle <- gsub("(gebasserd|gebasseerd)", "gebaseerd", df$participle)
+df$participle <- gsub("gecurreteerd", "gecuretteerd", df$participle)
+df$participle <- gsub("gefilleerd", "gefileerd", df$participle)
+df$participle <- gsub("getuterd", "getoeterd", df$participle)
+df$participle <- gsub("gecontrolleerd", "gecontroleerd", df$participle)
+df$participle <- gsub("getruckeerd", "getrukeerd", df$participle)
+df$participle <- gsub("gelerd", "geleerd", df$participle)
+
+
+df <- df[!(df$participle %in% c("zgn", "gemiddeld", "gelijkstand")), ]
 
 # Remove all participles ending in 'e'
 # These participles are declensed, and are thus ADJECTIVES!
