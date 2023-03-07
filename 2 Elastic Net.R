@@ -13,11 +13,13 @@ df <- read.csv("output/RoodGroenAnthe_sampled.csv")
 df$order <- factor(df$order, levels=c("green", "red"))
 # Coerce the lexical influence column to a factor
 df$participle <- as.factor(df$participle)
+# Coerce the country column to a factor
+df$country <- as.factor(df$country)
 
 # Create an ElasticTools dataset
 ds <- dataset(df=df,
               response_variable_column="order",
-              to_binary_columns=c("participle"))
+              to_binary_columns=c("participle", "country"))
 
 # Get the list of features
 # In our case, this is the list of participles
