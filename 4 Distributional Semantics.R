@@ -20,6 +20,14 @@ vector_space_ <- vector_space(space=as.matrix(
 distributional_coords <- 
   vector_space_$get_distributional_values(df$feature)
 
+# Stop! Not all features will have distributional values
+# Especially considering extra features like region etc.
+# We check where the coordinates are all zeroes
+no_vector_features <- df[distributional_coords[,11] == 0.0,]$feature
+no_vector_indices <- which(distributional_coords[,11] == 0.0)
+distributional_coords_filtered <-
+  distributional_coords[distributional_coords[,11] != 0.0,]
+
 # 
 # Dimensionality reduction
 # 
@@ -29,13 +37,29 @@ distributional_coords <-
 # We apply dimension reduction using three techniques:
 # MDS, TSNE and UMAP
 
-dim_reduce <- dimension_reduction_factory(distributional_coords)
+dim_reduce <- dimension_reduction_factory(distributional_coords_filtered)
 coords.mds <- dim_reduce$do_mds()
 coords.tsne <- dim_reduce$do_tsne()
 coords.umap <- dim_reduce$do_umap()
 
+# To re-insert the no-vector columns (they will get NA coordinates)
+# https://stackoverflow.com/a/11562428
+insert_row <- function(existingDF, newrow, r) {
+  existingDF[seq(r+1,nrow(existingDF)+1),] <- existingDF[seq(r,nrow(existingDF)),]
+  existingDF[r,] <- newrow
+  existingDF
+}
+
+
 # Save the coordinates to the coefficients output
 save_coordinates <- function(coords, technique, output) {
+  # We go over each index in the no vector vector (confusing nomenclature)
+  for (index in sort(no_vector_indices)) {
+    coords <- insert_row(coords, list(NA, NA), index)
+  }
+  
+  # Then, once the empty coordinates have been inserted,
+  # we can attach the coordinates back to the original data frame
   output[paste0(technique, ".x")] <- coords[paste0(technique, "_x")]
   output[paste0(technique, ".y")] <- coords[paste0(technique, "_y")]
   
