@@ -30,6 +30,9 @@ df_acquisition$aoa <- as.numeric(gsub(",", ".", df_acquisition$aoa))
 # Behavior Research Methods, 42(3), 643-650.
 df_subtlex <- read.delim("data/SUBTLEX.txt", sep="\t")
 
+# Adjectiveness
+# Sevenants, A. Adjectiveness dataset for past participles in Dutch
+df_adjectiveness <- read.csv("data/adjectiveness.csv")
 
 #
 # Introduce Brysbaert et al. data into our dataset
@@ -51,6 +54,9 @@ names(df)[names(df) == 'FREQcount'] <- 'freq'
 # Also log-transform
 df$logfreq <- log10(df$freq)
 
-# TODO: adjectiveness?
+# Adjectiveness
+df <- merge(x=df, y=df_adjectiveness[,c("participle", "adjectiveness")],
+            by.x="feature", by.y="participle", all.x=TRUE)
+
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused.csv", row.names=FALSE)
