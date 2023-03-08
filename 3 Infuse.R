@@ -16,6 +16,13 @@ df$separable <- grepl("_", df$lemma_original, fixed=TRUE)
 df_concreteness <- read.csv("data/Brysbaert_concreteness.csv", sep=";")
 df_concreteness$Concrete_m <- 
   as.numeric(gsub(",", ".", df_concreteness$Concrete_m))
+# Aggregate over duplicates (sigh)
+df_concreteness <- aggregate(df_concreteness$Concrete_m,
+                             by=list(stimulus=df_concreteness$stimulus),
+                             data=df_concreteness,
+                             FUN=mean)
+# Restore column names
+colnames(df_concreteness) <- c("stimulus", "Concrete_m")
 
 # Brysbaert, M., Stevens, M., De Deyne, S., Voorspoels, W., & Storms, G. (2014). 
 # Norms of age of acquisition and concreteness for 30,000 Dutch words. 
