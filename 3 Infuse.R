@@ -30,19 +30,25 @@ df_acquisition$aoa <- as.numeric(gsub(",", ".", df_acquisition$aoa))
 # Behavior Research Methods, 42(3), 643-650.
 df_subtlex <- read.delim("data/SUBTLEX.txt", sep="\t")
 
-# Function to merge data between dataframes
-get_info <- function(dest_df, source_df, by_column, info_column,
-                     source_column="lemma") {
-  apply(dest_df, 1, function(row) {
-    row <- source_df[source_df[by_column] == row[[source_column]],][1,]
-    return(as.numeric(row[[info_column]]))
-  })
-}
 
+#
 # Introduce Brysbaert et al. data into our dataset
-df$concreteness <- get_info(df, df_concreteness, "stimulus", "Concrete_m")
-df$aoa <- get_info(df, df_acquisition, "word", "aoa")
-df$freq <- get_info(df, df_subtlex, "Word", "FREQcount", source_column="feature")
+#
+
+# Concreteness
+df <- merge(x=df, y=df_concreteness[,c("stimulus", "Concrete_m")],
+            by.x="lemma", by.y="stimulus", all.x=TRUE)
+names(df)[names(df) == 'Concrete_m'] <- 'concreteness'
+
+# Age of acquisition
+df <- merge(x=df, y=df_acquisition[,c("word", "aoa")],
+            by.x="lemma", by.y="word", all.x=TRUE)
+
+# Subtlex frequency
+df <- merge(x=df, y=df_subtlex[,c("Word", "FREQcount")],
+            by.x="lemma", by.y="Word", all.x=TRUE)
+names(df)[names(df) == 'FREQcount'] <- 'freq'
+# Also log-transform
 df$logfreq <- log10(df$freq)
 
 # TODO: adjectiveness?
