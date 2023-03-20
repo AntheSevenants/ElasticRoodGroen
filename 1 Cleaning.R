@@ -100,6 +100,12 @@ df <- merge(x=df, y=lassy_meta,
             by.x="component", by.y="document",
             all.x=TRUE)
 
+# Load polarity data and do a left join
+polarity_df <- read.csv("data/RoodGroenAnthePolarity.csv")
+df <- merge(x=df, y=polarity_df,
+            by="sentence_id",
+            all.x=TRUE)
+
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
