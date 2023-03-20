@@ -2,6 +2,7 @@ import pandas as pd
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from tqdm.auto import tqdm
+from math import ceil
 
 def divide_chunks(l, n):
     # looping till length l
@@ -13,10 +14,13 @@ model = AutoModelForSequenceClassification.from_pretrained("DTAI-KULeuven/robber
 
 df = pd.read_csv("../RoodGroenAnthe.csv")
 
-chunks = divide_chunks(list(df["sentence"]), 100)
+CHUNK_SIZE = 100
+
+chunks = divide_chunks(list(df["sentence"]), CHUNK_SIZE)
+total_chunks = ceil(len(df["sentence"]) / CHUNK_SIZE)
 #print(f"Split {len(df['sentence'])} sentences into {len(chunks)} chunks")
 
-for chunk in tqdm(chunks):
+for chunk in tqdm(chunks, total=total_chunks):
     inputs = tokenizer(chunk, return_tensors='pt', padding=True)
     output = model(**inputs)
     # Convert to regular floats
