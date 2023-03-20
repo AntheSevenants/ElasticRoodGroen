@@ -35,4 +35,4 @@ for chunk in tqdm(chunks, total=total_chunks):
 df["negative"] = list(map(lambda polarity: polarity[0], output_logits))
 df["positive"] = list(map(lambda polarity: polarity[1], output_logits))
 
-df.to_csv("../RoodGroenAnthePolarity.csv", index=False)
+df.to_csv("../data/RoodGroenAnthePolarity.csv", index=False)
