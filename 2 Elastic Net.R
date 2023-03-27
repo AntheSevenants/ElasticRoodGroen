@@ -5,6 +5,7 @@ set.seed(2204355)
 # Make sure the git submodules have been pulled!
 source("ElasticToolsR/Dataset.R")
 source("ElasticToolsR/ElasticNet.R")
+source("ElasticToolsR/MetaFile.R")
 
 # Read sampled dataframe
 df <- read.csv("output/RoodGroenAnthe_sampled.csv")
@@ -51,3 +52,15 @@ coefficients_with_labels$lemma <-
 # Export
 write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv",
           row.names=FALSE)
+
+#
+# Export model information
+#
+
+model_meta <- meta.file()
+
+for (attribute in colnames(lowest_loss_row)) {
+  model_meta$add_model_information(attribute, lowest_loss_row[[attribute]])
+}
+
+write.csv(model_meta$as.data.frame(), "output/model_meta.csv", row.names=FALSE)
