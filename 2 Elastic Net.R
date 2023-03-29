@@ -32,7 +32,7 @@ feature_list <- ds$as_feature_list()
 # Elastic Net regression itself
 net <- elastic_net(ds=ds)
 gc()
-output <- net$do_elastic_net_regression_auto_alpha(k=20)
+output <- net$do_elastic_net_regression_auto_alpha(k=5)
 
 output$results
 
