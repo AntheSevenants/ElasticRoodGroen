@@ -77,10 +77,11 @@ df <- df[get_last_char(df$participle) != "e", ]
 # Build a frequency table so we know the participle counts
 participle_counts <- table(df$participle)
 
-# Remove all hapaxes
+# Add minimum frequency
+MINIMUM_FREQUENCY = 10
 df <- subset(df,
         participle %in% 
-        names(participle_counts[participle_counts > 1]))
+        names(participle_counts[participle_counts >= MINIMUM_FREQUENCY]))
 
 # Compute the difference
 difference <- original_items_count - nrow(df)
