@@ -3,6 +3,7 @@
 # Use DistributionalSemanticsR scripts
 source("DistributionalSemanticsR/VectorSpace.R")
 source("DistributionalSemanticsR/DimensionReductionFactory.R")
+source("ElasticToolsR/MetaFile.R")
 
 # Read coefficients output
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
@@ -74,26 +75,37 @@ df <- save_coordinates(coords.umap, "umap", df)
 # Coordinate regression
 #
 
-fill_coefficient <- function(df, model, coefficient_name) {
-  df[[paste0(coefficient_name, "_coeff")]] <- 
-    model$coefficients[[coefficient_name]]
-  return(df)
+df_meta <- read.csv("output/model_meta.csv")
+model_meta <- meta.file(df_meta)
+
+fill_coefficient <- function(model_meta, model, coefficient_name) {
+  print(model_meta)
+  print(model)
+  print(coefficient_name)
+  model_meta$add_free_information(coefficient_name,
+                                  "coefficient",
+                                  lowest_loss_row[[attribute]])
+  return(model_meta)
 }
 
-fill_significance <- function(df, model, coefficient_name) {
-  df[[paste0(coefficient_name, "_sig")]] <- 
-    coef(summary(model))[coefficient_name, 4] <= 0.05
-  return(df)
-}
-
-fill_regression_data <- function(df, model, coefficient_name) {
-  df <- fill_coefficient(df, model, coefficient_name)
-  df <- fill_significance(df, model, coefficient_name)
+fill_significance <- function(model_meta, model, coefficient_name) {
+  is_significant <- coef(summary(model))[coefficient_name, 4] <= 0.05
   
-  return(df)
+  model_meta$add_free_information(coefficient_name,
+                                  "is_significant",
+                                  is_significant)
+  
+  return(model_meta)
 }
 
-add_coordinate_regression_columns <- function(df, technique) {
+fill_regression_data <- function(model_meta, model, coefficient_name) {
+  model_meta <- fill_coefficient(model_meta, model, coefficient_name)
+  model_meta <- fill_significance(model_meta, model, coefficient_name)
+  
+  return(model_meta)
+}
+
+add_coordinate_regression_columns <- function(df, technique, model_meta) {
   df_filtered <- df[df$coefficient != 0,]
   df_filtered$class <-
     as.factor(ifelse(df_filtered$coefficient < 0, "green", "red"))
@@ -102,15 +114,18 @@ add_coordinate_regression_columns <- function(df, technique) {
                family=binomial(link='logit'),
                data=df_filtered)
   
-  df <- fill_regression_data(df, model, paste0(technique, ".x"))
-  df <- fill_regression_data(df, model, paste0(technique, ".y"))
+  model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".x"))
+  model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".y"))
   
-  return(df)
+  return(model_meta)
 }
 
-df <- add_coordinate_regression_columns(df, "mds")
-df <- add_coordinate_regression_columns(df, "tsne")
-df <- add_coordinate_regression_columns(df, "umap")
+model_meta <- add_coordinate_regression_columns(df, "mds", model_meta)
+model_meta <- add_coordinate_regression_columns(df, "tsne", model_meta)
+model_meta <- add_coordinate_regression_columns(df, "umap", model_meta)
+
+# Export the model meta again
+write.csv(model_meta$as.data.frame(), "output/model_meta.csv", row.names=FALSE)
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors.csv", 
           row.names=FALSE)
