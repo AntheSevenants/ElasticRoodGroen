@@ -79,12 +79,9 @@ df_meta <- read.csv("output/model_meta.csv")
 model_meta <- meta.file(df_meta)
 
 fill_coefficient <- function(model_meta, model, coefficient_name) {
-  print(model_meta)
-  print(model)
-  print(coefficient_name)
   model_meta$add_free_information(coefficient_name,
                                   "coefficient",
-                                  lowest_loss_row[[attribute]])
+                                  model$coefficients[[coefficient_name]])
   return(model_meta)
 }
 
@@ -113,6 +110,8 @@ add_coordinate_regression_columns <- function(df, technique, model_meta) {
   model <- glm(as.formula(paste0("class ~ ", technique, ".x + ", technique, ".y")),
                family=binomial(link='logit'),
                data=df_filtered)
+  
+  print(coef(model))
   
   model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".x"))
   model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".y"))
