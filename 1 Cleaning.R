@@ -74,6 +74,11 @@ get_last_char <- Vectorize(get_last_char)
 
 df <- df[get_last_char(df$participle) != "e", ]
 
+# Handle separable verbs
+# In the Alpino corpus, the separable parts are split using '_'
+# We can use this to encode whether a verb is separable or not
+df$separable <- grepl("_", df$participle_lemma, fixed=TRUE)
+
 # Build a frequency table so we know the participle counts
 participle_counts <- table(df$participle)
 
@@ -106,6 +111,12 @@ polarity_df <- read.csv("data/RoodGroenAnthePolarity.csv")
 df <- merge(x=df, y=polarity_df,
             by="sentence_id",
             all.x=TRUE)
+
+# Load adjectivity data and do a left join
+adjectiveness_df <- read.csv("data/adjectiveness.csv")
+df <- merge(x=df, y=adjectiveness_df,
+                          by="participle",
+                          all.x=TRUE)
 
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
