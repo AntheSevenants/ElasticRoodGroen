@@ -60,6 +60,10 @@ write.csv(coefficients_with_labels, "output/RoodGroenAnthe_coefficients.csv",
 model_meta <- meta.file()
 
 for (attribute in colnames(lowest_loss_row)) {
+  if (attribute == "X_id") {
+    next
+  }
+  
   model_meta$add_model_information(attribute, lowest_loss_row[[attribute]])
 }
 
