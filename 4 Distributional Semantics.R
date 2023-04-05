@@ -111,8 +111,6 @@ add_coordinate_regression_columns <- function(df, technique, model_meta) {
                family=binomial(link='logit'),
                data=df_filtered)
   
-  print(coef(model))
-  
   model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".x"))
   model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".y"))
   
