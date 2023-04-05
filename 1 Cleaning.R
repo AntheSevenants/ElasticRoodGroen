@@ -118,6 +118,12 @@ df <- merge(x=df, y=adjectiveness_df,
                           by="participle",
                           all.x=TRUE)
 
+# Remove records without defined adjectiveness value
+# I checked them manually and they are all *not* participles
+na_indices <- which(is.na(df$adjectiveness))
+df[na_indices,] # Inspection
+df <- df[!is.na(df$adjectiveness),]
+
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
