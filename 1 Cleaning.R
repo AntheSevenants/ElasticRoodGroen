@@ -124,6 +124,9 @@ na_indices <- which(is.na(df$adjectiveness))
 df[na_indices,] # Inspection
 df <- df[!is.na(df$adjectiveness),]
 
+# Remove all UNK data
+df <- df[df$country %in% c("BE", "NL"),]
+
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
