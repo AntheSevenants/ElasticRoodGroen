@@ -15,15 +15,14 @@ df$order <- factor(df$order, levels=c("green", "red"))
 # Coerce the lexical influence column to a factor
 df$participle <- as.factor(df$participle)
 
-# Prefix country values
-df$country <- gsub("(.*)", "_is_\\1", df$country)
 # Coerce the country column to a factor
 df$country <- as.factor(df$country)
 
 # Create an ElasticTools dataset
 ds <- dataset(df=df,
               response_variable_column="order",
-              to_binary_columns=c("participle", "country"))
+              to_binary_columns=c("participle"),
+              other_columns=list("country", "separable", "adjectiveness"))
 
 # Get the list of features
 # In our case, this is the list of participles
@@ -68,3 +67,4 @@ for (attribute in colnames(lowest_loss_row)) {
 }
 
 write.csv(model_meta$as.data.frame(), "output/model_meta.csv", row.names=FALSE)
+
