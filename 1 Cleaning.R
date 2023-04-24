@@ -1,3 +1,5 @@
+library(stringr)
+
 # Import the dt fixing library
 source("naive-dt-fix/naive-dt-fix.R")
 
@@ -126,6 +128,33 @@ df <- df[!is.na(df$adjectiveness),]
 
 # Remove all UNK data
 df <- df[df$country %in% c("BE", "NL"),]
+
+# Priming information
+PRIMING_SENTENCES_NO = 10
+sentence_information <- str_match_all(df$sentence_id, "(.*s\\.)(\\d)+")
+priming <- list()
+for (sentence_tuple in sentence_information[1:1000]) {
+  prefix <- sentence_tuple[,2]
+  sentence_no <- as.numeric(sentence_tuple[,3])
+  
+  priming_sentence_start <- min(1, sentence_no - PRIMING_SENTENCES_NO)
+  priming_sentence_end <- sentence_no - 1
+  priming_range <- priming_sentence_start:priming_sentence_end
+  
+  primers <- c()
+  for (primer_index in priming_range) {
+    primer_row <- df[df$sentence_id == paste0(prefix, primer_index),]
+    if (dim(primer_row)[1] == 1) {
+      primers <- append(primers, primer_row$order)
+    }
+  }
+  
+  primers_table <- table(primers)
+  
+  priming <- append(priming,
+              list("red" = primers_table[names(primers_table) == "red"],
+                   "green" = primers_table[names(primers_table) == "green"]))
+}
 
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
