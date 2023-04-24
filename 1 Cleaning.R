@@ -103,10 +103,9 @@ get_component <- Vectorize(get_component)
 df$component <- get_component(df$sentence_id)
 
 # Load Lassy Groot meta data and do a left join
-lassy_meta <- read.csv("data/LassyGrootMeta.csv")
+lassy_meta <- read.csv("data/SonarMeta.csv")
 df <- merge(x=df, y=lassy_meta,
-            by.x="component", by.y="document",
-            all.x=TRUE)
+            by.x="component", by.y="document")
 
 # Load polarity data and do a left join
 polarity_df <- read.csv("data/RoodGroenAnthePolarity.csv")
