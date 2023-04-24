@@ -37,6 +37,11 @@ df_acquisition$aoa <- as.numeric(gsub(",", ".", df_acquisition$aoa))
 # Behavior Research Methods, 42(3), 643-650.
 df_subtlex <- read.delim("data/SUBTLEX.txt", sep="\t")
 
+# Moorset al. (2013).
+# Norms of Valence, Arousal, Dominance, and Age of Acquisition for 4,300 Dutch Words.
+# Behavior Research Methods 45 (1): 169–77.
+df_norms <- read.csv("data/ValenceArousalDominance.csv")
+
 # Adjectiveness
 # Sevenants, A. Adjectiveness dataset for past participles in Dutch
 df_adjectiveness <- read.csv("data/adjectiveness.csv")
@@ -60,6 +65,10 @@ df <- merge(x=df, y=df_subtlex[,c("Word", "FREQcount")],
 names(df)[names(df) == 'FREQcount'] <- 'freq'
 # Also log-transform
 df$logfreq <- log10(df$freq)
+
+# Norms
+df <- merge(x=df, y=df_norms[,c("valence", "arousal", "dominance", "word")],
+            by.x="lemma", by.y="word", all.x=TRUE)
 
 # Adjectiveness
 df <- merge(x=df, y=df_adjectiveness[,c("participle", "adjectiveness")],
