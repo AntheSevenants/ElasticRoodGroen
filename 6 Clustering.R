@@ -4,14 +4,17 @@
 source("DistributionalSemanticsR/Clustering.R")
 
 # Read coefficients output
-df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors_levenshtein.csv")
+df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
 
 # Define the clustering function
 do_clustering <- function(df,
                           clustering_algorithm="kmeans",
                           base,
                           mode="all") {
-  df_copy <- df
+  x_column <- paste0(base, ".x")
+  y_column <- paste0(base, ".y")
+  
+  df_copy <- df[!is.na(df[x_column]),]
   
   # Mode can be "all", "zero", "non-zero"
 
@@ -31,7 +34,7 @@ do_clustering <- function(df,
   df_copy$coefficient <- NULL
   
   # Only keep the required coordinates
-  pass_coords <- df_copy[, c(paste0(base, ".x"), paste0(base, ".y")), drop=FALSE]
+  pass_coords <- df_copy[, c(x_column, y_column), drop=FALSE]
   
   return_dataframe <- data.frame(feature = df_copy$feature)
   
@@ -76,6 +79,6 @@ for (mode in c("all", "non-zero", "zero")) {
   df <- do_clustering(df, "dbscan", "umap", mode)
 }
 
-write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors_levenshtein_clusters.csv", 
+write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors_clusters.csv", 
           row.names=FALSE)
 
