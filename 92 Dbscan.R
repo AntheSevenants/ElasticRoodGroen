@@ -1,0 +1,72 @@
+library(dbscan)
+library(magrittr)
+library(DescTools)
+library(ggplot2)
+library(cowplot) # arranging plots
+
+df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
+
+df_copy <- df
+df_copy <- df_copy[df_copy$coefficient != 0, ]
+
+base <- "mds"
+column_x <- paste0(base, ".x")
+column_y <- paste0(base, ".y")
+
+df_copy <- df_copy[!is.na(df_copy[[column_x]]), ]
+
+pass_coords <- df_copy[, c(column_x, column_y), drop = FALSE]
+
+pts_range <- 2:25
+eps_range <- seq(0, 0.25, 0.001)
+
+pts_col <- c()
+eps_col <- c()
+c_col <- c()
+cluster_count_col <- c()
+
+for (pts in pts_range) {
+  for (eps in eps_range) {
+    clusters <- dbscan(pass_coords, minPts = pts, eps = eps)$cluster %>%
+      as.numeric() %>% as.factor()
+    cluster_count <- length(unique(clusters))
+    
+    pts_col <- append(pts_col, pts)
+    eps_col <- append(eps_col, eps)
+    cluster_count_col <- append(cluster_count_col, cluster_count)
+    
+    if (cluster_count > 1) {
+      df_shim <- df_copy
+      df_copy$cluster <- clusters
+      
+      fit <- glm(coefficient ~ cluster, data=df_shim)
+      c_value <- Cstat(fit)
+    } else {
+      c_value <- NA
+    }
+    
+    c_col <- append(c_col, c_value)
+  }
+}
+
+results <- data.frame(pts = pts_col,
+                      eps = eps_col,
+                      cluster_count = cluster_count_col,
+                      cluster_count_log = log10(cluster_count_col),
+                      c = c_col)
+
+plot_tile <- function(data, fill_column) {
+  ggplot(data = data) +
+    geom_tile(aes(x = pts, y = eps, fill = eval(as.name(fill_column)))) +
+    scale_fill_distiller(palette = "Greys", direction=1) + 
+    labs(fill=fill_column)
+}
+
+cluster_count_plot <- plot_tile(results, "cluster_count")
+cluster_count_log_plot <-  plot_tile(results, "cluster_count_log")
+
+plot_grid(cluster_count_plot, cluster_count_log_plot, labels=c("Clusters", "Clusters (log)"))
+
+plot_tile(results, "c")
+
+View(results)
