@@ -1,12 +1,11 @@
 library(ggplot2) # plots
+library(cowplot) # arranging plots
 library(mgcv) # GAM
 library(tidyr) # expand_grid
 
 df <-
   read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
-df <- df[!is.na(df$mds.x),]
-df <- df[abs(df$coefficient) >= sd(df$coefficient),]
-df <- df[df$coefficient != 0,]
+df <- df[!is.na(df$mds.x), ]
 df$sign <- ifelse(df$coefficient > 0, "red", "green")
 
 # https://stackoverflow.com/a/46489816
@@ -14,7 +13,32 @@ round_any = function(x, accuracy, f = round) {
   f(x / accuracy) * accuracy
 }
 
-plot_gam <- function(fit, technique) {
+build_gam <- function(df, technique, kind) {
+  x_column <- paste0(technique, ".x")
+  y_column <- paste0(technique, ".y")
+  
+  # Remove NA values
+  df <- df[!is.na(df$mds.x), ]
+  
+  if (kind == "sd") {
+    df <- df[abs(df$coefficient) >= sd(df$coefficient), ]
+    df <- df[df$coefficient != 0, ]
+  } else if (kind == "non-zero") {
+    df <- df[df$coefficient != 0, ]
+  }
+  
+  formula <-
+    as.formula(paste0("coefficient ~ te(", x_column, ", ", y_column, ")"))
+  
+  fit <-
+    gam(formula,
+        data = df,
+        method = "REML")
+  
+  return(fit)
+}
+
+plot_gam <- function(df, fit, technique) {
   x_column <- paste0(technique, ".x")
   y_column <- paste0(technique, ".y")
   
@@ -49,61 +73,61 @@ plot_gam <- function(fit, technique) {
     #geom_contour(data=df_pred, aes(x=x, y=y, z = fit), colour = "white")
     geom_point(
       data = df,
-      size = 1,
+      size = 0.5,
       #width = 0.02,
       #height = 0.02,
-      alpha = 0.5,
-      aes(x = eval(as.name(x_column)),
-          y = eval(as.name(y_column)),
-          color = sign)
+      alpha = 0.2,
+      aes(
+        x = eval(as.name(x_column)),
+        y = eval(as.name(y_column)),
+        color = sign
+      )
     ) +
-    scale_color_manual(values = c("green", "red"))
+    scale_color_manual(values = c("green", "red")) +
+    xlab(x_column) +
+    ylab(y_column)
+}
+
+tri_gam_plot <- function(df, technique) {
+  title <- ggdraw() +
+    draw_label(
+      paste(technique, "semantic space"),
+      fontface = 'bold',
+      x = 0,
+      hjust = 0
+    ) +
+    theme(# add margin on the left of the drawing canvas,
+      # so title is aligned with left edge of first plot
+      plot.margin = margin(0, 0, 0, 7))
+  
+  fit_all <- build_gam(df, technique, "all")
+  fit_non_zero <- build_gam(df, technique, "non-zero")
+  fit_sd <- build_gam(df, technique, "sd")
+  
+  plot_all <- plot_gam(df, fit_all, technique)
+  plot_non_zero <- plot_gam(df, fit_non_zero, technique)
+  plot_sd <- plot_gam(df, fit_sd, technique)
+  
+  grid <- plot_grid(plot_all,
+                    plot_non_zero,
+                    plot_sd,
+                    labels = c('All', 'Non-zero', 'SD'))
+  plot_grid(title, grid, ncol = 1, rel_heights = c(0.1, 1))
 }
 
 #
 # MDS
 #
-mds.fit <-
-  gam(coefficient ~ te(mds.x, mds.y),
-      data = df,
-      method = "REML")
-plot_gam(mds.fit, "mds")
-
-vis.gam(
-  mds.fit,
-  view = c("mds.x", "mds.y"),
-  plot.type = "contour",
-  color = "heat"
-)
+tri_gam_plot(df, "mds")
 
 #
 # TSNE
 #
 
-tsne.fit <-
-  gam(coefficient ~ te(tsne.x, tsne.y),
-      data = df,
-      method = "REML")
-plot_gam(tsne.fit, "tsne")
-vis.gam(
-  tsne.fit,
-  view = c("tsne.x", "tsne.y"),
-  plot.type = "contour",
-  color = "heat"
-)
+tri_gam_plot(df, "tsne")
 
 #
 # UMAP
 #
 
-umap.fit <-
-  gam(coefficient ~ te(umap.x, umap.y),
-      data = df,
-      method = "REML")
-plot_gam(umap.fit, "umap")
-vis.gam(
-  umap.fit,
-  view = c("umap.x", "umap.y"),
-  plot.type = "contour",
-  color = "heat"
-)
+tri_gam_plot(df, "umap")
