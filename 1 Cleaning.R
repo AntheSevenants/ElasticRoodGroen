@@ -135,7 +135,7 @@ df <- df[df$country %in% c("BE", "NL"),]
 # WARNING: very intensive process!
 dt <- as.data.table(df)
 
-PRIMING_SENTENCES_NO = 10
+PRIMING_PARAGRAPHS_NO = 1
 paragraph_information <- str_match_all(df$sentence_id,
                                        "(.*p\\.)(\\d+)(\\.s\\.)(\\d+)")
 
@@ -143,9 +143,11 @@ start.time <- Sys.time()
 priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
   prefix <- paragraph_tuple[, 2]
   paragraph_no <- as.numeric(paragraph_tuple[, 3])
+  infix <- paragraph_tuple[,4]
+  sentence_no <- as.numeric(paragraph_tuple[,5])
   
   priming_paragraph_start <-
-    max(1, paragraph_no - PRIMING_SENTENCES_NO)
+    max(1, paragraph_no - PRIMING_PARAGRAPHS_NO)
   priming_paragraph_end <- max(1, paragraph_no - 1)
   priming_range <- priming_paragraph_start:priming_paragraph_end
   
@@ -164,19 +166,30 @@ priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
     }
   }
   
+  priming_sentence_start <- 1
+  priming_sentence_end <- max(1, sentence_no - 1)
+  priming_range <- priming_sentence_start:priming_sentence_end
+
+  for (primer_index in priming_range) {
+    needle <- paste0(prefix, paragraph_no, infix, primer_index)
+    #print(needle)
+    primer_rows <- dt[startsWith(dt$sentence_id, needle),]
+
+    if (dim(primer_rows)[1] > 0) {
+      for (i in 1:nrow(primer_rows)) {
+        row <- primer_rows[i,]
+
+        primers[[row$order]] = primers[[row$order]] + 1
+      }
+    }
+  }
+  
   rm(primer_rows)
   #gc()
   
   return(primers)
-  
-  # 
-  # primers <- factor(primers, levels = c("red", "green"))
-  # primers_table <- table(primers)
-  # 
-  # return(c(primers_table[names(primers_table) == "red"][1],
-  #          primers_table[names(primers_table) == "green"][1]))
 }
-, mc.cores = 16, mc.preschedule=TRUE)
+, mc.cores = 12, mc.preschedule=TRUE)
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
