@@ -41,6 +41,17 @@ for (pts in pts_range) {
       
       fit <- glm(coefficient ~ cluster, data=df_shim)
       c_value <- Cstat(fit)
+      
+      
+      # In addition, how much better does a random model perform?
+      # First, generate random clusters
+      fake_clusters <- sample(1:cluster_count,
+                              size = nrow(df_shim),
+                              replace = TRUE)
+      # Then, assign them to the data
+      df_shim$fake_cluster <- fake_clusters
+      
+      fake_fit <- glm(coefficient ~ fake_cluster, data=df_shim)
     } else {
       c_value <- NA
     }
