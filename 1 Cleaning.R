@@ -94,7 +94,9 @@ df <- subset(df,
         names(participle_counts[participle_counts >= MINIMUM_FREQUENCY]))
 
 # Compute the difference
-difference <- original_items_count - nrow(df)
+second_stage_count <- nrow(df)
+difference <- original_items_count - second_stage_count
+
 print(paste("Removed", difference, "items"))
 
 # Extract the SoNaR components from the sentence IDs
@@ -130,6 +132,12 @@ df <- df[!is.na(df$adjectiveness),]
 
 # Remove all UNK data
 df <- df[df$country %in% c("BE", "NL"),]
+
+# Compute the difference
+third_stage_count <- nrow(df)
+difference <- second_stage_count - third_stage_count
+
+print(paste("Removed", difference, "items"))
 
 # Priming information
 # WARNING: very intensive process!
@@ -189,7 +197,7 @@ priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
   
   return(primers)
 }
-, mc.cores = 12, mc.preschedule=TRUE)
+, mc.cores = 8, mc.preschedule=TRUE)
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
