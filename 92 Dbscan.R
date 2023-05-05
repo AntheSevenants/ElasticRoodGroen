@@ -37,7 +37,7 @@ for (pts in pts_range) {
     
     if (cluster_count > 1) {
       df_shim <- df_copy
-      df_copy$cluster <- clusters
+      df_shim$cluster <- clusters
       
       fit <- glm(coefficient ~ cluster, data=df_shim)
       c_value <- Cstat(fit)
