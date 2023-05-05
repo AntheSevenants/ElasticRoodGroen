@@ -24,6 +24,7 @@ pts_col <- c()
 eps_col <- c()
 c_col <- c()
 cluster_count_col <- c()
+vuong_p_col <- c()
 
 for (pts in pts_range) {
   for (eps in eps_range) {
@@ -50,21 +51,35 @@ for (pts in pts_range) {
                               replace = TRUE)
       # Then, assign them to the data
       df_shim$fake_cluster <- fake_clusters
-      
+      # We fit a model using the "random" model
       fake_fit <- glm(coefficient ~ fake_cluster, data=df_shim)
+      
+      # How, the question is, which model is better? And is the real model
+      # fundamentally better than the baseline random model?
+      # Since the models are not nested, we cannot use LRT
+      # Therefore, we use the Vuong (1989) test,
+      # graciously implemented in nonnest2
+      vuong <- vuongtest(fit, fake_fit)
+      vuong_p <- vuong$p_omega # if p < 0.05, the models can be distinguished
     } else {
       c_value <- NA
+      vuong_p <- NA
     }
     
     c_col <- append(c_col, c_value)
+    vuong_p_col <- append(vuong_p, vuong_p_col)
   }
 }
+
+
+#icci(fit, fake_fit)
 
 results <- data.frame(pts = pts_col,
                       eps = eps_col,
                       cluster_count = cluster_count_col,
                       cluster_count_log = log10(cluster_count_col),
-                      c = c_col)
+                      c = c_col,
+                      vuong_p = vuong_p_col)
 
 plot_tile <- function(data, fill_column) {
   ggplot(data = data) +
@@ -79,5 +94,7 @@ cluster_count_log_plot <-  plot_tile(results, "cluster_count_log")
 plot_grid(cluster_count_plot, cluster_count_log_plot, labels=c("Clusters", "Clusters (log)"))
 
 plot_tile(results, "c")
+
+plot_tile(results, "vuong_p")
 
 View(results)
