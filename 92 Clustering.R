@@ -50,7 +50,7 @@ get_clustering_results <- function(base, df) {
                                 size = nrow(df_shim),
                                 replace = TRUE)
         # Then, assign them to the data
-        df_shim$fake_cluster <- fake_clusters
+        df_shim$fake_cluster <- fake_clusters %>% as.factor()
         # We fit a model using the "random" model
         fake_fit <- glm(coefficient ~ fake_cluster, data = df_shim)
         
