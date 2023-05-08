@@ -16,13 +16,11 @@ df_copy <- df_copy[!is.na(df_copy[[column_x]]),]
 
 pass_coords <- df_copy[, c(column_x, column_y), drop = FALSE]
 
-k_range <- 2:100
-
 plots <- list()
-c_col <- c()
-vuong_p_col <- c()
 
-for (k in k_range) {
+k_range <- 2:60
+
+results_list <- mclapply(k_range, function(k) {
   test <- pam(pass_coords, k = k)
   clusters <- test$clustering
   df_copy$cluster <- clusters
@@ -58,15 +56,15 @@ for (k in k_range) {
   vuong_p <-
     vuong$p_omega # if p < 0.05, the models can be distinguished
   
-  c_col <- append(c_col, c_value)
-  vuong_p_col <- append(vuong_p, vuong_p_col)
-}
+  list("vuong_p" = vuong_p,
+       "c" = c_value,
+       "k" = k) %>% return
+}, mc.cores=detectCores())
 
-results <- data.frame(
-  k = k_range,
-  c = c_col,
-  vuong_p = vuong_p_col
-)
+results <- do.call(rbind, results_list) %>% as.data.frame()
+results$k <- as.numeric(results$k)
+results$c <- as.numeric(results$c)
+results$vuong_p <- as.numeric(results$vuong_p)
 
 plot_bar <- function(results, fill_column) {
   ggplot(data=results) +
@@ -77,7 +75,7 @@ plot_bar <- function(results, fill_column) {
     labs(y = fill_column)
 }
 
-plot_bar(results, "c")
-plot_bar(results, "vuong_p")
+c_plot <- plot_bar(results, "c")
+vuong_plot <- plot_bar(results, "vuong_p")
 
-plot_grid(plotlist=plots, labels=k_range)
+plot_grid(c_plot, vuong_plot, labels=c("C value", "Vuong p value"))
