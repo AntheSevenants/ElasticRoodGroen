@@ -1,6 +1,7 @@
 library(magrittr)
 library(cluster)
 library(cowplot) # arranging plots
+library(semvar)
 
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
 
@@ -32,6 +33,13 @@ results_list <- mclapply(k_range, function(k) {
   # Now, let's run a regression
   df_shim <- df_copy
   df_shim$cluster <- clusters
+  
+  # Remove all items with negative silhouette width
+  distance_matrix <- dist(pass_coords, method="euclidean", diag=T, upper=T)
+  silhouette <- clusterqualSIL(distance_matrix, df_shim$cluster)
+
+  df_shim$sil <- silhouette$pointqual
+  df_shim$cluster <- ifelse(df_shim$sil >= 0, df_shim$cluster, 0)
   
   fit <- glm(coefficient ~ cluster, data = df_shim)
   c_value <- Cstat(fit)
