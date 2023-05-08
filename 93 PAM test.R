@@ -17,6 +17,8 @@ df_copy <- df_copy[!is.na(df_copy[[column_x]]),]
 
 pass_coords <- df_copy[, c(column_x, column_y), drop = FALSE]
 
+distance_matrix <- dist(pass_coords, method="euclidean", diag=T, upper=T)
+
 plots <- list()
 
 k_range <- 2:60
@@ -35,7 +37,6 @@ results_list <- mclapply(k_range, function(k) {
   df_shim$cluster <- clusters
   
   # Remove all items with negative silhouette width
-  distance_matrix <- dist(pass_coords, method="euclidean", diag=T, upper=T)
   silhouette <- clusterqualSIL(distance_matrix, df_shim$cluster)
 
   df_shim$sil <- silhouette$pointqual
