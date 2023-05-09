@@ -5,7 +5,6 @@ library(tidyr) # expand_grid
 
 df <-
   read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
-df <- df[!is.na(df$mds.x), ]
 df$sign <- ifelse(df$coefficient > 0, "red", "green")
 
 # https://stackoverflow.com/a/46489816
@@ -13,19 +12,20 @@ round_any = function(x, accuracy, f = round) {
   f(x / accuracy) * accuracy
 }
 
+check_kind <- function(kind) {
+  if (!kind %in% c("all", "non_zero", "outside_sd")) {
+    stop("Kind should be: all, non-zero, outside-sd")
+  }
+}
+
 build_gam <- function(df, technique, kind) {
-  x_column <- paste0(technique, ".x")
-  y_column <- paste0(technique, ".y")
+  check_kind(kind)
+  
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
   
   # Remove NA values
-  df <- df[!is.na(df$mds.x), ]
-  
-  if (kind == "sd") {
-    df <- df[abs(df$coefficient) >= sd(df$coefficient), ]
-    df <- df[df$coefficient != 0, ]
-  } else if (kind == "non-zero") {
-    df <- df[df$coefficient != 0, ]
-  }
+  df <- df[!is.na(df[[x_column]]), ]
   
   formula <-
     as.formula(paste0("coefficient ~ te(", x_column, ", ", y_column, ")"))
@@ -38,9 +38,14 @@ build_gam <- function(df, technique, kind) {
   return(fit)
 }
 
-plot_gam <- function(df, fit, technique) {
-  x_column <- paste0(technique, ".x")
-  y_column <- paste0(technique, ".y")
+plot_gam <- function(df, fit, technique, kind) {
+  check_kind(kind)
+  
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
+  
+  # Remove NA values
+  df <- df[!is.na(df[[x_column]]), ]
   
   df_pred <- expand_grid(
     x = seq(
@@ -101,12 +106,12 @@ tri_gam_plot <- function(df, technique) {
       plot.margin = margin(0, 0, 0, 7))
   
   fit_all <- build_gam(df, technique, "all")
-  fit_non_zero <- build_gam(df, technique, "non-zero")
-  fit_sd <- build_gam(df, technique, "sd")
+  fit_non_zero <- build_gam(df, technique, "non_zero")
+  fit_sd <- build_gam(df, technique, "outside_sd")
   
-  plot_all <- plot_gam(df, fit_all, technique)
-  plot_non_zero <- plot_gam(df, fit_non_zero, technique)
-  plot_sd <- plot_gam(df, fit_sd, technique)
+  plot_all <- plot_gam(df, fit_all, technique, "all")
+  plot_non_zero <- plot_gam(df, fit_non_zero, technique, "non_zero")
+  plot_sd <- plot_gam(df, fit_sd, technique, "outside_sd")
   
   grid <- plot_grid(plot_all,
                     plot_non_zero,
