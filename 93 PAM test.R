@@ -2,6 +2,7 @@ library(magrittr)
 library(cluster)
 library(cowplot) # arranging plots
 library(semvar)
+library(parallel)
 
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
 
@@ -78,6 +79,8 @@ get_clustering_results_pam <- function(base, df) {
 }
 
 mds_results_pam <- get_clustering_results_pam("mds", df_copy)
+tsne_results_pam <- get_clustering_results_pam("tsne", df_copy)
+umap_results_pam <- get_clustering_results_pam("umap", df_copy)
 
 plot_bar <- function(results, fill_column) {
   ggplot(data=results) +
