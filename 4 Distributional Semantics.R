@@ -118,14 +118,14 @@ df <- save_coordinates(coords_all.tsne, "tsne", "all", df, no_vector_indices)
 df <- save_coordinates(coords_all.umap, "umap", "all", df, no_vector_indices)
 
 # Saving: non-zero words
-df <- save_coordinates(coords_non_zero.mds, "mds", "non-zero", df, zero_indices)
-df <- save_coordinates(coords_non_zero.tsne, "tsne", "non-zero", df, zero_indices)
-df <- save_coordinates(coords_non_zero.umap, "umap", "non-zero", df, zero_indices)
+df <- save_coordinates(coords_non_zero.mds, "mds", "non_zero", df, zero_indices)
+df <- save_coordinates(coords_non_zero.tsne, "tsne", "non_zero", df, zero_indices)
+df <- save_coordinates(coords_non_zero.umap, "umap", "non_zero", df, zero_indices)
 
 # Saving: outside sd words
-df <- save_coordinates(coords_outside_sd.mds, "mds", "outside-sd", df, within_sd_indices)
-df <- save_coordinates(coords_outside_sd.tsne, "tsne", "outside-sd", df, within_sd_indices)
-df <- save_coordinates(coords_outside_sd.umap, "umap", "outside-sd", df, within_sd_indices)
+df <- save_coordinates(coords_outside_sd.mds, "mds", "outside_sd", df, within_sd_indices)
+df <- save_coordinates(coords_outside_sd.tsne, "tsne", "outside_sd", df, within_sd_indices)
+df <- save_coordinates(coords_outside_sd.umap, "umap", "outside_sd", df, within_sd_indices)
 
 #
 # Coordinate regression
