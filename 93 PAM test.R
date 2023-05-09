@@ -1,13 +1,4 @@
-library(magrittr)
-library(cluster)
-library(cowplot) # arranging plots
-library(semvar)
-library(parallel)
-
-df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
-
-df_copy <- df
-df_copy <- df_copy[df_copy$coefficient != 0, ]
+source("91 Clustering base.R")
 
 get_clustering_results_pam <- function(base, df) {
   column_x <- paste0(base, ".x")
@@ -91,7 +82,14 @@ plot_bar <- function(results, fill_column) {
     labs(y = fill_column)
 }
 
-c_plot <- plot_bar(results, "c")
-vuong_plot <- plot_bar(results, "vuong_p")
+plot_all_pam <- function(results) {
+  c_plot <- plot_bar(results, "c")
+  vuong_plot <- plot_bar(results, "vuong_p")
+  
+  plot_grid(c_plot, vuong_plot, labels=c("C value", "Vuong p value")) %>%
+    return
+}
 
-plot_grid(c_plot, vuong_plot, labels=c("C value", "Vuong p value"))
+plot_all_pam(mds_results_pam)
+plot_all_pam(tsne_results_pam)
+plot_all_pam(umap_results_pam)

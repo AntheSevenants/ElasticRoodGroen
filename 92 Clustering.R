@@ -1,15 +1,6 @@
-library(dbscan)
-library(magrittr)
-library(DescTools)
-library(ggplot2)
-library(cowplot) # arranging plots
+source("91 Clustering base.R")
 
-df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
-
-df_copy <- df
-df_copy <- df_copy[df_copy$coefficient != 0, ]
-
-get_clustering_results <- function(base, df) {
+get_clustering_results_dbscan <- function(base, df) {
   column_x <- paste0(base, ".x")
   column_y <- paste0(base, ".y")
   
@@ -87,9 +78,9 @@ get_clustering_results <- function(base, df) {
   return(results)
 }
 
-mds_results <- get_clustering_results("mds", df_copy)
-tsne_results <- get_clustering_results("tsne", df_copy)
-umap_results <- get_clustering_results("umap", df_copy)
+mds_results_dbscan <- get_clustering_results_dbscan("mds", df_copy)
+tsne_results_dbscan <- get_clustering_results_dbscan("tsne", df_copy)
+umap_results_dbscan <- get_clustering_results_dbscan("umap", df_copy)
 
 plot_tile <- function(data, fill_column) {
   ggplot(data = data) +
@@ -102,7 +93,7 @@ plot_tile <- function(data, fill_column) {
     labs(fill = fill_column)
 }
 
-plot_all <- function(results) {
+plot_all_dbscan <- function(results) {
   cluster_count_plot <- plot_tile(results, "cluster_count")
   cluster_count_log_plot <-  plot_tile(results, "cluster_count_log")
   c_plot <- plot_tile(results, "c")
@@ -112,8 +103,6 @@ plot_all <- function(results) {
             labels=c("Clusters", "Clusters (log)", "C values", "Vuong p value"))
 }
 
-plot_all(mds_results)
-plot_all(tsne_results)
-plot_all(umap_results)
-
-View(results)
+plot_all_dbscan(mds_results_dbscan)
+plot_all_dbscan(tsne_results_dbscan)
+plot_all_dbscan(umap_results_dbscan)
