@@ -1,7 +1,6 @@
 library(stringr)
 library(parallel)
 library(data.table)
-library(microbenchmark)
 
 # Import the dt fixing library
 source("naive-dt-fix/naive-dt-fix.R")
