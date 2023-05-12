@@ -1,3 +1,5 @@
+library(MuMIn)
+
 source("91 Clustering base.R")
 
 get_clustering_results_dbscan <- function(base, df) {
@@ -13,7 +15,7 @@ get_clustering_results_dbscan <- function(base, df) {
   
   pts_col <- c()
   eps_col <- c()
-  c_col <- c()
+  r2_col <- c()
   cluster_count_col <- c()
   vuong_p_col <- c()
   
@@ -32,7 +34,7 @@ get_clustering_results_dbscan <- function(base, df) {
         df_shim$cluster <- clusters
         
         fit <- glm(coefficient ~ cluster, data = df_shim)
-        c_value <- Cstat(fit)
+        r2_value <- r.squaredGLMM(fit)[,1] %>% unname
         
         
         # In addition, how much better does a random model perform?
@@ -54,11 +56,11 @@ get_clustering_results_dbscan <- function(base, df) {
         vuong_p <-
           vuong$p_omega # if p < 0.05, the models can be distinguished
       } else {
-        c_value <- NA
+        r2_value <- NA
         vuong_p <- NA
       }
       
-      c_col <- append(c_col, c_value)
+      r2_col <- append(r2_col, r2_value)
       vuong_p_col <- append(vuong_p, vuong_p_col)
     }
   }
@@ -71,7 +73,7 @@ get_clustering_results_dbscan <- function(base, df) {
     eps = eps_col,
     cluster_count = cluster_count_col,
     cluster_count_log = log10(cluster_count_col),
-    c = c_col,
+    r2 = r2_col,
     vuong_p = vuong_p_col
   )
   
@@ -96,11 +98,11 @@ plot_tile <- function(data, fill_column) {
 plot_all_dbscan <- function(results) {
   cluster_count_plot <- plot_tile(results, "cluster_count")
   cluster_count_log_plot <-  plot_tile(results, "cluster_count_log")
-  c_plot <- plot_tile(results, "c")
+  r2_plot <- plot_tile(results, "r2")
   vuong_plot <- plot_tile(results, "vuong_p")
   
-  plot_grid(cluster_count_plot, cluster_count_log_plot, c_plot, vuong_plot,
-            labels=c("Clusters", "Clusters (log)", "C values", "Vuong p value"))
+  plot_grid(cluster_count_plot, cluster_count_log_plot, r2_plot, vuong_plot,
+            labels=c("Clusters", "Clusters (log)", "R^2 values", "Vuong p value"))
 }
 
 plot_all_dbscan(mds_results_dbscan)
