@@ -208,6 +208,10 @@ colnames(priming_df) <- c("red_primes", "green_primes")
 df$red_primes <- as.numeric(priming_df$red_primes)
 df$green_primes <- as.numeric(priming_df$green_primes)
 
+df$priming_rate <- 
+  df$red_primes / (df$red_primes + df$green_primes)
+df$priming_rate <- ifelse(is.na(df$priming_rate), 0, df$priming_rate)
+
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
