@@ -18,6 +18,23 @@ check_kind <- function(kind) {
   }
 }
 
+build_lm <- function(df, technique, kind) {
+  check_kind(kind)
+  
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
+  
+  # Remove NA values
+  df <- df[!is.na(df[[x_column]]), ]
+  
+  formula <-
+    as.formula(paste0("coefficient ~ ", x_column, " + ", y_column))
+  
+  fit <- lm(formula, data = df)
+  
+  return(fit)
+}
+
 build_gam <- function(df, technique, kind) {
   check_kind(kind)
   
@@ -38,6 +55,7 @@ build_gam <- function(df, technique, kind) {
   return(fit)
 }
 
+# Can also be used to plot linear models, but would be kind of useless...
 plot_gam <- function(df, fit, technique, kind) {
   check_kind(kind)
   
