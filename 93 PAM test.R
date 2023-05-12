@@ -1,3 +1,5 @@
+library(MuMIn)
+
 source("91 Clustering base.R")
 
 get_clustering_results_pam <- function(base, df) {
@@ -11,6 +13,7 @@ get_clustering_results_pam <- function(base, df) {
   distance_matrix <- dist(pass_coords, method="euclidean", diag=T, upper=T)
   
   plots <- list()
+  
   
   k_range <- 2:60
   
@@ -34,7 +37,7 @@ get_clustering_results_pam <- function(base, df) {
     df_shim$cluster <- ifelse(df_shim$sil >= 0, df_shim$cluster, 0)
     
     fit <- glm(coefficient ~ cluster, data = df_shim)
-    c_value <- Cstat(fit)
+    r2_value <- r.squaredGLMM(fit)[,1] %>% unname
     
     
     # In addition, how much better does a random model perform?
@@ -57,13 +60,13 @@ get_clustering_results_pam <- function(base, df) {
       vuong$p_omega # if p < 0.05, the models can be distinguished
     
     list("vuong_p" = vuong_p,
-         "c" = c_value,
+         "r2" = r2_value,
          "k" = k) %>% return
   }, mc.cores=detectCores())
   
   results <- do.call(rbind, results_list) %>% as.data.frame()
   results$k <- as.numeric(results$k)
-  results$c <- as.numeric(results$c)
+  results$r2 <- as.numeric(results$r2)
   results$vuong_p <- as.numeric(results$vuong_p)
   
   results %>% return()
@@ -86,7 +89,7 @@ plot_all_pam <- function(results) {
   c_plot <- plot_bar(results, "c")
   vuong_plot <- plot_bar(results, "vuong_p")
   
-  plot_grid(c_plot, vuong_plot, labels=c("C value", "Vuong p value")) %>%
+  plot_grid(c_plot, vuong_plot, labels=c("R^2 value", "Vuong p value")) %>%
     return
 }
 
