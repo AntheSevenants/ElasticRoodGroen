@@ -80,9 +80,9 @@ get_clustering_results_dbscan <- function(base, df) {
   return(results)
 }
 
-mds_results_dbscan <- get_clustering_results_dbscan("mds", df_copy)
-tsne_results_dbscan <- get_clustering_results_dbscan("tsne", df_copy)
-umap_results_dbscan <- get_clustering_results_dbscan("umap", df_copy)
+mds_results_dbscan <- get_clustering_results_dbscan("mds.all", df_copy)
+tsne_results_dbscan <- get_clustering_results_dbscan("tsne.all", df_copy)
+umap_results_dbscan <- get_clustering_results_dbscan("umap.all", df_copy)
 
 plot_tile <- function(data, fill_column) {
   ggplot(data = data) +
