@@ -1,4 +1,7 @@
 library(stringr)
+library(parallel)
+library(data.table)
+library(microbenchmark)
 
 # Import the dt fixing library
 source("naive-dt-fix/naive-dt-fix.R")
@@ -91,7 +94,9 @@ df <- subset(df,
         names(participle_counts[participle_counts >= MINIMUM_FREQUENCY]))
 
 # Compute the difference
-difference <- original_items_count - nrow(df)
+second_stage_count <- nrow(df)
+difference <- original_items_count - second_stage_count
+
 print(paste("Removed", difference, "items"))
 
 # Extract the SoNaR components from the sentence IDs
@@ -128,33 +133,84 @@ df <- df[!is.na(df$adjectiveness),]
 # Remove all UNK data
 df <- df[df$country %in% c("BE", "NL"),]
 
-# Priming information
-# Disabled because implementation is dubious
-PRIMING_SENTENCES_NO = 10
-sentence_information <- str_match_all(df$sentence_id, "(.*s\\.)(\\d)+")
+# Compute the difference
+third_stage_count <- nrow(df)
+difference <- second_stage_count - third_stage_count
 
-# lapply(sentence_information[1:1000], function(sentence_tuple) {
-#   prefix <- sentence_tuple[,2]
-#   sentence_no <- as.numeric(sentence_tuple[,3])
-#   
-#   priming_sentence_start <- max(1, sentence_no - PRIMING_SENTENCES_NO)
-#   priming_sentence_end <- max(1, sentence_no - 1)
-#   priming_range <- priming_sentence_start:priming_sentence_end
-#   
-#   primers <- lapply(priming_range, function(primer_index) {
-#     primer_row <- df[df$sentence_id == paste0(prefix, primer_index),]
-#     if (dim(primer_row)[1] == 1) {
-#       return(primer_row$order)
-#     } else {
-#       return(NA)
-#     }
-#   })
-#   
-#   primers_table <- table(primers)
-#   
-#   return(list("red" = primers_table[names(primers_table) == "red"],
-#               "green" = primers_table[names(primers_table) == "green"]))
-# })
+print(paste("Removed", difference, "items"))
+
+# Priming information
+# WARNING: very intensive process!
+dt <- as.data.table(df)
+
+PRIMING_PARAGRAPHS_NO = 1
+paragraph_information <- str_match_all(df$sentence_id,
+                                       "(.*p\\.)(\\d+)(\\.s\\.)(\\d+)")
+
+start.time <- Sys.time()
+priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
+  prefix <- paragraph_tuple[, 2]
+  paragraph_no <- as.numeric(paragraph_tuple[, 3])
+  infix <- paragraph_tuple[,4]
+  sentence_no <- as.numeric(paragraph_tuple[,5])
+  
+  priming_paragraph_start <-
+    max(1, paragraph_no - PRIMING_PARAGRAPHS_NO)
+  priming_paragraph_end <- max(1, paragraph_no - 1)
+  priming_range <- priming_paragraph_start:priming_paragraph_end
+  
+  primers <- list("red" = 0, "green" = 0)
+  
+  for (primer_index in priming_range) {
+    needle <- paste0(prefix, primer_index)
+    primer_rows <- dt[startsWith(dt$sentence_id, needle),]
+
+    if (dim(primer_rows)[1] > 0) {
+      for (i in 1:nrow(primer_rows)) {
+        row <- primer_rows[i,]
+        
+        primers[[row$order]] = primers[[row$order]] + 1
+      }
+    }
+  }
+  
+  priming_sentence_start <- 1
+  priming_sentence_end <- max(1, sentence_no - 1)
+  priming_range <- priming_sentence_start:priming_sentence_end
+
+  for (primer_index in priming_range) {
+    needle <- paste0(prefix, paragraph_no, infix, primer_index)
+    #print(needle)
+    primer_rows <- dt[startsWith(dt$sentence_id, needle),]
+
+    if (dim(primer_rows)[1] > 0) {
+      for (i in 1:nrow(primer_rows)) {
+        row <- primer_rows[i,]
+
+        primers[[row$order]] = primers[[row$order]] + 1
+      }
+    }
+  }
+  
+  rm(primer_rows)
+  #gc()
+  
+  return(primers)
+}
+, mc.cores = 8, mc.preschedule=TRUE)
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
+
+priming_df <- as.data.frame(do.call(rbind, priming_info))
+colnames(priming_df) <- c("red_primes", "green_primes")
+
+df$red_primes <- as.numeric(priming_df$red_primes)
+df$green_primes <- as.numeric(priming_df$green_primes)
+
+df$priming_rate <- 
+  df$red_primes / (df$red_primes + df$green_primes)
+df$priming_rate <- ifelse(is.na(df$priming_rate), 0, df$priming_rate)
 
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
