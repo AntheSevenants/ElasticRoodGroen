@@ -111,6 +111,33 @@ plot_gam <- function(df, fit, technique, kind) {
     ylab(y_column)
 }
 
+tri_lm_plot <- function(df, technique) {
+  title <- ggdraw() +
+    draw_label(
+      paste(technique, "semantic space"),
+      fontface = 'bold',
+      x = 0,
+      hjust = 0
+    ) +
+    theme(# add margin on the left of the drawing canvas,
+      # so title is aligned with left edge of first plot
+      plot.margin = margin(0, 0, 0, 7))
+  
+  fit_all <- build_lm(df, technique, "all")
+  fit_non_zero <- build_lm(df, technique, "non_zero")
+  fit_sd <- build_lm(df, technique, "outside_sd")
+  
+  plot_all <- plot_gam(df, fit_all, technique, "all")
+  plot_non_zero <- plot_gam(df, fit_non_zero, technique, "non_zero")
+  plot_sd <- plot_gam(df, fit_sd, technique, "outside_sd")
+  
+  grid <- plot_grid(plot_all,
+                    plot_non_zero,
+                    plot_sd,
+                    labels = c('All', 'Non-zero', 'SD'))
+  plot_grid(title, grid, ncol = 1, rel_heights = c(0.1, 1))
+}
+
 tri_gam_plot <- function(df, technique) {
   title <- ggdraw() +
     draw_label(
@@ -141,16 +168,20 @@ tri_gam_plot <- function(df, technique) {
 #
 # MDS
 #
+
+tri_lm_plot(df, "mds")
 tri_gam_plot(df, "mds")
 
 #
 # TSNE
 #
 
+tri_lm_plot(df, "tsne")
 tri_gam_plot(df, "tsne")
 
 #
 # UMAP
 #
 
+tri_lm_plot(df, "umap")
 tri_gam_plot(df, "umap")
