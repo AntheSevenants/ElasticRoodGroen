@@ -72,9 +72,9 @@ get_clustering_results_pam <- function(base, df) {
   results %>% return()
 }
 
-mds_results_pam <- get_clustering_results_pam("mds", df_copy)
-tsne_results_pam <- get_clustering_results_pam("tsne", df_copy)
-umap_results_pam <- get_clustering_results_pam("umap", df_copy)
+mds_results_pam <- get_clustering_results_pam("mds.all", df_copy)
+tsne_results_pam <- get_clustering_results_pam("tsne.all", df_copy)
+umap_results_pam <- get_clustering_results_pam("umap.all", df_copy)
 
 plot_bar <- function(results, fill_column) {
   ggplot(data=results) +
