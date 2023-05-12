@@ -196,7 +196,7 @@ priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
   
   return(primers)
 }
-, mc.cores = 8, mc.preschedule=TRUE)
+, mc.cores = min(detectCores(), 8), mc.preschedule=TRUE)
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
