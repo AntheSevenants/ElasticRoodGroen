@@ -95,9 +95,9 @@ df <- subset(df,
 
 # Compute the difference
 second_stage_count <- nrow(df)
-difference <- original_items_count - second_stage_count
+difference_second_stage <- original_items_count - second_stage_count
 
-print(paste("Removed", difference, "items"))
+print(paste("Removed", difference_second_stage, "items"))
 
 # Extract the SoNaR components from the sentence IDs
 get_component <- function(filename) {
@@ -149,9 +149,9 @@ df <- df[df$country %in% c("BE", "NL"),]
 
 # Compute the difference
 third_stage_count <- nrow(df)
-difference <- second_stage_count - third_stage_count
+difference_third_stage <- second_stage_count - third_stage_count
 
-print(paste("Removed", difference, "items"))
+print(paste("Removed", difference_third_stage, "items"))
 
 # Priming information
 # WARNING: very intensive process!
@@ -230,6 +230,11 @@ df$priming_rate <-
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
+
+# For the paper
+write.csv(data.frame(name=c("first_removal", "second_removal"),
+                     no_items=c(difference_second_stage, difference_third_stage)),
+          "output/filtering_numbers.csv", row.names=FALSE)
 
 # Write to file
 write.csv(df, "output/RoodGroenAnthe_sampled.csv", row.names = FALSE)
