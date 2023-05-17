@@ -68,6 +68,7 @@ df$participle <- gsub("gelerd", "geleerd", df$participle)
 
 
 df <- df[!(df$participle %in% c("zgn", "gemiddeld", "gelijkstand")), ]
+df <- df[df$auxiliary_lemma %in% c("zijn", "hebben", "worden"), ]
 
 # Remove all participles ending in 'e'
 # These participles are declensed, and are thus ADJECTIVES!
