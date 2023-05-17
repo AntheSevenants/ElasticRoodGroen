@@ -124,11 +124,25 @@ df <- merge(x=df, y=adjectiveness_df,
                           by="participle",
                           all.x=TRUE)
 
+# Load frequency data and do a left join
+frequency_df <- read.delim("data/SUBTLEX.txt", quote = "")
+frequency_df <- frequency_df[,c("Word", "FREQcount")]
+frequency_df$logfreq <- log10(frequency_df$FREQcount)
+df <- merge(x=df, y=frequency_df,
+                  by.x="participle",
+                  by.y="Word",
+                  all.x=TRUE)
+
 # Remove records without defined adjectiveness value
 # I checked them manually and they are all *not* participles
 na_indices <- which(is.na(df$adjectiveness))
 df[na_indices,] # Inspection
 df <- df[!is.na(df$adjectiveness),]
+
+# Remove all participles without frequency counts
+# They are few (don't worry)
+df[is.na(df$FREQcount),]$participle %>% unique
+df <- df[!is.na(df$FREQcount),]
 
 # Remove all UNK data
 df <- df[df$country %in% c("BE", "NL"),]
@@ -208,9 +222,10 @@ colnames(priming_df) <- c("red_primes", "green_primes")
 df$red_primes <- as.numeric(priming_df$red_primes)
 df$green_primes <- as.numeric(priming_df$green_primes)
 
-df$priming_rate <- 
-  df$red_primes / (df$red_primes + df$green_primes)
-df$priming_rate <- ifelse(is.na(df$priming_rate), 0, df$priming_rate)
+INCREMENT <- 0.001
+
+df$priming_rate <-
+  log((df$red_primes + INCREMENT) / (df$green_primes + INCREMENT))
 
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
