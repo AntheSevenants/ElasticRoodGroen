@@ -93,6 +93,11 @@ df <- subset(df,
         participle %in% 
         names(participle_counts[participle_counts >= MINIMUM_FREQUENCY]))
 
+# Some attestations have short, weird or no sentence ID
+# We need the ID to compute priming, so we throw them away
+# It's only a couple hundred, doesn't really matter
+df <- df[df$sentence_id %>% nchar > 6, ]
+
 # Compute the difference
 second_stage_count <- nrow(df)
 difference_second_stage <- original_items_count - second_stage_count
@@ -106,6 +111,19 @@ get_component <- function(filename) {
 }
 get_component <- Vectorize(get_component) 
 df$component <- get_component(df$sentence_id)
+
+# Extract the SoNaR subcorpus from the file IDs
+get_subcorpus <- function(filename) {
+  subcorpus <- gsub("([a-z]{2}-[a-z]{1}-[a-z]{1}-[a-z]{1}).*", "\\1",
+                    filename, ignore.case=T)
+  return(subcorpus)
+}
+get_subcorpus <- Vectorize(get_subcorpus) 
+df$subcorpus <- get_subcorpus(df$file)
+
+# Decide whether informal or not
+df$informal <- ifelse(df$subcorpus %in% 
+                        c("WR-P-E-A", "WR-P-E-L", "WR-U-E-A", "WR-U-E-D"), T, F)
 
 # Load Lassy Groot meta data and do a left join
 lassy_meta <- read.csv("data/SonarMeta.csv")
