@@ -121,9 +121,9 @@ get_subcorpus <- function(filename) {
 get_subcorpus <- Vectorize(get_subcorpus) 
 df$subcorpus <- get_subcorpus(df$file)
 
-# Decide whether informal or not
-df$informal <- ifelse(df$subcorpus %in% 
-                        c("WR-P-E-A", "WR-P-E-L", "WR-U-E-A", "WR-U-E-D"), T, F)
+# Decide whether edited or not
+df$edited <- ifelse(df$subcorpus %in% 
+                    c("WR-P-E-A", "WR-P-E-L", "WR-U-E-A", "WR-U-E-D"), F, T)
 
 # Load Lassy Groot meta data and do a left join
 lassy_meta <- read.csv("data/SonarMeta.csv")
