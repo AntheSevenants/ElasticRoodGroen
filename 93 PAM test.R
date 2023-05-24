@@ -62,7 +62,7 @@ get_clustering_results_pam <- function(base, df) {
     list("vuong_p" = vuong_p,
          "r2" = r2_value,
          "k" = k) %>% return
-  }, mc.cores=detectCores())
+  }, mc.cores=min(detectCores(), 8))
   
   results <- do.call(rbind, results_list) %>% as.data.frame()
   results$k <- as.numeric(results$k)
@@ -79,20 +79,32 @@ umap_results_pam <- get_clustering_results_pam("umap.all", df_copy)
 plot_bar <- function(results, fill_column) {
   ggplot(data=results) +
     geom_bar(aes(
-      x = k_range,
+      x = k,
       y = eval(as.name(fill_column)),
     ), stat="identity") +
     labs(y = fill_column)
 }
 
-plot_all_pam <- function(results) {
-  c_plot <- plot_bar(results, "c")
+plot_all_pam <- function(technique, results) {
+  title <- ggdraw() +
+    draw_label(
+      paste(technique, "PAM results"),
+      fontface = 'bold',
+      x = 0,
+      hjust = 0
+    ) +
+    theme(# add margin on the left of the drawing canvas,
+      # so title is aligned with left edge of first plot
+      plot.margin = margin(0, 0, 0, 7))
+  
+  c_plot <- plot_bar(results, "r2")
   vuong_plot <- plot_bar(results, "vuong_p")
   
-  plot_grid(c_plot, vuong_plot, labels=c("R^2 value", "Vuong p value")) %>%
+  grid <- plot_grid(c_plot, vuong_plot, labels=c("R^2 value", "Vuong p value")) %>%
     return
+  plot_grid(title, grid, ncol = 1, rel_heights = c(0.1, 1))
 }
 
-plot_all_pam(mds_results_pam)
-plot_all_pam(tsne_results_pam)
-plot_all_pam(umap_results_pam)
+plot_all_pam("MDS", mds_results_pam)
+plot_all_pam("TSNE", tsne_results_pam)
+plot_all_pam("UMAP", umap_results_pam)
