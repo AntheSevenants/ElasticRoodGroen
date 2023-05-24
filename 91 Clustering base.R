@@ -5,6 +5,8 @@ library(ggplot2) # graphs
 library(cowplot) # arranging plots
 library(parallel) # gotta go fast
 library(semvar) # Speelman & Heylen (2014)
+library(cluster) # pam etc
+library(nonnest2) # Vuong test
 
 
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
