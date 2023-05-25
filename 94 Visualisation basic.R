@@ -9,13 +9,17 @@ plot_basic_coords <- function(technique) {
   x_column <- paste0(technique, ".all.x")
   y_column <- paste0(technique, ".all.y")
   
-  built_plot <- plot(df[,x_column],
-                     df[,y_column],
-                     ylim=c(-2.5, 2.5),
-                     pch = 19,
-                     cex = 0.5,
-                     col=colours[factor(df$order)],
-                     xlab="", ylab="")
-  
-  return(built_plot)
+  plot(
+    df[, x_column],
+    df[, y_column],
+    ylim = c(-2.5, 2.5),
+    pch = 19,
+    cex = 0.5,
+    col = colours[factor(df$order)],
+    xlab = "",
+    ylab = "",
+    asp = 1
+  )
 }
+
+plot_basic_coords("tsne")
