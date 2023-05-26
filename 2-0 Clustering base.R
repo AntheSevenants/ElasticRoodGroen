@@ -1,8 +1,6 @@
 library(dbscan) # for dbscan
 library(magrittr) # %>%
 library(DescTools) # Cstat
-library(ggplot2) # graphs
-library(cowplot) # arranging plots
 library(parallel) # gotta go fast
 library(semvar) # Speelman & Heylen (2014)
 library(cluster) # pam etc

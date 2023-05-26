@@ -1,6 +1,4 @@
-df <-
-  read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
-#df <- df[df$coefficient != 0,]
+source("2-0 Clustering base.R")
 
 df$order <- ifelse(df$coefficient > 0, "red", "green")
 df$order <- ifelse(df$coefficient == 0, "removed", df$order)

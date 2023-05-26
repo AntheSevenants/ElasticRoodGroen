@@ -164,24 +164,3 @@ tri_gam_plot <- function(df, technique) {
                     labels = c('All', 'Non-zero', 'SD'))
   plot_grid(title, grid, ncol = 1, rel_heights = c(0.1, 1))
 }
-
-#
-# MDS
-#
-
-tri_lm_plot(df, "mds")
-tri_gam_plot(df, "mds")
-
-#
-# TSNE
-#
-
-tri_lm_plot(df, "tsne")
-tri_gam_plot(df, "tsne")
-
-#
-# UMAP
-#
-
-tri_lm_plot(df, "umap")
-tri_gam_plot(df, "umap")

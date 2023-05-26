@@ -1,6 +1,6 @@
 library(MuMIn)
 
-source("91 Clustering base.R")
+source("2-0 Clustering base.R")
 
 get_clustering_results_dbscan <- function(base, df) {
   column_x <- paste0(base, ".x")
@@ -80,31 +80,10 @@ get_clustering_results_dbscan <- function(base, df) {
   return(results)
 }
 
-mds_results_dbscan <- get_clustering_results_dbscan("mds.all", df_copy)
-tsne_results_dbscan <- get_clustering_results_dbscan("tsne.all", df_copy)
-umap_results_dbscan <- get_clustering_results_dbscan("umap.all", df_copy)
+mds_results_dbscan <- get_clustering_results_dbscan("mds.non_zero", df_copy)
+tsne_results_dbscan <- get_clustering_results_dbscan("tsne.mds.non_zero", df_copy)
+umap_results_dbscan <- get_clustering_results_dbscan("umap.mds.non_zero", df_copy)
 
-plot_tile <- function(data, fill_column) {
-  ggplot(data = data) +
-    geom_tile(aes(
-      x = pts,
-      y = eps,
-      fill = eval(as.name(fill_column))
-    )) +
-    scale_fill_distiller(palette = "Greys", direction = 1) +
-    labs(fill = fill_column)
-}
-
-plot_all_dbscan <- function(results) {
-  cluster_count_plot <- plot_tile(results, "cluster_count")
-  cluster_count_log_plot <-  plot_tile(results, "cluster_count_log")
-  r2_plot <- plot_tile(results, "r2")
-  vuong_plot <- plot_tile(results, "vuong_p")
-  
-  plot_grid(cluster_count_plot, cluster_count_log_plot, r2_plot, vuong_plot,
-            labels=c("Clusters", "Clusters (log)", "R^2 values", "Vuong p value"))
-}
-
-plot_all_dbscan(mds_results_dbscan)
-plot_all_dbscan(tsne_results_dbscan)
-plot_all_dbscan(umap_results_dbscan)
+write.csv(mds_results_dbscan, "output/dbscan_mds.csv", row.names=FALSE)
+write.csv(tsne_results_dbscan, "output/dbscan_tsne.csv", row.names=FALSE)
+write.csv(umap_results_dbscan, "output/dbscan_umap.csv", row.names=FALSE)

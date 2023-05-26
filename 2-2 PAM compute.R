@@ -1,6 +1,6 @@
 library(MuMIn)
 
-source("91 Clustering base.R")
+source("2-0 Clustering base.R")
 
 get_clustering_results_pam <- function(base, df) {
   column_x <- paste0(base, ".x")
@@ -76,35 +76,6 @@ mds_results_pam <- get_clustering_results_pam("mds.all", df_copy)
 tsne_results_pam <- get_clustering_results_pam("tsne.all", df_copy)
 umap_results_pam <- get_clustering_results_pam("umap.all", df_copy)
 
-plot_bar <- function(results, fill_column) {
-  ggplot(data=results) +
-    geom_bar(aes(
-      x = k,
-      y = eval(as.name(fill_column)),
-    ), stat="identity") +
-    labs(y = fill_column)
-}
-
-plot_all_pam <- function(technique, results) {
-  title <- ggdraw() +
-    draw_label(
-      paste(technique, "PAM results"),
-      fontface = 'bold',
-      x = 0,
-      hjust = 0
-    ) +
-    theme(# add margin on the left of the drawing canvas,
-      # so title is aligned with left edge of first plot
-      plot.margin = margin(0, 0, 0, 7))
-  
-  c_plot <- plot_bar(results, "r2")
-  vuong_plot <- plot_bar(results, "vuong_p")
-  
-  grid <- plot_grid(c_plot, vuong_plot, labels=c("R^2 value", "Vuong p value")) %>%
-    return
-  plot_grid(title, grid, ncol = 1, rel_heights = c(0.1, 1))
-}
-
-plot_all_pam("MDS", mds_results_pam)
-plot_all_pam("TSNE", tsne_results_pam)
-plot_all_pam("UMAP", umap_results_pam)
+write.csv(mds_results_pam, "output/pam_mds.csv", row.names = FALSE)
+write.csv(tsne_results_pam, "output/pam_tsne.csv", row.names = FALSE)
+write.csv(umap_results_pam, "output/pam_umap.csv", row.names = FALSE)
