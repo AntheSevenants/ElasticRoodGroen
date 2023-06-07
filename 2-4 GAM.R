@@ -55,8 +55,7 @@ build_gam <- function(df, technique, kind) {
   return(fit)
 }
 
-# Can also be used to plot linear models, but would be kind of useless...
-plot_gam <- function(df, fit, technique, kind) {
+get_predictions_df <- function(df, fit, technique, kind) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
@@ -85,6 +84,18 @@ plot_gam <- function(df, fit, technique, kind) {
                      se.fit = TRUE) %>%
     as_tibble() %>%
     cbind(df_pred)
+  
+  return(df_pred)
+}
+
+# Can also be used to plot linear models, but would be kind of useless...
+plot_gam <- function(df, fit, technique, kind) {
+  check_kind(kind)
+  
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
+  
+  df_pred <- get_predictions_df(df, fit, technique, kind)
   
   ggplot() +
     geom_tile(data = df_pred, aes(
