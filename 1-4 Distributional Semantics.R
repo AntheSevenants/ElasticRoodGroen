@@ -127,56 +127,6 @@ df <- save_coordinates(coords_outside_sd.mds, "mds", "outside_sd", df, within_sd
 df <- save_coordinates(coords_outside_sd.tsne, "tsne", "outside_sd", df, within_sd_indices)
 df <- save_coordinates(coords_outside_sd.umap, "umap", "outside_sd", df, within_sd_indices)
 
-#
-# Coordinate regression
-#
-
-df_meta <- read.csv("output/model_meta.csv")
-model_meta <- meta.file(df_meta)
-
-fill_coefficient <- function(model_meta, model, coefficient_name) {
-  model_meta$add_free_information(coefficient_name,
-                                  "coefficient",
-                                  model$coefficients[[coefficient_name]])
-  return(model_meta)
-}
-
-fill_significance <- function(model_meta, model, coefficient_name) {
-  is_significant <- coef(summary(model))[coefficient_name, 4] <= 0.05
-  
-  model_meta$add_free_information(coefficient_name,
-                                  "is_significant",
-                                  is_significant)
-  
-  return(model_meta)
-}
-
-fill_regression_data <- function(model_meta, model, coefficient_name) {
-  model_meta <- fill_coefficient(model_meta, model, coefficient_name)
-  model_meta <- fill_significance(model_meta, model, coefficient_name)
-  
-  return(model_meta)
-}
-
-add_coordinate_regression_columns <- function(df, technique, model_meta) {
-  df_filtered <- df[df$coefficient != 0,]
-  df_filtered$class <-
-    as.factor(ifelse(df_filtered$coefficient < 0, "green", "red"))
-  
-  model <- glm(as.formula(paste0("class ~ ", technique, ".x + ", technique, ".y")),
-               family=binomial(link='logit'),
-               data=df_filtered)
-  
-  model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".x"))
-  model_meta <- fill_regression_data(model_meta, model, paste0(technique, ".y"))
-  
-  return(model_meta)
-}
-
-model_meta <- add_coordinate_regression_columns(df, "mds", model_meta)
-model_meta <- add_coordinate_regression_columns(df, "tsne", model_meta)
-model_meta <- add_coordinate_regression_columns(df, "umap", model_meta)
-
 # Export the model meta again
 write.csv(model_meta$as.data.frame(), "output/model_meta.csv", row.names=FALSE)
 
