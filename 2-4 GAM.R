@@ -100,7 +100,7 @@ get_predictions_df <- function(df, fit, technique, kind, too.far=NA) {
 }
 
 # Can also be used to plot linear models, but would be kind of useless...
-plot_gam <- function(df, fit, technique, kind, too.far=NA) {
+plot_gam <- function(df, fit, technique, kind, spawn.x, spawn.y, width, too.far=NA) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
@@ -108,7 +108,7 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
   
   df_pred <- get_predictions_df(df, fit, technique, kind, too.far)
   
-  ggplot() +
+  output_plot <- ggplot() +
     geom_tile(data = df_pred, aes(
       x = eval(as.name(x_column)),
       y = eval(as.name(y_column)),
@@ -131,6 +131,28 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
     scale_color_manual(values = c("green", "red")) +
     xlab(x_column) +
     ylab(y_column)
+  
+  
+  squares_per_row <- 3
+  for (i in 1:squares_per_row) {
+    small_rect_size <- width / squares_per_row
+    
+    for (j in 1:squares_per_row) {
+      output_plot <- output_plot + 
+        geom_rect(aes(xmin = !!(spawn.x + (i - 1) * small_rect_size),
+                      xmax = !!(spawn.x + (i) * small_rect_size),
+                      ymin = !!(spawn.y - (j - 1) * small_rect_size),
+                      ymax = !!(spawn.y - (j) * small_rect_size)), 
+                  fill="transparent", color = "grey")
+    }
+  }
+  
+  output_plot <- output_plot +
+    geom_rect(aes(xmin = spawn.x, xmax = spawn.x + width,
+                  ymin = spawn.y, ymax = spawn.y - width), 
+             fill="transparent", color = "black")
+  
+  return(output_plot)
 }
 
 tri_lm_plot <- function(df, technique) {
