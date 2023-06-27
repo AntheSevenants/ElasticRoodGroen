@@ -138,8 +138,15 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
 plot_gam_squares <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
   output_plot <- plot_gam(df, fit, technique, kind, too.far)
   
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
+  
+  
+  coords <- mapply(c, df[[x_column]], df[[y_column]], SIMPLIFY=FALSE)
+  
   squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
   
+  print(squares_df)
   
   output_plot <- output_plot +
     geom_rect(aes(
@@ -156,6 +163,36 @@ plot_gam_squares <- function(df, fit, technique, kind, spawn.x, spawn.y, width, 
     geom_rect(aes(xmin = spawn.x, xmax = spawn.x + width,
                   ymin = spawn.y, ymax = spawn.y - width), 
               fill="transparent", color = "black")
+  
+  first_rectangle <- head(squares_df, 1)
+  
+  in_first_rect <- lapply(coords, function(coord) {
+    x <- coord[1]
+    y <- coord[2]
+    
+    if (is.na(x)) {
+      return(FALSE)
+    }
+    
+    return(x < first_rectangle$xmax && x > first_rectangle$xmin && y > first_rectangle$ymax && y < first_rectangle$ymin)
+  })
+  
+  df$in_first_rect <- in_first_rect %>% as.logical()
+  
+  print(xtabs(~ in_first_rect, df))
+  
+  # output_plot <- output_plot + geom_point(
+  #   data = df,
+  #   size = 0.5,
+  #   #width = 0.02,
+  #   #height = 0.02,
+  #   alpha = 0.2,
+  #   aes(
+  #     x = eval(as.name(x_column)),
+  #     y = eval(as.name(y_column)),
+  #     color = in_first_rect
+  #   )
+  # )
   
   return(output_plot)
 }
