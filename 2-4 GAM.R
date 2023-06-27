@@ -135,59 +135,37 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
   return(output_plot)
 }
 
-plot_gam_squares <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
-  output_plot <- plot_gam(df, fit, technique, kind, too.far)
-  
-  squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
-  
-  output_plot <- output_plot +
-    geom_rect(aes(
-      xmin = xmin,
-      xmax = xmax,
-      ymin = ymin,
-      ymax = ymax
-    ),
-    fill = "transparent",
-    color = "grey",
-    data = squares_df)
-  
-  output_plot <- output_plot +
-    geom_rect(aes(xmin = spawn.x, xmax = spawn.x + width,
-                  ymin = spawn.y, ymax = spawn.y - width), 
-              fill="transparent", color = "black")
-  
-  first_rectangle <- head(squares_df, 1)
-  
-  in_first_rect <- lapply(coords, function(coord) {
-    x <- coord[1]
-    y <- coord[2]
+
+plot_gam_squares <-
+  function(df,
+           fit,
+           technique,
+           kind,
+           squares_df,
+           too.far = NA) {
+    output_plot <- plot_gam(df, fit, technique, kind, too.far)
     
-    if (is.na(x)) {
-      return(FALSE)
-    }
+    output_plot <- output_plot +
+      geom_rect(
+        aes(
+          xmin = xmin,
+          xmax = xmax,
+          ymin = ymin,
+          ymax = ymax,
+          color = dominant_order
+        ),
+        fill = "transparent",
+        data = squares_df
+      ) +
+      geom_text(aes(
+        label = points_count,
+        x = xmin + 0.1,
+        y = ymin - 0.1
+      ),
+      data = squares_df)
     
-    return(x < first_rectangle$xmax && x > first_rectangle$xmin && y > first_rectangle$ymax && y < first_rectangle$ymin)
-  })
-  
-  df$in_first_rect <- in_first_rect %>% as.logical()
-  
-  print(xtabs(~ in_first_rect, df))
-  
-  # output_plot <- output_plot + geom_point(
-  #   data = df,
-  #   size = 0.5,
-  #   #width = 0.02,
-  #   #height = 0.02,
-  #   alpha = 0.2,
-  #   aes(
-  #     x = eval(as.name(x_column)),
-  #     y = eval(as.name(y_column)),
-  #     color = in_first_rect
-  #   )
-  # )
-  
-  return(output_plot)
-}
+    return(output_plot)
+  }
 
 get_squares_coords <- function(spawn.x, spawn.y, width, squares_per_row) {
   xmin <- c()
