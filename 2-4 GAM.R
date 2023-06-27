@@ -55,7 +55,7 @@ build_gam <- function(df, technique, kind) {
   return(fit)
 }
 
-get_predictions_df <- function(df, fit, technique, kind) {
+get_predictions_df <- function(df, fit, technique, kind, too.far=NA) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
@@ -77,6 +77,13 @@ get_predictions_df <- function(df, fit, technique, kind) {
     )
   )
   
+  if (!is.na(too.far)) {
+    too_far <-
+      exclude.too.far(df_pred$x, df_pred$y, df[[x_column]], df[[y_column]], too.far)
+  } else {
+    too_far <- rep(FALSE, df_pred$x %>% length)
+  }
+  
   colnames(df_pred) <- c(x_column, y_column)
   
   # Turn into dataframe
@@ -85,17 +92,21 @@ get_predictions_df <- function(df, fit, technique, kind) {
     as_tibble() %>%
     cbind(df_pred)
   
+  # Remove "too far" data points
+  df_pred$too_far <- too_far
+  df_pred <- df_pred[!df_pred$too_far,]
+  
   return(df_pred)
 }
 
 # Can also be used to plot linear models, but would be kind of useless...
-plot_gam <- function(df, fit, technique, kind) {
+plot_gam <- function(df, fit, technique, kind, too.far=NA) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
   y_column <- paste0(technique, ".", kind, ".y")
   
-  df_pred <- get_predictions_df(df, fit, technique, kind)
+  df_pred <- get_predictions_df(df, fit, technique, kind, too.far)
   
   ggplot() +
     geom_tile(data = df_pred, aes(
@@ -103,7 +114,7 @@ plot_gam <- function(df, fit, technique, kind) {
       y = eval(as.name(y_column)),
       fill = fit
     )) +
-    scale_fill_distiller(palette = "RdYlGn") +
+    scale_fill_gradientn(colours = c("#96E637", "#FEFEBD", "#DE193E"), limits=c(-0.5, 0.5)) +
     #geom_contour(data=df_pred, aes(x=x, y=y, z = fit), colour = "white")
     geom_point(
       data = df,
