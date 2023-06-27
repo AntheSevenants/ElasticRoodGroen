@@ -100,7 +100,7 @@ get_predictions_df <- function(df, fit, technique, kind, too.far=NA) {
 }
 
 # Can also be used to plot linear models, but would be kind of useless...
-plot_gam <- function(df, fit, technique, kind, spawn.x, spawn.y, width, too.far=NA) {
+plot_gam <- function(df, fit, technique, kind, too.far=NA) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
@@ -132,27 +132,57 @@ plot_gam <- function(df, fit, technique, kind, spawn.x, spawn.y, width, too.far=
     xlab(x_column) +
     ylab(y_column)
   
+  return(output_plot)
+}
+
+plot_gam_squares <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
+  output_plot <- plot_gam(df, fit, technique, kind, too.far)
   
-  squares_per_row <- 3
-  for (i in 1:squares_per_row) {
-    small_rect_size <- width / squares_per_row
-    
-    for (j in 1:squares_per_row) {
-      output_plot <- output_plot + 
-        geom_rect(aes(xmin = !!(spawn.x + (i - 1) * small_rect_size),
-                      xmax = !!(spawn.x + (i) * small_rect_size),
-                      ymin = !!(spawn.y - (j - 1) * small_rect_size),
-                      ymax = !!(spawn.y - (j) * small_rect_size)), 
-                  fill="transparent", color = "grey")
-    }
-  }
+  squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
+  
+  
+  output_plot <- output_plot +
+    geom_rect(aes(
+      xmin = xmin,
+      xmax = xmax,
+      ymin = ymin,
+      ymax = ymax
+    ),
+    fill = "transparent",
+    color = "grey",
+    data = squares_df)
   
   output_plot <- output_plot +
     geom_rect(aes(xmin = spawn.x, xmax = spawn.x + width,
                   ymin = spawn.y, ymax = spawn.y - width), 
-             fill="transparent", color = "black")
+              fill="transparent", color = "black")
   
   return(output_plot)
+}
+
+get_squares_coords <- function(spawn.x, spawn.y, width, squares_per_row) {
+  xmin <- c()
+  xmax <- c()
+  ymin <- c()
+  ymax <- c()
+  
+  small_rect_size <- width / squares_per_row
+  
+  for (i in 1:squares_per_row) {
+    for (j in 1:squares_per_row) {
+      xmin <- append(xmin, spawn.x + (i - 1) * small_rect_size)
+      xmax <- append(xmax, spawn.x + (i) * small_rect_size)
+      ymin <- append(ymin, spawn.y - (j - 1) * small_rect_size)
+      ymax <- append(ymax, spawn.y - (j) * small_rect_size)
+    }
+  }
+  
+  squares_df <- data.frame(xmin = xmin,
+                           xmax = xmax,
+                           ymin = ymin,
+                           ymax = ymax)
+  
+  return(squares_df)
 }
 
 tri_lm_plot <- function(df, technique) {
