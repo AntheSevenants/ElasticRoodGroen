@@ -138,15 +138,7 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
 plot_gam_squares <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
   output_plot <- plot_gam(df, fit, technique, kind, too.far)
   
-  x_column <- paste0(technique, ".", kind, ".x")
-  y_column <- paste0(technique, ".", kind, ".y")
-  
-  
-  coords <- mapply(c, df[[x_column]], df[[y_column]], SIMPLIFY=FALSE)
-  
   squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
-  
-  print(squares_df)
   
   output_plot <- output_plot +
     geom_rect(aes(
@@ -219,6 +211,77 @@ get_squares_coords <- function(spawn.x, spawn.y, width, squares_per_row) {
                            ymin = ymin,
                            ymax = ymax)
   
+  return(squares_df)
+}
+
+compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
+  # We get the coordinates of the different squares we want to compute statistics for
+  squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
+  
+  #print(squares_df)
+  
+  # Get the names of the x and y columns
+  # TODO: this should really be generalised at this point
+  x_column <- paste0(technique, ".", kind, ".x")
+  y_column <- paste0(technique, ".", kind, ".y")
+
+  # Get 'tuples' of all coordinates
+  coords <- mapply(c, df[[x_column]], df[[y_column]], SIMPLIFY=FALSE)
+  
+  # These vectors will be attached to squares_df
+  points_count_c <- c()
+  dominant_order_c <- c()
+  has_dominant_order_c <- c()
+  
+  # Compute stats for each square
+  for(i in 1:nrow(squares_df)) {
+    square <- squares_df[i,]
+    
+    # For each square, go over all points
+    in_square <- lapply(coords, function(coord) {
+      x <- coord[1]
+      y <- coord[2]
+      
+      # If a coordinate is NA, there is no bounding box to be calculated
+      if (is.na(x)) {
+        return(FALSE)
+      }
+      
+      # Bounding box calculations
+      return(x < square[["xmax"]] && x > square[["xmin"]] && 
+             y > square[["ymax"]] && y < square[["ymin"]])
+    }) %>% as.logical()
+    
+    # We now have a vector which, for each point, says whether it is in the
+    # square or not
+    # We use it to index our dataframe of points
+    in_square_points <- df[in_square,]
+    
+    # How many points are in the square?
+    points_count <- dim(in_square_points)[1]
+    points_count_c <- append(points_count_c, points_count)
+    
+    # Is this square red, green or ambivalent?
+    cross_tab <- table(df$sign)
+    t_test_results <- t.test(in_square_points$coefficient)
+    
+    #print(t_test_results)
+    
+    has_dominant_order <- t_test_results$p.value <= 0.05
+    has_dominant_order_c <- append(has_dominant_order_c, has_dominant_order)
+    
+    dominant_order <- NA
+    if (has_dominant_order) {
+      dominant_order <- ifelse(t_test_results$estimate < 0, "green", "red")
+    }
+    
+    dominant_order_c <- append(dominant_order_c, dominant_order)
+  }
+
+  squares_df$has_dominant_order <- has_dominant_order_c
+  squares_df$points_count <- points_count_c
+  squares_df$dominant_order <- dominant_order_c
+
   return(squares_df)
 }
 
