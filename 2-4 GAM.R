@@ -159,9 +159,17 @@ plot_gam_squares <-
       ) +
       geom_text(aes(
         label = points_count,
-        x = xmin + 0.1,
+        x = xmin + 0.05,
         y = ymin - 0.1
       ),
+      hjust = 0,
+      data = squares_df) +
+      geom_text(aes(
+        label = mean_adjectiveness %>% round(2),
+        x = xmin + 0.05,
+        y = ymin - 0.3
+      ),
+      hjust = 0,
       data = squares_df)
     
     return(output_plot)
@@ -210,6 +218,7 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
   points_count_c <- c()
   dominant_order_c <- c()
   has_dominant_order_c <- c()
+  mean_adjectiveness_c <- c()
   
   # Compute stats for each square
   for(i in 1:nrow(squares_df)) {
@@ -254,11 +263,15 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
     }
     
     dominant_order_c <- append(dominant_order_c, dominant_order)
+    
+    mean_adjectiveness_c <- 
+      append(mean_adjectiveness_c, in_square_points$adjectiveness %>% mean)
   }
 
   squares_df$has_dominant_order <- has_dominant_order_c
   squares_df$points_count <- points_count_c
   squares_df$dominant_order <- dominant_order_c
+  squares_df$mean_adjectiveness <- mean_adjectiveness_c
 
   return(squares_df)
 }
