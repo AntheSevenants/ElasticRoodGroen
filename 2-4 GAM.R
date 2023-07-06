@@ -173,6 +173,14 @@ plot_gam_squares <-
         y = ymin - 0.3
       ),
       hjust = 0,
+      data = squares_df) +
+      geom_text(aes(
+        label = index,
+        x = (xmax + xmin) / 2,
+        y = (ymax + ymin) / 2,
+      ),
+      size = 15,
+      alpha = 0.05,
       data = squares_df)
     
     x_starts <- c()
@@ -264,7 +272,8 @@ get_squares_coords <- function(spawn.x, spawn.y, width, squares_per_row) {
   return(squares_df)
 }
 
-compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA) {
+compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far=NA,
+                                  t_test_enabled=TRUE) {
   # We get the coordinates of the different squares we want to compute statistics for
   squares_df <- get_squares_coords(spawn.x, spawn.y, width, squares_per_row)
   
@@ -324,18 +333,22 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
     
     # Is this square red, green or ambivalent?
     cross_tab <- table(df$sign)
-    t_test_results <- t.test(in_square_points$coefficient)
+    if (t_test_enabled) {
+      t_test_results <- t.test(in_square_points$coefficient)
     
-    #print(t_test_results)
+      has_dominant_order <- t_test_results$p.value <= 0.05
     
-    has_dominant_order <- t_test_results$p.value <= 0.05
-    has_dominant_order_c <- append(has_dominant_order_c, has_dominant_order)
+      dominant_order <- NA
+      if (has_dominant_order) {
+        dominant_order <- ifelse(t_test_results$estimate < 0, "green", "red")
+      }
     
-    dominant_order <- NA
-    if (has_dominant_order) {
-      dominant_order <- ifelse(t_test_results$estimate < 0, "green", "red")
+    } else {
+      has_dominant_order <- FALSE
+      dominant_order <- NA
     }
     
+    has_dominant_order_c <- append(has_dominant_order_c, has_dominant_order)
     dominant_order_c <- append(dominant_order_c, dominant_order)
     
     mean_adjectiveness_c <- 
