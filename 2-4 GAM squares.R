@@ -9,5 +9,5 @@ squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_p
 }
 
 squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
-squares_test(df, "tsne", "non_zero", -4.5,4, 8.5, 3, 0.1)
-squares_test(df, "umap", "non_zero", -2.2, 2.2, 4.5, 3, 0.1)
+squares_test(df, "tsne", "non_zero", -5, 5, 10, 3, 0.1)
+squares_test(df, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1)
