@@ -22,6 +22,49 @@ squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_p
   plot_gam_squares(df, fit, technique, kind, squares_df, pairwise_t, too.far)
 }
 
+do_squares_regression <- function(df, fit, technique, kind, spawn.x, spawn.y,
+                                  width, squares_per_row, too.far=NA) {
+  large_squares_df <- compute_squares_stats(df, fit, technique, kind,
+                                            spawn.x, spawn.y,
+                                            width, squares_per_row, too.far)
+  small_squares_df <- compute_squares_stats(df, fit, technique, kind,
+                                            spawn.x, spawn.y,
+                                            width, squares_per_row * 2, too.far,
+                                            FALSE)
+  
+  small_square_parents <- c()
+  for (i in 0:(squares_per_row - 1)) {
+    current_line <- c()
+    for (j in 1:squares_per_row) {
+      current_line <- append(current_line, rep(j + i * squares_per_row , 2))
+    }
+    
+    current_line <- rep(current_line, 2)
+    small_square_parents <- append(small_square_parents, current_line)
+  }
+  
+  small_squares_df$parent <- small_square_parents
+  small_squares_df$has_dominant_order <- NULL
+  small_squares_df$dominant_order <- NULL
+  
+  small_squares_df <- merge(x = small_squares_df,
+                            y = large_squares_df[,c("index", "has_dominant_order", "dominant_order")],
+                            by.x="parent", by.y="index", all.x = TRUE)
+  
+  small_squares_df$dominant_order <- ifelse(is.na(small_squares_df$dominant_order),
+                                            "none",
+                                            small_squares_df$dominant_order)
+  
+  glm(has_dominant_order ~ points_count, family="binomial", data=small_squares_df)
+}
+
+
 squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
 squares_test(df, "tsne", "non_zero", -5, 5, 10, 3, 0.1)
 squares_test(df, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1)
+
+do_squares_regression(df, fit, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1) %>% summary
+do_squares_regression(df, fit, "tsne", "non_zero", -5, 5, 10, 3, 0.1) %>% summary
+do_squares_regression(df, fit, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1) %>% summary
+
+glm(has_dominant_order ~ points_count, family="binomial", data=squares_df) %>% summary
