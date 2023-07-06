@@ -142,6 +142,7 @@ plot_gam_squares <-
            technique,
            kind,
            squares_df,
+           pairwise_t,
            too.far = NA) {
     output_plot <- plot_gam(df, fit, technique, kind, too.far)
     
@@ -171,6 +172,43 @@ plot_gam_squares <-
       ),
       hjust = 0,
       data = squares_df)
+    
+    # We go over each table row
+    for (i in 1:dim(pairwise_t$p.value)[1]) {
+      # We go over each column in the roiw
+      for (j in 1:length(pairwise_t$p.value[i,])) {
+        # Get the value at this position
+        value <- pairwise_t$p.value[i,j]
+        # If value is NA, go to the next value
+        if (is.na(value)) {
+          next
+        }
+        
+        # If not significant, also skip
+        if (value > 0.05) {
+          next
+        }
+        
+        start_row <- squares_df[i + 1,]
+        x_start <- (start_row[["xmax"]] + start_row[["xmin"]]) / 2
+        y_start <- (start_row[["ymax"]] + start_row[["ymin"]]) / 2
+        
+        end_row <- squares_df[j,]
+        x_end <- (end_row[["xmax"]] + end_row[["xmin"]]) / 2
+        y_end <- (end_row[["ymax"]] + end_row[["ymin"]]) / 2
+        
+        output_plot <- output_plot +
+          geom_segment(
+            aes(x = !!x_start, y = !!y_start, xend = !!x_end, yend =!! y_end),
+            lineend = "butt",,
+            size = 1
+          )
+        
+        
+        # Else, print the difference relation
+        #print(paste0(i + 1, "≠", j))
+      }
+    }
     
     return(output_plot)
   }
@@ -215,13 +253,17 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
   coords <- mapply(c, df[[x_column]], df[[y_column]], SIMPLIFY=FALSE)
   
   # These vectors will be attached to squares_df
+  square_indices_c <- c()
   points_count_c <- c()
   dominant_order_c <- c()
   has_dominant_order_c <- c()
   mean_adjectiveness_c <- c()
-  
+  point_indices_c <- c()
+
   # Compute stats for each square
   for(i in 1:nrow(squares_df)) {
+    square_indices_c <- append(square_indices_c, i)
+    
     square <- squares_df[i,]
     
     # For each square, go over all points
@@ -243,6 +285,12 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
     # square or not
     # We use it to index our dataframe of points
     in_square_points <- df[in_square,]
+    
+    point_indices_c <- append(point_indices_c, 
+                              in_square_points %>% 
+                                rownames() %>% 
+                                as.numeric() %>% 
+                                paste0(collapse=","))
     
     # How many points are in the square?
     points_count <- dim(in_square_points)[1]
@@ -268,10 +316,12 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
       append(mean_adjectiveness_c, in_square_points$adjectiveness %>% mean)
   }
 
+  squares_df$index <- square_indices_c
   squares_df$has_dominant_order <- has_dominant_order_c
   squares_df$points_count <- points_count_c
   squares_df$dominant_order <- dominant_order_c
   squares_df$mean_adjectiveness <- mean_adjectiveness_c
+  squares_df$point_indices <- point_indices_c
 
   return(squares_df)
 }
