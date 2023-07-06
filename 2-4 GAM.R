@@ -2,6 +2,8 @@ library(ggplot2) # plots
 library(cowplot) # arranging plots
 library(mgcv) # GAM
 library(tidyr) # expand_grid
+library(ggnewscale) # for colour scales
+library(pals) # for elaborate colour palettes
 
 df <-
   read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
@@ -173,6 +175,11 @@ plot_gam_squares <-
       hjust = 0,
       data = squares_df)
     
+    x_starts <- c()
+    x_ends <- c()
+    y_starts <- c()
+    y_ends <- c()
+    
     # We go over each table row
     for (i in 1:dim(pairwise_t$p.value)[1]) {
       # We go over each column in the roiw
@@ -197,18 +204,37 @@ plot_gam_squares <-
         x_end <- (end_row[["xmax"]] + end_row[["xmin"]]) / 2
         y_end <- (end_row[["ymax"]] + end_row[["ymin"]]) / 2
         
-        output_plot <- output_plot +
-          geom_segment(
-            aes(x = !!x_start, y = !!y_start, xend = !!x_end, yend =!! y_end),
-            lineend = "butt",,
-            size = 1
-          )
+        x_starts <- append(x_starts, x_start)
+        y_starts <- append(y_starts, y_start)
+        
+        x_ends <- append(x_ends, x_end)
+        y_ends <- append(y_ends, y_end)
         
         
         # Else, print the difference relation
         #print(paste0(i + 1, "≠", j))
       }
     }
+    
+    pairwise_adjectiveness_differences <- data.frame(
+      x_start = x_starts,
+      y_start = y_starts,
+      x_end = x_ends,
+      y_end = y_ends
+    )
+    pairwise_adjectiveness_differences$index <- 
+      1:nrow(pairwise_adjectiveness_differences) %>% as.factor()
+    
+    output_plot <- output_plot +
+      new_scale_color() +
+      geom_segment(
+        aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index),
+        lineend = "butt",
+        size = 1,
+        position=position_jitter(w = 0.2, h = 0),
+        data=pairwise_adjectiveness_differences
+      ) +
+      scale_color_manual(values=glasbey() %>% unname() %>% unname())
     
     return(output_plot)
   }
