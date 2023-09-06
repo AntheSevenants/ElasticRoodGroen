@@ -4,6 +4,13 @@ mds_results_dbscan <- read.csv("output/dbscan_mds.csv")
 tsne_results_dbscan <- read.csv("output/dbscan_tsne.csv")
 umap_results_dbscan <- read.csv("output/dbscan_umap.csv")
 
+mds_results_dbscan$vuong_p <- mds_results_dbscan$vuong_p %>% 
+  round(digits = 2)
+tsne_results_dbscan$vuong_p <- tsne_results_dbscan$vuong_p %>% 
+  round(digits = 2)
+umap_results_dbscan$vuong_p <- umap_results_dbscan$vuong_p %>% 
+  round(digits = 2)
+
 plot_tile <- function(data, fill_column) {
   ggplot(data = data) +
     geom_tile(aes(

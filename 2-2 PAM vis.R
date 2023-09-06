@@ -4,6 +4,13 @@ mds_results_pam <- read.csv("output/pam_mds.csv")
 tsne_results_pam <- read.csv("output/pam_tsne.csv")
 umap_results_pam <- read.csv("output/pam_umap.csv")
 
+mds_results_pam$vuong_p <- mds_results_pam$vuong_p %>% 
+  round(digits = 2)
+tsne_results_pam$vuong_p <- tsne_results_pam$vuong_p %>% 
+  round(digits = 2)
+umap_results_pam$vuong_p <- umap_results_pam$vuong_p %>% 
+  round(digits = 2)
+
 plot_bar <- function(results, fill_column) {
   ggplot(data=results) +
     geom_bar(aes(
