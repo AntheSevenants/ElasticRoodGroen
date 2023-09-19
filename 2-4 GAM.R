@@ -110,6 +110,10 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
   
   df_pred <- get_predictions_df(df, fit, technique, kind, too.far)
   
+  # Remove nan data points (these are the regular fixed effects)
+  df_pred <- df_pred[!is.na(df_pred[[x_column]]),]
+  df <- df[!is.na(df[[x_column]]),]
+  
   output_plot <- ggplot() +
     geom_tile(data = df_pred, aes(
       x = eval(as.name(x_column)),
