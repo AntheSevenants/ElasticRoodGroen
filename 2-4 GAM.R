@@ -246,7 +246,8 @@ plot_gam_squares <-
         position=position_jitter(w = 0.2, h = 0),
         data=pairwise_adjectiveness_differences
       ) +
-      scale_color_manual(values=glasbey() %>% unname() %>% unname())
+      scale_color_manual(values=glasbey() %>% unname() %>% unname(),
+                         guide="none")
     
     return(output_plot)
   }
