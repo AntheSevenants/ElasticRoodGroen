@@ -57,14 +57,3 @@ do_squares_regression <- function(df, fit, technique, kind, spawn.x, spawn.y,
   
   glm(has_dominant_order ~ points_count, family="binomial", data=small_squares_df)
 }
-
-
-squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
-squares_test(df, "tsne", "non_zero", -5, 5, 10, 3, 0.1)
-squares_test(df, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1)
-
-do_squares_regression(df, fit, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1) %>% summary
-do_squares_regression(df, fit, "tsne", "non_zero", -5, 5, 10, 3, 0.1) %>% summary
-do_squares_regression(df, fit, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1) %>% summary
-
-glm(has_dominant_order ~ points_count, family="binomial", data=squares_df) %>% summary
