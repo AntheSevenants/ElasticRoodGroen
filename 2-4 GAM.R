@@ -242,7 +242,7 @@ plot_gam_squares <-
       geom_segment(
         aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index),
         lineend = "butt",
-        size = 1,
+        linewidth = 1,
         position=position_jitter(w = 0.2, h = 0),
         data=pairwise_adjectiveness_differences
       ) +
