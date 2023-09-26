@@ -152,6 +152,20 @@ plot_gam_squares <-
            too.far = NA) {
     output_plot <- plot_gam(df, fit, technique, kind, too.far)
     
+    x_column <- paste0(technique, ".", kind, ".x")
+    y_column <- paste0(technique, ".", kind, ".y")
+    
+    df <- df[!is.na(df[[x_column]]),]
+    
+    x_range <- range(df[[x_column]])
+    y_range <- range(df[[y_column]])
+
+    # The x and y offset adjustments are dependent on the range of the axes
+    # I take percentages of these ranges below to have comparable offsets
+    # for each dimension reduction technique
+    x_width <- x_range[2] - x_range[1]
+    y_width <- y_range[2] - y_range[1]
+
     output_plot <- output_plot +
       geom_rect(
         aes(
@@ -165,19 +179,20 @@ plot_gam_squares <-
         data = squares_df
       ) +
       geom_text(aes(
-        label = points_count,
-        x = xmin + 0.05,
-        y = ymin - 0.1
+        label = paste0(points_count, "\n", mean_adjectiveness %>% round(2)),
+        x = xmin + 0.013 * x_width,
+        y = ymin - 0.05 * y_width,
+        lineheight = 0.90
       ),
       hjust = 0,
       data = squares_df) +
-      geom_text(aes(
-        label = mean_adjectiveness %>% round(2),
-        x = xmin + 0.05,
-        y = ymin - 0.3
-      ),
-      hjust = 0,
-      data = squares_df) +
+      # geom_text(aes(
+      #   label = mean_adjectiveness %>% round(2),
+      #   x = xmin + 0.05,
+      #   y = ymin - 0.3
+      # ),
+      # hjust = 0,
+      # data = squares_df) +
       geom_text(aes(
         label = index,
         x = (xmax + xmin) / 2,
