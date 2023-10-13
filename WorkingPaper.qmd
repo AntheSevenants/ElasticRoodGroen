@@ -643,7 +643,7 @@ $$
 coefficient \sim cluster
 $$
 
-Again, we used the $R^2$ values of the models to find the best models and compared the models to garbage models with randomly assigned clusters using the Vuong test. Here as well, the significance values show that no discernible difference can be found between real and fake models, which means that for dbscan as well, clustering has failed. @fig-dbscan-r2-vuong-p shows both the R^2^ values and Vuong test p values.
+Again, we used the $R^2$ values of the models to find the best models and compared the models to garbage models with randomly assigned clusters using the Vuong test. Here as well, the significance values show that no discernible difference can be found between real and garbage models, which means that for dbscan as well, clustering has failed. @fig-dbscan-r2-vuong-p shows both the R^2^ values and Vuong test p values.
 
 ```{r #fig-dbscan-r2-vuong-p}
 #| fig-cap: Overview of the R^2^ values for each $k$-model and Vuong test p values for each comparison between a $k$-model and its garbage counterpart for all three dimension reduction techniques
