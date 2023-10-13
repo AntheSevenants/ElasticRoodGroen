@@ -242,7 +242,7 @@ Context is an important influence in the choice between the red and green word o
 
 #### Influence of prosody
 
-Another source of influence is that of prosody. The most important prosodial influence [@de_sutter_rood_2005, 305] stems from the so-called 'separable verbs' in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two consecutive stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider the following example:
+Another source of influence is that of prosody. The most important prosodical influence [@de_sutter_rood_2005, 305] stems from the so-called 'separable verbs' in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two consecutive stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider the following example:
 
 ```{r, prosody-green-gloss}
 #| tbl-cap: Green word order prosody example
