@@ -377,28 +377,6 @@ boxplot(df_filtered$logfreq, horizontal=T)
 
 ### Computing semantic pull using elastic net regression
 
-#### Converting the dataset
-
-To compute the semantic preference of the participles found in our attestations, we used elastic net regression, the technique detailed in @sec-elastic-net-regression. In contrast to regular regression techniques, a tabular dataset cannot be used 'as-is' for analysis with elastic net. Instead, the dataset has to be supplied in a matrix form. Consider the following toy example:
-
-| Word order | Participle | Country | Adjectiveness |
-|---|---|---|---|
-| green | gebroken | Belgium | 0.5 |
-| red | mislukt | The Netherlands | 0.4 |
-| green | gebeurd | Belgium | 0.1 |
-
-In the matrix form, each multidimensional column is converted so that each unique value of that column becomes its own predictor. In our case, all unique values of the column `Participle` will become binary predictors, each predictor indicating whether that participle occurs in the cluster or not. This means our matrix will be inherently sparse, since each cluster can only feature one participle. Binary predictors such as `Country` are also converted to a binary column in the matrix, and simply indicate a deviation from the reference level. For example, if Belgium is the reference level, a Belgian attestation will be encoded as `1`, and a Netherlandic attestation as `0`. The `Adjectiveness` column is numeric and can be adopted as-is. The response variable `Word order` is also encoded as a binary variable, as is typical in logistic regression, but it is not a part of the input matrix. The input matrix for our toy example would look as follows:
-
-| is_gebroken | is_mislukt | is_gebeurd | is_BE | adjectiveness |
-|---|---|---|---|---|
-| 1 | 0 | 0 | 1 | 0.5 |
-| 0 | 1 | 0 | 0 | 0.4 |
-| 0 | 0 | 1 | 1 | 0.1 |
-
-The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
-
-To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert 'traditional' datasets to the matrix format detailed above in seconds.
-
 #### Running elastic net regression
 
 ```{r meta-info-load}
@@ -410,7 +388,7 @@ alpha <- subset(model_meta$as.data.frame(), predicate == "alpha")[["object"]]
 lambda <- subset(model_meta$as.data.frame(), predicate == "lambda")[["object"]]
 ```
 
-The elastic net regression itself was also carried out using ElasticToolsR, which aditionally acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built seven predictors into our model (see @tbl-predictors); six are 'traditional' predictors, one is distributed among `r types_count %>% formatn` different coefficients: one for each type. ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best the best possible model. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` and lambda = `r lambda %>% formatd(6)`.
+The elastic net regression itself was also carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built seven predictors into our model (see @tbl-predictors); six are 'traditional' predictors, one is distributed among `r types_count %>% formatn` different coefficients: one for each type. ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best the best possible model. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` and lambda = `r lambda %>% formatd(6)`.
 
 | predictor | type | possible values |
 | --- | --- | --- |
@@ -966,6 +944,28 @@ $$
 We computed the ratio between the number of red and green primes and used Laplace smoothing [@brysbaert_dealing_2013] to prevent division by zero. The natural logarithm attenuates large disparities between red and green *and* turns our priming ratio into a continuous variable ranging from $-\infty$ to $+\infty$.
 
 As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
+
+#### Converting the dataset
+
+To compute the semantic preference of the participles found in our attestations, we used elastic net regression, the technique detailed in @sec-elastic-net-regression. In contrast to regular regression techniques, a tabular dataset cannot be used 'as-is' for analysis with elastic net. Instead, the dataset has to be supplied in a matrix form. Consider the following toy example:
+
+| Word order | Participle | Country | Adjectiveness |
+|---|---|---|---|
+| green | gebroken | Belgium | 0.5 |
+| red | mislukt | The Netherlands | 0.4 |
+| green | gebeurd | Belgium | 0.1 |
+
+In the matrix form, each multidimensional column is converted so that each unique value of that column becomes its own predictor. In our case, all unique values of the column `Participle` will become binary predictors, each predictor indicating whether that participle occurs in the cluster or not. This means our matrix will be inherently sparse, since each cluster can only feature one participle. Binary predictors such as `Country` are also converted to a binary column in the matrix, and simply indicate a deviation from the reference level. For example, if Belgium is the reference level, a Belgian attestation will be encoded as `1`, and a Netherlandic attestation as `0`. The `Adjectiveness` column is numeric and can be adopted as-is. The response variable `Word order` is also encoded as a binary variable, as is typical in logistic regression, but it is not a part of the input matrix. The input matrix for our toy example would look as follows:
+
+| is_gebroken | is_mislukt | is_gebeurd | is_BE | adjectiveness |
+|---|---|---|---|---|
+| 1 | 0 | 0 | 1 | 0.5 |
+| 0 | 1 | 0 | 0 | 0.4 |
+| 0 | 0 | 1 | 1 | 0.1 |
+
+The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
+
+To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert 'traditional' datasets to the matrix format detailed above in seconds.
 
 ### Xpath queries
 
