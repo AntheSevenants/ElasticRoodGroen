@@ -286,94 +286,7 @@ Despite the fact that semantics is deemed to be so important in all linguistic f
 
 ### Data
 
-#### Corpus and querying
-
-To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ('treebank') in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
-
-```{r}
-df_original <- read.csv("RoodGroenAnthe.csv")
-```
-
-In order to query the syntactic information of the entire SoNaR corpus, we used mattenklopper [@sevenants_mattenklopper_2023], a treebank search engine tailor-made for this study. While there are several Alpino search engines available, many of which are much more user friendly *and* faster than the custom search engine used here [e.g. GrETEL, @augustinus_example-based_2012; PaQu, @kleiweg_paqu_2023], these engines all have specific problems which made it so they could not be used for this study. In both GrETEL and PaQu, it is only possible to retrieve entire sentences. One cannot further retrieve the participles or auxiliaries in a verb cluster -- this must be done manually. GrETEL only supports searching through subsections of SoNaR[^gretel] and PaQu does not even offer the SoNaR corpus for querying. Finally, GrETEL results are limited to only 500 sentences due to copyright concerns, which is not enough for a sophisticated analysis. The custom mattenklopper engine was developed as a solution to all these problems. It is available online and can be used for future alternance studies of Dutch using Alpino-based corpora. The xpath queries used to search the corpus are included in the appendix. The mattenklopper search engine returned `r nrow(df_original) %>% formatn` attestations of either the red or green word order.
-
-[^gretel]: In addition, the SoNaR corpus included in the GrETEL web interface is parsed using an older version of Alpino, which results in unreliable annotations.
-
-
-#### Filtering and enriching
-
-```{r}
-filtering_numbers <- read.csv("output/filtering_numbers.csv")
-```
-
-The results were further filtered in order to guarantee the quality of the attestations. In short, duplicates were removed, tokenisation errors were fixed (i.e. removing superfluous punctuation from participles) and obvious tagging mistakes were removed (e.g. words such as *zgn* 'so-called' and *gemiddeld* 'average' were removed). In addition, wrong participle endings (e.g. *gebeurt* instead of *gebeurd* 'happened') were corrected using *naive-dt-fix* [@sevenants_naive-dt-fix_2023], a library for the R language designed for this study. This library automatically corrects wrong participle endings by relying on the relative frequencies of all possible spellings. The most frequent spelling is seen as the correct spelling and is used as a correction.[^dt] Declensed words were also removed (e.g. *geplaatst**e***). Past participles cannot be declensed in Dutch, so all declensed forms in the corpus tagged as participles are, in fact, mis-tagged adjectives. We also removed all clusters with an auxiliary other than *hebben*, *zijn* or *worden* and removed all attestations without a sentence ID (which we need to compute priming). In addition, all types occurring less than 10 times were removed in order to guarantee a stable estimate for the semantic pulls of each type. As a result of these operations, `r subset(filtering_numbers, name == "first_removal")[1,][["no_items"]] %>% formatn` attestations were removed.
-
-[^dt]: Some participles are so often misspelled that they are seen as the correct spelling by the program. These cases are overruled by a built-in list of 'problematic' participles which have their correct spellings enforced.
-
-Furthermore, the attestations were enriched with additional information to be used in the multifactorial elastic net regression. Firstly, regional information was added for each attestation. SoNaR comes with contextual information about its documents, such as country of origin information. Since region is an important influence in the red-green word order, this variable is vital for multifactorial control.
-
-We also used the subcorpus division in SoNaR (e.g. `WR-P-E-A_discussion_lists`, `WR-P-E-F_press_releases`) to distinguish between edited and unedited genres. We decided to focus on an edited-unedited dichotomy, because it is difficult to assess the formality of certain genres in the corpus (e.g. websites and blogs). By focussing on whether a genre is typically edited or not, we sidestep these issues, but we are still able to include some form of formality distinction. Refer to @tbl-sonar-editing for an overview of our judgements.
-
-| subcorpus | contents | degree of editing |
-|---|---|---|
-| WR-P-E-A | discussion lists | unedited |
-| WR-P-E-C | e-magazines | edited |
-| WR-P-E-E | newsletters | no attestations[^no-attestations] |
-| WR-P-E-F | press releases | edited |
-| WR-P-E-G | subtitles | edited |
-| WR-P-E-H | teletext pages | edited |
-| WR-P-E-I | web sites | edited |
-| WR-P-E-J | wikipedia | edited |
-| WR-P-E-K | blogs | edited |
-| WR-P-P-B | books | edited |
-| WR-P-P-C | brochures | edited |
-| WR-P-P-D | newsletters | edited |
-| WR-P-P-E | guides manuals | edited |
-| WR-P-P-F | legal texts | edited |
-| WR-P-P-G | newspapers | edited |
-| WR-P-P-H | periodicals magazines | edited |
-| WR-P-P-I | policy documents | edited |
-| WR-P-P-J | proceedings | edited |
-| WR-P-P-K | reports | edited |
-| WR-U-E-E | written assignments | edited |
-| WS-U-E-A | auto cues | edited |
-| WS-U-T-B | texts for the visually impaired | edited |
-| WR-P-E-L | tweets | unedited |
-| WR-U-E-A | chats | unedited |
-| WR-U-E-D | sms | unedited |
-
-: An overview of the SoNaR subcorpora and our edited-unedited judgement {#tbl-sonar-editing}
-
-[^no-attestations]: The newsletters subcorpus is incredibly small, hence why we have no attestations.
-
-Adjectiveness information was added for all participles. Adjectiveness is expressed as a ratio denoting how often a participle functions as an adjective in language use:
-$$
-\frac{\text{\#uses as an adjective}}{\text{\#uses as an adjective + \#uses as a participle}}
-$$
-
-$0$ denotes no adjectival use, $1$ denotes maximal adjectival use. We computed adjectiveness on the entire Lassy corpus [@van_noord_large_2013].[^adjectiveness-dataset]
-
-[^adjectiveness-dataset]: The adjectiveness dataset is published as a separate dataset for re-use by other researchers. See @sevenants_adjectiveness_2023.
-
-Because the Alpino syntactic parser marks separable verbs by infixing an underscore (`_`) between the preposition and verb root, we can exploit this behaviour to automatically infer whether a verb cluster contains a separable verb.
-
-We included frequency information from the SUBTLEX dataset [@keuleers_subtlex-nl_2010] in order be able to assess the effect of frequency. Because frequency is typically Zipfian [@zipf_psycho-biology_1965], we transformed the frequency information using the natural logarithm in order to compress the frequency variation among the types in our dataset.
-
-Priming information is also important to include. To obtain priming information, we relied on the sentence IDs included in the SoNaR corpus. Consider the following example:
-
-::: {.center}
-WR-P-P-B-0000000103.p.37.s.4
-:::
-
-
-The ID refers to document 103 of the `WR-P-P-B` component of the SoNaR corpus ('books'). Within that document, it refers to the 4^th^ sentence of the 37^th^ paragraph. The window we chose for priming is one paragraph: this means that in our example, we would consider all attestations from paragraph 36 and all sentences leading up to sentence 4 of paragraph 37 to be possible prime sources. It was not possible to work on the sentence level, since paragraphs can have a variable number of sentences and not all sentences have red-green attestations in the dataset.
-
-We included priming in our model by using a modified odds-ratio [@bland_odds_2000] we will call the 'priming ratio'. For every attestation, we computed the following equation:
-$$
-\ln \left(\frac{\text{\#red primes} + 0.001}{\text{\#green primes} + 0.001}\right)
-$$
-We computed the ratio between the number of red and green primes and used Laplace smoothing [@brysbaert_dealing_2013] to prevent division by zero. The natural logarithm attenuates large disparities between red and green *and* turns our priming ratio into a continuous variable ranging from $-\infty$ to $+\infty$.
-
-As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
+To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process and the annotation of linguistic variables, see the Appendix.
 
 #### Overview
 
@@ -964,6 +877,97 @@ Next, we saw that the Generalised Additive Models (GAMs) were an ideal technique
 Future research could zoom in on the contribution of phonological similarity between words to see whether this also contributes to the lexical effects we see. Of course, there are many other possible alternances that could be investigated. Examples are the distinction between Dutch *doen* and *laten* ['make' and 'let', e.g. @speelman_causes_2009] or the dative alternance in English [@bresnan_predicting_2007]. In any case, this study has shown that combining elastic net regression and generalised additive models can bring us one step further in research centred around lexical effects.
 
 ## Appendix {#appendix .appendix}
+
+### Corpus and querying
+
+To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ('treebank') in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
+
+```{r}
+df_original <- read.csv("RoodGroenAnthe.csv")
+```
+
+In order to query the syntactic information of the entire SoNaR corpus, we used mattenklopper [@sevenants_mattenklopper_2023], a treebank search engine tailor-made for this study. While there are several Alpino search engines available, many of which are much more user friendly *and* faster than the custom search engine used here [e.g. GrETEL, @augustinus_example-based_2012; PaQu, @kleiweg_paqu_2023], these engines all have specific problems which made it so they could not be used for this study. In both GrETEL and PaQu, it is only possible to retrieve entire sentences. One cannot further retrieve the participles or auxiliaries in a verb cluster -- this must be done manually. GrETEL only supports searching through subsections of SoNaR[^gretel] and PaQu does not even offer the SoNaR corpus for querying. Finally, GrETEL results are limited to only 500 sentences due to copyright concerns, which is not enough for a sophisticated analysis. The custom mattenklopper engine was developed as a solution to all these problems. It is available online and can be used for future alternance studies of Dutch using Alpino-based corpora. The xpath queries used to search the corpus are included in the appendix. The mattenklopper search engine returned `r nrow(df_original) %>% formatn` attestations of either the red or green word order.
+
+[^gretel]: In addition, the SoNaR corpus included in the GrETEL web interface is parsed using an older version of Alpino, which results in unreliable annotations.
+
+
+### Filtering and enriching
+
+```{r}
+filtering_numbers <- read.csv("output/filtering_numbers.csv")
+```
+
+The results were further filtered in order to guarantee the quality of the attestations. In short, duplicates were removed, tokenisation errors were fixed (i.e. removing superfluous punctuation from participles) and obvious tagging mistakes were removed (e.g. words such as *zgn* 'so-called' and *gemiddeld* 'average' were removed). In addition, wrong participle endings (e.g. *gebeurt* instead of *gebeurd* 'happened') were corrected using *naive-dt-fix* [@sevenants_naive-dt-fix_2023], a library for the R language designed for this study. This library automatically corrects wrong participle endings by relying on the relative frequencies of all possible spellings. The most frequent spelling is seen as the correct spelling and is used as a correction.[^dt] Declensed words were also removed (e.g. *geplaatst**e***). Past participles cannot be declensed in Dutch, so all declensed forms in the corpus tagged as participles are, in fact, mis-tagged adjectives. We also removed all clusters with an auxiliary other than *hebben*, *zijn* or *worden* and removed all attestations without a sentence ID (which we need to compute priming). In addition, all types occurring less than 10 times were removed in order to guarantee a stable estimate for the semantic pulls of each type. As a result of these operations, `r subset(filtering_numbers, name == "first_removal")[1,][["no_items"]] %>% formatn` attestations were removed.
+
+[^dt]: Some participles are so often misspelled that they are seen as the correct spelling by the program. These cases are overruled by a built-in list of 'problematic' participles which have their correct spellings enforced.
+
+Furthermore, the attestations were enriched with additional information to be used in the multifactorial elastic net regression. Firstly, regional information was added for each attestation. SoNaR comes with contextual information about its documents, such as country of origin information. Since region is an important influence in the red-green word order, this variable is vital for multifactorial control.
+
+We also used the subcorpus division in SoNaR (e.g. `WR-P-E-A_discussion_lists`, `WR-P-E-F_press_releases`) to distinguish between edited and unedited genres. We decided to focus on an edited-unedited dichotomy, because it is difficult to assess the formality of certain genres in the corpus (e.g. websites and blogs). By focussing on whether a genre is typically edited or not, we sidestep these issues, but we are still able to include some form of formality distinction. Refer to @tbl-sonar-editing for an overview of our judgements.
+
+| subcorpus | contents | degree of editing |
+|---|---|---|
+| WR-P-E-A | discussion lists | unedited |
+| WR-P-E-C | e-magazines | edited |
+| WR-P-E-E | newsletters | no attestations[^no-attestations] |
+| WR-P-E-F | press releases | edited |
+| WR-P-E-G | subtitles | edited |
+| WR-P-E-H | teletext pages | edited |
+| WR-P-E-I | web sites | edited |
+| WR-P-E-J | wikipedia | edited |
+| WR-P-E-K | blogs | edited |
+| WR-P-P-B | books | edited |
+| WR-P-P-C | brochures | edited |
+| WR-P-P-D | newsletters | edited |
+| WR-P-P-E | guides manuals | edited |
+| WR-P-P-F | legal texts | edited |
+| WR-P-P-G | newspapers | edited |
+| WR-P-P-H | periodicals magazines | edited |
+| WR-P-P-I | policy documents | edited |
+| WR-P-P-J | proceedings | edited |
+| WR-P-P-K | reports | edited |
+| WR-U-E-E | written assignments | edited |
+| WS-U-E-A | auto cues | edited |
+| WS-U-T-B | texts for the visually impaired | edited |
+| WR-P-E-L | tweets | unedited |
+| WR-U-E-A | chats | unedited |
+| WR-U-E-D | sms | unedited |
+
+: An overview of the SoNaR subcorpora and our edited-unedited judgement {#tbl-sonar-editing}
+
+[^no-attestations]: The newsletters subcorpus is incredibly small, hence why we have no attestations.
+
+Adjectiveness information was added for all participles. Adjectiveness is expressed as a ratio denoting how often a participle functions as an adjective in language use:
+$$
+\frac{\text{\#uses as an adjective}}{\text{\#uses as an adjective + \#uses as a participle}}
+$$
+
+$0$ denotes no adjectival use, $1$ denotes maximal adjectival use. We computed adjectiveness on the entire Lassy corpus [@van_noord_large_2013].[^adjectiveness-dataset]
+
+[^adjectiveness-dataset]: The adjectiveness dataset is published as a separate dataset for re-use by other researchers. See @sevenants_adjectiveness_2023.
+
+Because the Alpino syntactic parser marks separable verbs by infixing an underscore (`_`) between the preposition and verb root, we can exploit this behaviour to automatically infer whether a verb cluster contains a separable verb.
+
+We included frequency information from the SUBTLEX dataset [@keuleers_subtlex-nl_2010] in order be able to assess the effect of frequency. Because frequency is typically Zipfian [@zipf_psycho-biology_1965], we transformed the frequency information using the natural logarithm for a multitude of reasons: (i) to compress the frequency variation among the types in our dataset (ii) to make the distribution of priming more normal (iii) because it makes the distribution more psychologically real.
+
+Priming information is also important to include. To obtain priming information, we relied on the sentence IDs included in the SoNaR corpus. Consider the following example:
+
+::: {.center}
+WR-P-P-B-0000000103.p.37.s.4
+:::
+
+
+The ID refers to document 103 of the `WR-P-P-B` component of the SoNaR corpus ('books'). Within that document, it refers to the 4^th^ sentence of the 37^th^ paragraph. The window we chose for priming is one paragraph: this means that in our example, we would consider all attestations from paragraph 36 and all sentences leading up to sentence 4 of paragraph 37 to be possible prime sources. It was not possible to work on the sentence level, since paragraphs can have a variable number of sentences and not all sentences have red-green attestations in the dataset.
+
+We included priming in our model by using a modified odds-ratio [@bland_odds_2000] we will call the 'priming ratio'. For every attestation, we computed the following equation:
+$$
+\ln \left(\frac{\text{\#red primes} + 0.001}{\text{\#green primes} + 0.001}\right)
+$$
+We computed the ratio between the number of red and green primes and used Laplace smoothing [@brysbaert_dealing_2013] to prevent division by zero. The natural logarithm attenuates large disparities between red and green *and* turns our priming ratio into a continuous variable ranging from $-\infty$ to $+\infty$.
+
+As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
+
+### Xpath queries
 
 **Xpath queries for identifying eligible clauses**
 
