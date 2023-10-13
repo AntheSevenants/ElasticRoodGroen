@@ -695,7 +695,7 @@ format_num_col <- Vectorize(format_num_col)
 format_table <- function(df) {
   df <- df %>% tidy
 
-  df$sig <- ifelse(df$p.value <= 0.05, "*", "")
+  #df$sig <- ifelse(df$p.value <= 0.05, "*", "")
   
   df$estimate <- df$estimate %>% formatd(4)
   df$std.error <- df$std.error %>% formatd(4)
