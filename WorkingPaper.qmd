@@ -854,6 +854,10 @@ Future research could zoom in on the contribution of phonological similarity bet
 
 ## Appendix {#appendix .appendix}
 
+### Try it yourself
+
+- Misschien ook een aansporing om zelf naar de coëfficiënten te kijken met Rekker — met automatische link
+
 ### Corpus and querying
 
 To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ('treebank') in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
