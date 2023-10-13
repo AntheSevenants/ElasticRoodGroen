@@ -750,7 +750,7 @@ plot_gam(df, lm_umap, "umap", "non_zero", 0.1)
 
 These linear models are far too simple to accurately represent the semantic space. This is of course inherent to the design of such models, since they can only model the two axes linearly.
 
-Due to the limitations of linear regression, we opted to use a modern regression technique to model the spatial coordinates: Generalised Additive Modelling (GAM) [@hastie_generalized_1987]. GAM models are able to model non-linear relationships and can be used to model spatial relationships when two axes are deployed as a joint predictor. GAM models have already been used in linguistic research by @ghyselen_over_2019 to model the spatial distribution of a West-Flemish dialect trait. We can use GAMs for the same purpose to model the spatial distribution of the red and green word order in our virtual semantic space according to the following equation:
+Due to the limitations of linear regression, we opted to use a modern regression technique to model the spatial coordinates: Generalised Additive Modelling (GAM) [@hastie_generalized_1987]. GAM models are able to model non-linear relationships and can be used to model spatial relationships when two axes are deployed as a joint predictor. GAM models have already been used in linguistic research to model linguistic phenomena spatially [@wieling_quantitative_2011; @franco_maps_2019; @ghyselen_over_2019]. We can use GAMs for the same purpose to model the spatial distribution of the red and green word order in our virtual semantic space according to the following equation:
 
 $$
 coefficient \sim te(x + y)
