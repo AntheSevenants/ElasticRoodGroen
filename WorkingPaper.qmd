@@ -93,11 +93,13 @@ In addition, model coefficients can be shrunk to the extent that they are reduce
 
 When we speak of elastic net regression, we actually mean the combination of 'lasso regression' and 'ridge regression'. Both are penalised regression techniques, but their exact operationalisations are different.
 
-Lasso regression attenuates predictions through the use of the so-called L1-norm. In lasso regression's objective function, the coefficients of the model are optimised for maximum likelihood, like in a traditional regression fitting procedure. Additionally, however, the absolute values of the coefficients are also used as a *penalty* to the same objective function. An additional parameter lambda ($\lambda$) controls how severe this penalty is. The following equation shows the lasso objective function for a binary response variable [adapted from @friedman_regularization_2010]:
+Lasso regression attenuates predictions through the use of the so-called L1-norm.[^lnote] In lasso regression's objective function, the coefficients of the model are optimised for maximum likelihood, like in a traditional regression fitting procedure. Additionally, however, the absolute values of the coefficients are also used as a *penalty* to the same objective function. An additional parameter lambda ($\lambda$) controls how severe this penalty is. The following equation shows the lasso objective function for a binary response variable [adapted from @friedman_regularization_2010]:
 $$
 \min_{(\beta_0, \beta) \in \mathbb{R}^{p+1}} \underbrace{ - \biggl[ \frac{1}{N} \cdot \sum_{i=1}^N y_i \cdot (\beta_0 + x_i^T \cdot \beta) - \log (1+e^{(\beta_0+x_i^T \cdot \beta)})\biggr] }_{\text{negative log-likelihood of logistic regression}} + 
  \underbrace{\biggl[ \lambda \cdot \lvert \beta \rvert \biggr]}_{ \text{regularization penalty }}
 $$
+
+[^lnote]: The L1- and L2-norm (further down) are mathematical concepts that are not to be confused with the terms L1 and L2 referring to language acquisition. We will not use L1 and L2 in this latter context in this article.
 
 ::: {layout-ncol="2"}
 
