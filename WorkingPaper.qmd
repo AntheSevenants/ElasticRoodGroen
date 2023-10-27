@@ -198,7 +198,7 @@ $$
 
 ::::
 
-Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand.
+Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. TODO uitleggen hoe alpha bepaald wordt
 
 ## Case study: red and green word order
 
