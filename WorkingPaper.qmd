@@ -1,5 +1,5 @@
 ---
-title: "Investigating lexical-semantic effects on the red and green word order in Dutch using elastic net regression and generalised additive models"
+title: "Investigating lexical-semantic effects on morphosyntactic variation using elastic net regression and generalised additive models"
 author:
   - name: Anthe Sevenants
     email: anthe.sevenants@kuleuven.be
