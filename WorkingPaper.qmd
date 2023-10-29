@@ -232,7 +232,7 @@ green_example
 
 [^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
 
-This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these almost exclusively appear in the red order, which makes them much less interesting. In theory, the choice between either order is free, thus indicating that there is free variation. However, when one looks at spontaneous language use, there are some general tendencies, which we will discuss below.
+This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting. In theory, the choice between either order is free, thus indicating that there is free variation. However, when one looks at spontaneous language use, there are some general tendencies, which we will discuss below.
 
 #### Influence of lectal factors
 
