@@ -517,7 +517,7 @@ As a basis for our semantic analysis, we used the 'count' snaut vectors for Dutc
 
 One of the other properties of semantic vectors is that they are high-dimensional. For example, a snaut vector has a length of 200, which means that a single word is represented by 200 numbers. If we want to inspect the vector space of our words visually, we have to reduce the vectors to two or three dimensions. Typically, this is done by first computing a distance matrix, i.e. a matrix which shows the pairwise distances between each word, and then applying dimension reduction to that matrix. The dimension reduction technique will attempt to capture the information found in the high-dimensional space as well as possible in the lower-dimensional space. While there are several dimension reduction techniques available, we chose MDS [@douglas_carroll_multidimensional_1998], TSNE [@hinton_stochastic_2002] and UMAP [@mcinnes_umap_2020], following @montes_cloudspotting_2021.
 
-The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic field processed by the three dimension reduction techniques, see @fig-mds-test.
+The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the three dimension reduction techniques, see @fig-mds-test.
 
 ```{r visualisation-load}
 #| output: false
@@ -525,15 +525,15 @@ source("2-1 Visualisation basic.R")
 ```
 
 ```{r #fig-mds-test}
-#| fig-cap: Visual representations of the semantic field in MDS, TSNE and UMAP
+#| fig-cap: Visual representations of the semantic space in MDS, TSNE and UMAP
 #| column: screen-inset-shaded
 #| layout-ncol: 3 
 #| fig-width: 5
 #| fig-height: 5
 #| fig-subcap:
-#|   - "Visual representation of the semantic field, MDS dimension reduction"
-#|   - "Visual representation of the semantic field, TSNE dimension reduction"
-#|   - "Visual representation of the semantic field, UMAP dimension reduction"
+#|   - "Visual representation of the semantic space, MDS dimension reduction"
+#|   - "Visual representation of the semantic space, TSNE dimension reduction"
+#|   - "Visual representation of the semantic space, UMAP dimension reduction"
 
 plot_basic_coords("mds", TRUE)
 
@@ -788,7 +788,7 @@ plot_gam(df, gam_tsne, "tsne", "non_zero", 0.1)
 plot_gam(df, gam_umap, "umap", "non_zero", 0.1)
 ```
 
-It is immediately clear that the GAM models are much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green. Still, if we look at the actual data points, the semantic field remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
+It is immediately clear that the GAM models are much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
 
 With the affirmation of the existence of these red and green lexical areas, the question arises *what* verbs we find in these areas. What semantic properties make a verb particularly red or green? To investigate the contents of the different semantic areas, we attempted to find an explanation in two ways: the overall adjectiveness value in different semantic areas, and their respective densities.
 
