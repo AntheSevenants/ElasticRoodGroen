@@ -335,7 +335,7 @@ The mean type frequency of the participles in the verb clusters is `r df_filtere
 #|   - "Distribution of adjectiveness in the dataset"
 #|   - "Proportion of auxiliary lemmas in the dataset" 
 #|   - "Proportion of separable verbs in the dataset" 
-#|   - "Distribution of priming rate in the dataset. The rug plot shows the priming direction." 
+#|   - "Distribution of priming rate in the dataset. The rug plot shows the priming direction (towards red or green order)." 
 #|   - "Proportion of edited and unedited genres in the dataset" 
 #|   - "Frequency distribution of types in the dataset (log10 scale)" 
 options(scipen=999)
