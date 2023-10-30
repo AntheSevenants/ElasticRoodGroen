@@ -941,7 +941,7 @@ WR-P-P-B-0000000103.p.37.s.4
 
 The ID refers to document 103 of the `WR-P-P-B` component of the SoNaR corpus ('books'). Within that document, it refers to the 4^th^ sentence of the 37^th^ paragraph. The window we chose for priming is one paragraph: this means that in our example, we would consider all attestations from paragraph 36 and all sentences leading up to sentence 4 of paragraph 37 to be possible prime sources. It was not possible to work on the sentence level, since paragraphs can have a variable number of sentences and not all sentences have red-green attestations in the dataset.
 
-We included priming in our model by using a modified odds-ratio [@bland_odds_2000] we will call the 'priming ratio'. For every attestation, we computed the following equation:
+We included priming in our model by using a corrected log-odds measure, which we will call the 'priming ratio'. For every attestation, we computed the following equation:
 $$
 \ln \left(\frac{\text{\#red primes} + 0.001}{\text{\#green primes} + 0.001}\right)
 $$
