@@ -232,11 +232,11 @@ green_example
 
 [^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
 
-This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting. In theory, the choice between either order is free, thus indicating that there is free variation. However, when one looks at spontaneous language use, there are some general tendencies, which we will discuss below.
+This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting. The choice between either word order is influenced by many different factors, which we will discuss below.
 
 #### Influence of lectal factors
 
-Context is an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. Still, the red order remains the dominant order in the two regions combined. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Inversely, this means that formal, unidirectional and edited language favours the red word order.
+Context is an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Inversely, this means that formal, unidirectional and edited language favours the red word order.
 
 #### Influence of prosody
 
