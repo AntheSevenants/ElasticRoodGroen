@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    ports: 
+      - "8787:8787"
+    environment:
+      PASSWORD: 'roodgroen'
+    volumes:
+      - .:/home/rstudio/
