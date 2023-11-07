@@ -218,3 +218,7 @@ cython_debug/
 *.bib
 *.html
 *.tex
+
+# Docker Rstudio
+.config/
+.local/
