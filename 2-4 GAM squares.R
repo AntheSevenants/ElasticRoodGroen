@@ -22,6 +22,30 @@ squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_p
   plot_gam_squares(df, fit, technique, kind, squares_df, pairwise_t, too.far)
 }
 
+scatter_pairs <- function(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
+                          too.far=NA) {
+  fit <- build_gam(df, technique, kind)
+  squares_df <- compute_squares_stats(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far)
+  
+  ggplot(squares_df, aes(y = mean_adjectiveness,
+                         x = mean_coefficient,
+                         color = dominant_order)) +
+    geom_point(shape=15, size=5) +
+    scale_color_manual(values=c("green", "grey", "red"))
+}
+
+conc_disc_pairs <- function(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
+                            too.far=NA) {
+  fit <- build_gam(df, technique, kind)
+  squares_df <- compute_squares_stats(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far)
+  
+  d_table <- as.table(rbind(squares_df$mean_adjectiveness,
+                             squares_df$mean_coefficient))
+  
+  #ConDisPairs(d_table) %>% return
+  DescTools:::.DoCount(squares_df$mean_adjectiveness, squares_df$mean_coefficient) %>% return
+}
+
 do_squares_regression <- function(df, fit, technique, kind, spawn.x, spawn.y,
                                   width, squares_per_row, too.far=NA) {
   large_squares_df <- compute_squares_stats(df, fit, technique, kind,
