@@ -165,6 +165,10 @@ plot_gam_squares <-
     # for each dimension reduction technique
     x_width <- x_range[2] - x_range[1]
     y_width <- y_range[2] - y_range[1]
+    
+    # Bonferroni k
+    # I count the number of the non-NA values in the table
+    bonferroni_k <- sum(!is.na(pairwise_t$p.value))
 
     output_plot <- output_plot +
       geom_rect(
@@ -206,6 +210,7 @@ plot_gam_squares <-
     x_ends <- c()
     y_starts <- c()
     y_ends <- c()
+    bonf_sigs <- c()
     
     # We go over each table row
     for (i in 1:dim(pairwise_t$p.value)[1]) {
@@ -223,6 +228,9 @@ plot_gam_squares <-
           next
         }
         
+        # Significant after Bonferroni correction?
+        bonf_sig <- value <= 0.05 / bonferroni_k
+        
         start_row <- squares_df[i + 1,]
         x_start <- (start_row[["xmax"]] + start_row[["xmin"]]) / 2
         y_start <- (start_row[["ymax"]] + start_row[["ymin"]]) / 2
@@ -237,6 +245,8 @@ plot_gam_squares <-
         x_ends <- append(x_ends, x_end)
         y_ends <- append(y_ends, y_end)
         
+        bonf_sigs <- append(bonf_sigs, bonf_sig)
+        
         
         # Else, print the difference relation
         #print(paste0(i + 1, "≠", j))
@@ -247,7 +257,8 @@ plot_gam_squares <-
       x_start = x_starts,
       y_start = y_starts,
       x_end = x_ends,
-      y_end = y_ends
+      y_end = y_ends,
+      bonf_sigs = bonf_sigs
     )
     pairwise_adjectiveness_differences$index <- 
       1:nrow(pairwise_adjectiveness_differences) %>% as.factor()
@@ -255,7 +266,8 @@ plot_gam_squares <-
     output_plot <- output_plot +
       new_scale_color() +
       geom_segment(
-        aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index),
+        aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index,
+            linetype = bonf_sigs),
         lineend = "butt",
         linewidth = 1,
         position=position_jitter(w = 0.2, h = 0),
