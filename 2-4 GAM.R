@@ -326,6 +326,7 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
   has_dominant_order_c <- c()
   mean_adjectiveness_c <- c()
   point_indices_c <- c()
+  mean_coefficient_c <- c()
 
   # Compute stats for each square
   for(i in 1:nrow(squares_df)) {
@@ -385,6 +386,9 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
     
     mean_adjectiveness_c <- 
       append(mean_adjectiveness_c, in_square_points$adjectiveness %>% mean)
+    
+    mean_coefficient_c <- 
+      append(mean_coefficient_c, in_square_points$coefficient %>% mean)
   }
 
   squares_df$index <- square_indices_c
@@ -392,6 +396,7 @@ compute_squares_stats <- function(df, fit, technique, kind, spawn.x, spawn.y, wi
   squares_df$points_count <- points_count_c
   squares_df$dominant_order <- dominant_order_c
   squares_df$mean_adjectiveness <- mean_adjectiveness_c
+  squares_df$mean_coefficient <- mean_coefficient_c
   squares_df$point_indices <- point_indices_c
 
   return(squares_df)
