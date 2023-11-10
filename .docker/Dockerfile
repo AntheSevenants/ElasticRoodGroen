@@ -1,21 +1,31 @@
 FROM rocker/rstudio:4
 
-RUN R -q -e 'install.packages("magrittr")'
-RUN R -q -e 'install.packages("stringr")'
-RUN R -q -e 'install.packages("data.table")'
-RUN R -q -e 'install.packages("glmnet")'
-RUN R -q -e 'install.packages("dbscan")'
-RUN R -q -e 'install.packages("Rtsne")'
-RUN R -q -e 'install.packages("umap")'
-RUN R -q -e 'install.packages("vegan")'
-RUN R -q -e 'install.packages("doMC")'
-RUN R -q -e 'install.packages("stringdist")'
-RUN R -q -e 'install.packages("DescTools")'
-RUN R -q -e 'install.packages("nonnest2")'
-RUN R -q -e 'install.packages("MuMIn")'
-RUN R -q -e 'install.packages("dplyr")'
-RUN R -q -e 'install.packages("cowplot")'
-RUN R -q -e 'install.packages("ggnewscale")'
-RUN R -q -e 'install.packages("ggplot2")'
-RUN R -q -e 'install.packages("pals")'
-RUN R -q -e 'install.packages("tidyr")'
+WORKDIR /home/rstudio/ElasticRoodGroen/
+ENV RENV_PATHS_LIBRARY renv/library
+
+COPY renv.lock renv.lock
+
+RUN R -q -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
+RUN R -q -e "renv::restore()"
+
+RUN echo "setwd(\"/home/rstudio/ElasticRoodGroen/\")" > ~/../home/rstudio/.Rprofile
+
+#RUN R -q -e 'install.packages("magrittr")'
+#RUN R -q -e 'install.packages("stringr")'
+#RUN R -q -e 'install.packages("data.table")'
+#RUN R -q -e 'install.packages("glmnet")'
+#RUN R -q -e 'install.packages("dbscan")'
+#RUN R -q -e 'install.packages("Rtsne")'
+#RUN R -q -e 'install.packages("umap")'
+#RUN R -q -e 'install.packages("vegan")'
+#RUN R -q -e 'install.packages("doMC")'
+#RUN R -q -e 'install.packages("stringdist")'
+#RUN R -q -e 'install.packages("DescTools")'
+#RUN R -q -e 'install.packages("nonnest2")'
+#RUN R -q -e 'install.packages("MuMIn")'
+#RUN R -q -e 'install.packages("dplyr")'
+#RUN R -q -e 'install.packages("cowplot")'
+#RUN R -q -e 'install.packages("ggnewscale")'
+#RUN R -q -e 'install.packages("ggplot2")'
+#RUN R -q -e 'install.packages("pals")'
+#RUN R -q -e 'install.packages("tidyr")'
