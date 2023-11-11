@@ -1,10 +1,8 @@
 version: "3"
 
 services:
-  python:
-    build:
-      context: .
-      dockerfile: .docker/Dockerfile
+  rstudio:
+    image: "anthesevenants/roodgroen:rstudio"
     ports: 
       - "8787:8787"
     environment:
