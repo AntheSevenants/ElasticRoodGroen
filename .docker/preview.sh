@@ -1,1 +1,1 @@
-docker run -p "8080:8080" anthesevenants/roodgroen:preview
+docker run -p "8788:8788" --mount "type=bind,src=$(pwd),target=/app/" anthesevenants/roodgroen:preview

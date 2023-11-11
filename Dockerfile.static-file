@@ -1,18 +1,5 @@
 FROM anthesevenants/roodgroen:quarto AS builder
 
-COPY . /app
 WORKDIR /app
-#RUN mkdir output
-RUN quarto render WorkingPaper.qmd
-#RUN rm index.qmd
 
-FROM ghcr.io/openfaas/of-watchdog:0.9.6 AS watchdog
-
-FROM alpine:latest
-RUN mkdir /app
-COPY --from=builder /app /app
-COPY --from=watchdog /fwatchdog .
-ENV mode="static"
-ENV static_path="/app"
-HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
-CMD ["./fwatchdog"]
+CMD [ "quarto", "preview", "WorkingPaper.qmd", "--host", "0.0.0.0", "--port", "8788" ]
