@@ -12,7 +12,8 @@
             "command": "sh .docker/preview.sh",
             "problemMatcher": [],
             "group": {
-                "kind": "build"
+                "kind": "build",
+                "isDefault": true
             }
         },
         {
@@ -21,7 +22,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "sh .docker/build.sh", 
+            "command": "sh .docker/build.sh",
             "group": {
                 "kind": "build"
             }
