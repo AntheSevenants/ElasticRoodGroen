@@ -15,12 +15,14 @@ get_clustering_results_pam <- function(base, df) {
   plots <- list()
   
   
-  k_range <- 2:60
+  k_range <- 2:40
   
   results_list <- mclapply(k_range, function(k) {
     test <- pam(pass_coords, k = k)
     clusters <- test$clustering
     df$cluster <- clusters
+    
+    print(k)
     
     # pam_plot <- ggplot(data = df) +
     #   geom_point(aes(x = mds.x, y = mds.y, color = cluster))
