@@ -740,13 +740,13 @@ To investigate both aspects, we first subdivided the semantic space into nine sq
 source("2-4 GAM squares.R")
 
 squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
-suares_mds_plot <- recordPlot()
+squares_mds_plot <- recordPlot()
 
 squares_test(df, "tsne", "non_zero", -5, 5, 10, 3, 0.1)
-suares_tsne_plot <- recordPlot()
+squares_tsne_plot <- recordPlot()
 
 squares_test(df, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1)
-suares_umap_plot <- recordPlot()
+squares_umap_plot <- recordPlot()
 
 ```
 
@@ -756,7 +756,7 @@ suares_umap_plot <- recordPlot()
 #| fig-width: 6
 #| fig-height: 5
 
-suares_umap_plot
+squares_umap_plot
 ```
 
 Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares-umap indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
@@ -987,9 +987,9 @@ gam_tsne_plot
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, TSNE (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 
-suares_mds_plot
+squares_mds_plot
 
-suares_tsne_plot
+squares_tsne_plot
 ```
 
 ### Xpath queries
