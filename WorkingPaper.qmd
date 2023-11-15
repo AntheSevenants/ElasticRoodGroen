@@ -736,6 +736,7 @@ With the affirmation of the existence of these red and green lexical areas, the 
 To investigate both aspects, we first subdivided the semantic space into nine square subareas. In the top-left corner of each square, we show the number of data points in that square (first line) and the mean adjectiveness of the points in that square (second line). Each square is assigned a so-called 'dominant colour'. This dominant colour is based on a t-test of the coefficients of the data points in that square. The null hypothesis for each square is that the coefficients do not specifically pull towards either word order. If significance was not attained in the t-test, the square receives a grey outline to indicate the lack of a dominant colour. If significance was attained in the t-test for that square, we assumed a dominant colour on the basis of the t-test estimate's sign; a negative estimate shows a square's pull towards the green order, a positive estimate shows a pull towards the red order. @fig-gam-squares-umap shows an overview of the squares and their dominant colours (other dimension reduction techniques in appendix).
 
 ```{r #fig-gam-squares-save}
+#| output: FALSE
 source("2-4 GAM squares.R")
 
 squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
