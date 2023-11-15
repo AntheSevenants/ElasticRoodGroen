@@ -2,7 +2,7 @@ library(dbscan) # for dbscan
 library(magrittr) # %>%
 library(DescTools) # Cstat
 library(parallel) # gotta go fast
-library(semvar) # Speelman & Heylen (2014)
+source("semvar.R") # Speelman & Heylen (2014)
 library(cluster) # pam etc
 library(nonnest2) # Vuong test
 
