@@ -550,7 +550,7 @@ First, we attempted to use regular clustering techniques in an attempt to bring 
 
 ##### PAM
 
-The PAM (Partitioning Around Medoids) technique [@kaufman_partitioning_1990] selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the cluster package [@maechler_cluster_2022]. Because a predefined number of clusters is required and we have no prior knowledge on the desirable number of clusters, we built clusterings with a number of clusters ranging from 2 to 60. The upper limit is a practical choice made to avoid compute issues at larger cluster numbers.
+The PAM (Partitioning Around Medoids) technique [@kaufman_partitioning_1990] selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the cluster package [@maechler_cluster_2022]. Because a predefined number of clusters is required and we have no prior knowledge on the desirable number of clusters, we built clusterings with a number of clusters ranging from 2 to 40. The upper limit is a practical choice made to avoid compute issues at larger cluster numbers. TODO
 
 Because semantics is inherently messy, we made the choice to remove all participles which did not fit their cluster very well from their respective clusters. For this, we used the silhouette width metric [@rousseeuw_silhouettes_1987] in its R implementation for semantics [@speelman_semvar_2014]. All participles with a negative silhouette width -- generally speaking, participles closer to participles from other clusters than to those of their own -- were assigned a zero cluster.
 
