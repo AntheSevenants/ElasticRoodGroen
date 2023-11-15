@@ -561,50 +561,33 @@ To investigate the best clustering among the 39 clusterings we made, we built a 
 $$
 coefficient \sim cluster
 $$
-A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2 gives an overview of the $R^2$ values for each model of the different dimension reduction techniques by $k$ value:
+A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the UMAP dimension reduction technique by $k$ value. An overview for different plots is in the appendix.
 
 ```{r pam-load}
 #| output: false
 source("2-2 PAM vis.R")
 ```
 
-```{r #fig-pam-r2}
-#| fig-cap: Overview of the R^2^ values for each $k$-model for all three dimension reduction techniques
-#| column: screen-inset-shaded
-#| layout-ncol: 3
-#| fig-subcap:
-#|   - "R^2^ value of each model by $k$ value, MDS"
-#|   - "R^2^ value of each model by $k$ value, TSNE" 
-#|   - "R^2^ value of each model by $k$ value, UMAP"
+```{r #fig-pam-r2-save}
+#| output: FALSE
 
 plot_bar(mds_results_pam, "r2")
-
+pam_mds_plot <- recordPlot()
 plot_bar(tsne_results_pam, "r2")
-
+pam_tsne_plot <- recordPlot()
 plot_bar(umap_results_pam, "r2")
+pam_umap_plot <- recordPlot()
 ```
 
-It is unclear from the plots why certain $k$ values yields the better results. In the TSNE plot, we see that many of the best models are those which feature many clusters at once. This is not surprising, since having many clusters is a form of overfitting. With a high number of clusters, one can more easily create smaller, homogeneous clusters and therefore obtain better predictions. In the other plots, the explanations are not as clear-cut. We see for MDS that using three clusters perform the best, while 22 clusters yield the best result for UMAP.
-
-In order to get a better understanding of how well our regression models capture the patterns in the data, we assigned random clusterings to the data points and built 'garbage' regression models based on these assigned clusters. We then used Vuong's test [@vuong_likelihood_1989, implementation in `nonnest2` R package by @merkle_nonnest2_2020, function `vuongtest`] to check whether there was a statistically significant difference between the models based on the real clusters and the models based on the randomly assigned clusters. If a difference was found, we checked whether the real model performed significantly better than the garbage model (or vice versa).
-
-@fig-pam-vuong-p shows the significance values for the difference between the real and garbage models. As can be inferred from the graphs, not a single model was substantially different from the garbage model. This means that the clustering using PAM essentially failed, since one could just as well use randomised clusterings and obtain comparable results.
-
-```{r #fig-pam-vuong-p}
-#| fig-cap: Overview of the Vuong test p values for each comparison between a $k$-model and its garbage counterpart for all three dimension reduction techniques
+```{r #fig-pam-r2-umap}
+#| fig-cap: Overview of the R^2^ values for each $k$-model for UMAP
 #| column: screen-inset-shaded
-#| layout-ncol: 3
-#| fig-subcap:
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, MDS"
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, TSNE" 
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, UMAP"
+#| layout-ncol: 1
 
-plot_bar(mds_results_pam, "vuong_p")
-
-plot_bar(tsne_results_pam, "vuong_p")
-
-plot_bar(umap_results_pam, "vuong_p")
+pam_umap_plot
 ```
+
+It is unclear from the plot why certain $k$ values yields the better results. In order to get a better understanding of how well our regression models capture the patterns in the data, we assigned random clusterings to the data points and built 'garbage' regression models based on these assigned clusters. We then used Vuong's test [@vuong_likelihood_1989; implementation in `nonnest2` R package by @merkle_nonnest2_2020, function `vuongtest`] to check whether there was a statistically significant difference between the models based on the real clusters and the models based on the randomly assigned clusters. If a difference was found, we checked whether the real model performed significantly better than the garbage model (or vice versa). Not a single model was substantially different from the garbage model (p > 0.05). This means that the clustering using PAM essentially failed, since one could just as well use randomised clusterings and obtain comparable results.
 
 ##### Dbscan
 
@@ -616,29 +599,7 @@ dbscan_model_count <- dim(mds_results_dbscan)[1]
 
 The Dbscan algorithm [@ram_density_2010] clusters data points which are closely packed together. Because the algorithm can by itself decide whether data points do not fit well into any cluster, it might be a better choice for our messy semantic data. We used the R implementation in the `dbscan` package [@hahsler_dbscan_2019, `dbscan` function].
 
-Dbscan hinges on two parameters to come to a clustering solution: one parameter (`eps`) decides how close two points need to be in order to be considered 'dense' enough to form a cluster, the other (`pts`) decides how many neighbours a point needs to have in order to be considered a salient point in the points cloud. Again, we considered a wide range of possible parameter combinations[^dbscan-combi], which yielded `r dbscan_model_count %>% formatn` models for each dimension reduction technique. Note that the number of clusters is variable in dbscan and depends on the set `eps` and `pts` values. @fig-dbscan-cluster-count shows an overview of the number of clusters in each of the models. For clarity's sake, a graph with log-transformed counts is also given.
-
-```{r #fig-dbscan-cluster-count}
-#| fig-cap: Overview of the number of clusters in each dbscan clustering for all three dimension reduction techniques
-#| column: screen-inset-shaded
-#| layout-ncol: 3
-#| layout-nrow: 2
-#| fig-subcap:
-#|   - "Number of clusters by `pts` and `ets` value, MDS"
-#|   - "Number of clusters by `pts` and `ets` value, TSNE" 
-#|   - "Number of clusters by `pts` and `ets` value, UMAP"
-#|   - "Number of clusters by `pts` and `ets` value, MDS (log scale)"
-#|   - "Number of clusters by `pts` and `ets` value, TSNE (log scale)" 
-#|   - "Number of clusters by `pts` and `ets` value, UMAP (log scale)"
-
-plot_tile(mds_results_dbscan, "cluster_count")
-plot_tile(tsne_results_dbscan, "cluster_count")
-plot_tile(umap_results_dbscan, "cluster_count")
-
-plot_tile(mds_results_dbscan, "cluster_count_log")
-plot_tile(tsne_results_dbscan, "cluster_count_log")
-plot_tile(umap_results_dbscan, "cluster_count_log")
-```
+Dbscan hinges on two parameters to come to a clustering solution: one parameter (`eps`) decides how close two points need to be in order to be considered 'dense' enough to form a cluster, the other (`pts`) decides how many neighbours a point needs to have in order to be considered a salient point in the points cloud. Again, we considered a wide range of possible parameter combinations[^dbscan-combi], which yielded `r dbscan_model_count %>% formatn` models for each dimension reduction technique. Note that the number of clusters is variable in dbscan and depends on the set `eps` and `pts` values.
 
 [^dbscan-combi]: All combinations from $\text{pts}=2$ to $\text{pts}=100$ (increments of $1$) and $\text{eps}=0$ to $\text{eps}=1$ (increments of $0.01$).
 
@@ -648,29 +609,7 @@ $$
 coefficient \sim cluster
 $$
 
-Again, we used the $R^2$ values of the models to find the best models and compared the models to garbage models with randomly assigned clusters using the Vuong test. Here as well, the significance values show that no discernible difference can be found between real and garbage models, which means that for dbscan as well, clustering has failed. @fig-dbscan-r2-vuong-p shows both the R^2^ values and Vuong test p values.
-
-```{r #fig-dbscan-r2-vuong-p}
-#| fig-cap: Overview of the R^2^ values for each $k$-model and Vuong test p values for each comparison between a $k$-model and its garbage counterpart for all three dimension reduction techniques
-#| column: screen-inset-shaded
-#| layout-ncol: 3
-#| layout-nrow: 2
-#| fig-subcap:
-#|   - "R^2^ value of each model by $k$ value, MDS"
-#|   - "R^2^ value of each model by $k$ value, TSNE" 
-#|   - "R^2^ value of each model by $k$ value, UMAP"
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, MDS"
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, TSNE" 
-#|   - "p values of the comparisons of each model with its garbage counterpart by $k$ value, UMAP"
-
-plot_tile(mds_results_dbscan, "r2")
-plot_tile(tsne_results_dbscan, "r2")
-plot_tile(umap_results_dbscan, "r2")
-
-plot_tile(mds_results_dbscan, "vuong_p")
-plot_tile(tsne_results_dbscan, "vuong_p")
-plot_tile(umap_results_dbscan, "vuong_p")
-```
+Again, we used the $R^2$ values of the models to find the best models and compared the models to garbage models with randomly assigned clusters using the Vuong test. Here as well, the significance values show that no discernible difference can be found between real and garbage models, which means that for dbscan as well, clustering has failed.
 
 #### Generalised Additive Models
 
@@ -679,8 +618,6 @@ It is clear that it is a difficult task to form meaningful clusters from our sem
 $$
 coefficient \sim x + y
 $$
-
-@tbl-lm gives summaries of the regression models for the MDS, TSNE and UMAP coordinates. Note that the data points eliminated in the elastic net regression are not part of the model.
 
 ```{r gam-load}
 #| output: false
@@ -712,14 +649,8 @@ format_table <- function(df) {
 
 ```
 
-```{r #tbl-lm}
-#| tbl-cap: Summaries of the regression models predicting the elastic net coefficients based on the semantic space
-#| column: screen-inset-shaded
-#| layout-ncol: 1
-#| tbl-subcap:
-#|   - "Summary of the regression model predicting the elastic net coefficients based on the semantic space, MDS"
-#|   - "Summary of the regression model predicting the elastic net coefficients based on the semantic space, TSNE"
-#|   - "Summary of the regression model predicting the elastic net coefficients based on the semantic space, UMAP"
+```{r #lm}
+#| output: FALSE
 
 lm_mds <- build_lm(df, "mds", "non_zero")
 lm_mds %>% format_table()
@@ -731,29 +662,33 @@ lm_umap <- build_lm(df, "umap", "non_zero")
 lm_umap %>% format_table()
 ```
 
-We see that the results differ for each regression model. For MDS, the further a participle is situated along the x and y-axis, the more likely it is to appear in the green order. For TSNE, the further a participle is situated along the y-axis, the more likely it is to appear in the red order. UMAP does not show any significant semantic trends. The MDS and TSNE plots show that at least *some* semantic effect is at play here. If we *plot* the predictions of the models, however (@fig-lm), it becomes immediately clear that using two linear predictors for spatial data -- in this case *virtual* spatial data -- is not ideal[^gaps]:
+However, if we *plot* the predictions of the linear model, however (@fig-lm), it becomes immediately clear that using two linear predictors for spatial data -- in this case *virtual* spatial data -- is not ideal[^gaps]. Note that the data points eliminated in the elastic net regression are not part of the model.
 
 [^gaps]: Extrapolations are only shown 0.1 units away from the furthest data point.
 
-```{r #fig-lm}
-#| fig-cap: Visualisations of the regression models predicting the elastic net coefficients based on the semantic space
-#| column: screen-inset-shaded
-#| layout-ncol: 3
-#| fig-width: 6
-#| fig-height: 5
-#| fig-subcap:
-#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
-#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
-#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)"
-
+```{r #fig-lm-save}
+#| output: FALSE
 plot_gam(df, lm_mds, "mds", "non_zero", 0.1)
+lm_mds_plot <- recordPlot()
 
 plot_gam(df, lm_tsne, "tsne", "non_zero", 0.1)
+lm_tsne_plot <- recordPlot()
 
 plot_gam(df, lm_umap, "umap", "non_zero", 0.1)
+lm_umap_plot <- recordPlot()
 ```
 
-These linear models are far too simple to accurately represent the semantic space. This is of course inherent to the design of such models, since they can only model the two axes linearly.
+```{r #fig-lm}
+#| fig-cap: Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)
+#| column: screen-inset-shaded
+#| layout-ncol: 1
+#| fig-width: 6
+#| fig-height: 5
+
+lm_umap_plot
+```
+
+A linear model is far too simple to accurately represent a semantic space. This is of course inherent to the design of such models, since they can only model the two axes linearly.
 
 Due to the limitations of linear regression, we opted to use a modern regression technique to model the spatial coordinates: Generalised Additive Modelling (GAM) [@hastie_generalized_1987]. GAM models are able to model non-linear relationships and can be used to model spatial relationships when two axes are deployed as a joint predictor. GAM models have already been used in linguistic research to model linguistic phenomena spatially [@wieling_quantitative_2011; @franco_maps_2019; @ghyselen_over_2019]. We can use GAMs for the same purpose to model the spatial distribution of the red and green word order in our virtual semantic space according to the following equation:
 
@@ -763,62 +698,67 @@ $$
 
 We used a *tensor smooth* (represented as $te$ in the equation) to model the x and y axis jointly.
 
-The GAMs were computed using the `gam` function in the `mgcv` R package [@wood_fast_2011]. We show the same heatmap as before, but this time using the underlying GAM models (@fig-gam).
+The GAMs were computed using the `gam` function in the `mgcv` R package [@wood_fast_2011]. We show the same heatmap as before, but this time using an underlying GAM model (@fig-gam, other dimension reduction techniques in the appendix).
 
 ```{r gam-gam}
 #| output: false
 
 gam_mds <- build_gam(df, "mds", "non_zero")
+plot_gam(df, gam_mds, "mds", "non_zero", 0.1)
+gam_mds_plot <- recordPlot()
+
 gam_tsne <- build_gam(df, "tsne", "non_zero")
+plot_gam(df, gam_tsne, "tsne", "non_zero", 0.1)
+gam_tsne_plot <- recordPlot()
+
 gam_umap <- build_gam(df, "umap", "non_zero")
+plot_gam(df, gam_umap, "umap", "non_zero", 0.1)
+gam_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-gam}
-#| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space
+#| fig-cap: Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)
 #| column: screen-inset-shaded
-#| layout-ncol: 3
+#| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
 #| fig-subcap:
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)"
 
-plot_gam(df, gam_mds, "mds", "non_zero", 0.1)
-
-plot_gam(df, gam_tsne, "tsne", "non_zero", 0.1)
-
-plot_gam(df, gam_umap, "umap", "non_zero", 0.1)
+gam_umap_plot
 ```
 
-It is immediately clear that the GAM models are much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
+It is immediately clear that a GAM model is much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
 
 With the affirmation of the existence of these red and green lexical areas, the question arises *what* verbs we find in these areas. What semantic properties make a verb particularly red or green? To investigate the contents of the different semantic areas, we attempted to find an explanation in two ways: the overall adjectiveness value in different semantic areas, and their respective densities.
 
-To investigate both aspects, we first subdivided the semantic space into nine square subareas. In the top-left corner of each square, we show the number of data points in that square (first line) and the mean adjectiveness of the points in that square (second line). Each square is assigned a so-called 'dominant colour'. This dominant colour is based on a t-test of the coefficients of the data points in that square. The null hypothesis for each square is that the coefficients do not specifically pull towards either word order. If significance was not attained in the t-test, the square receives a grey outline to indicate the lack of a dominant colour. If significance was attained in the t-test for that square, we assumed a dominant colour on the basis of the t-test estimate's sign; a negative estimate shows a square's pull towards the green order, a positive estimate shows a pull towards the red order. @fig-gam-squares shows an overview of the squares and their dominant colours.
+To investigate both aspects, we first subdivided the semantic space into nine square subareas. In the top-left corner of each square, we show the number of data points in that square (first line) and the mean adjectiveness of the points in that square (second line). Each square is assigned a so-called 'dominant colour'. This dominant colour is based on a t-test of the coefficients of the data points in that square. The null hypothesis for each square is that the coefficients do not specifically pull towards either word order. If significance was not attained in the t-test, the square receives a grey outline to indicate the lack of a dominant colour. If significance was attained in the t-test for that square, we assumed a dominant colour on the basis of the t-test estimate's sign; a negative estimate shows a square's pull towards the green order, a positive estimate shows a pull towards the red order. @fig-gam-squares-umap shows an overview of the squares and their dominant colours (other dimension reduction techniques in appendix).
 
-```{r #fig-gam-squares}
-#| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated
-#| column: screen-inset-shaded
-#| layout-ncol: 3
-#| fig-width: 6
-#| fig-height: 5
-#| fig-subcap:
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, TSNE (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, UMAP (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
-
+```{r #fig-gam-squares-save}
 source("2-4 GAM squares.R")
 
 squares_test(df, "mds", "non_zero", -1.8, 1.7, 3.2, 3, 0.1)
+suares_mds_plot <- recordPlot()
 
 squares_test(df, "tsne", "non_zero", -5, 5, 10, 3, 0.1)
+suares_tsne_plot <- recordPlot()
 
 squares_test(df, "umap", "non_zero", -2.8, 2.6, 5.25, 3, 0.1)
+suares_umap_plot <- recordPlot()
 
 ```
 
-Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
+```{r #fig-gam-squares-umap}
+#| fig-cap: "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, UMAP (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
+#| layout-ncol: 1
+#| fig-width: 6
+#| fig-height: 5
+
+suares_umap_plot
+```
+
+Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares-umap indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
 
 Next, we turned to the density of each square, i.e. the number of data points found in each square. We built a regression model for each dimension reduction technique:
 
@@ -991,6 +931,64 @@ To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elasti
 basic_mds_plot
 
 basic_tsne_plot
+```
+
+```{r #fig-pam-r2-extra}
+#| fig-cap: Overview of the R^2^ values for each $k$-model for MDS and TSNE
+#| column: screen-inset-shaded
+#| layout-ncol: 2
+#| fig-subcap:
+#|   - "R^2^ value of each model by $k$ value, MDS"
+#|   - "R^2^ value of each model by $k$ value, TSNE"
+
+pam_mds_plot
+
+pam_tsne_plot
+```
+
+```{r #fig-lm-extra}
+#| fig-cap: Visualisations of the regression models predicting the elastic net coefficients based on the semantic space
+#| column: screen-inset-shaded
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 5
+#| fig-subcap:
+#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
+#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
+
+lm_mds_plot
+
+lm_tsne_plot
+```
+
+```{r #fig-gam-extra}
+#| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space
+#| column: screen-inset-shaded
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 5
+#| fig-subcap:
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
+
+gam_mds_plot
+
+gam_tsne_plot
+```
+
+```{r #fig-gam-squares-extra}
+#| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated
+#| column: screen-inset-shaded
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 5
+#| fig-subcap:
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, TSNE (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
+
+suares_mds_plot
+
+suares_tsne_plot
 ```
 
 ### Xpath queries
