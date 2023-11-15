@@ -517,29 +517,32 @@ As a basis for our semantic analysis, we used the 'count' snaut vectors for Dutc
 
 One of the other properties of semantic vectors is that they are high-dimensional. For example, a snaut vector has a length of 200, which means that a single word is represented by 200 numbers. If we want to inspect the vector space of our words visually, we have to reduce the vectors to two or three dimensions. Typically, this is done by first computing a distance matrix, i.e. a matrix which shows the pairwise distances between each word, and then applying dimension reduction to that matrix. The dimension reduction technique will attempt to capture the information found in the high-dimensional space as well as possible in the lower-dimensional space. While there are several dimension reduction techniques available, we chose MDS [@douglas_carroll_multidimensional_1998], TSNE [@hinton_stochastic_2002] and UMAP [@mcinnes_umap_2020], following @montes_cloudspotting_2021.
 
-The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the three dimension reduction techniques, see @fig-mds-test.
+The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the UMAP dimension reduction technique, see @fig-basic-coords-umap. The plots for the other dimension reduction techniques are available in the appendix.
 
 ```{r visualisation-load}
 #| output: false
 source("2-1 Visualisation basic.R")
 ```
 
-```{r #fig-mds-test}
-#| fig-cap: Visual representations of the semantic space in MDS, TSNE and UMAP
+```{r #fig-coords-save}
+#| echo: FALSE
+#| output: FALSE
+plot_basic_coords("mds", TRUE)
+basic_mds_plot <- recordPlot()
+plot_basic_coords("tsne", TRUE)
+basic_tsne_plot <- recordPlot()
+plot_basic_coords("umap", TRUE)
+basic_umap_plot <- recordPlot()
+```
+
+```{r #fig-basic-coords-umap}
+#| fig-cap: Visual representations of the semantic space in UMAP
 #| column: screen-inset-shaded
-#| layout-ncol: 3 
+#| layout-ncol: 1
 #| fig-width: 5
 #| fig-height: 5
-#| fig-subcap:
-#|   - "Visual representation of the semantic space, MDS dimension reduction"
-#|   - "Visual representation of the semantic space, TSNE dimension reduction"
-#|   - "Visual representation of the semantic space, UMAP dimension reduction"
 
-plot_basic_coords("mds", TRUE)
-
-plot_basic_coords("tsne", TRUE)
-
-plot_basic_coords("umap", TRUE)
+basic_umap_plot %>% print()
 ```
 
 The three constellations of distributional vectors do not immediately show a clear-cut emergent structure which we can relate to our red and green word order. At the same time, any 'manual' grouping we would make would be undesirable anyway, since it would likely be biased by human perception. Therefore, we instead focussed on clustering and spatial modelling of the semantic coordinates. In the next section, we will discuss two ways we attempted to group the data and how we tried to avoid choosing a specific clustering ourselves.
@@ -972,6 +975,23 @@ In the matrix form, each multidimensional column is converted so that each uniqu
 The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
 
 To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert 'traditional' datasets to the matrix format detailed above in seconds.
+
+### Distributional plots
+
+```{r #fig-basic-coords-extra}
+#| fig-cap: Visual representations of the semantic space in MDS and TSNE
+#| column: screen-inset-shaded
+#| layout-ncol: 2
+#| fig-width: 5
+#| fig-height: 5
+#| fig-subcap:
+#|   - "Visual representation of the semantic space, MDS dimension reduction"
+#|   - "Visual representation of the semantic space, TSNE dimension reduction"
+
+basic_mds_plot
+
+basic_tsne_plot
+```
 
 ### Xpath queries
 
