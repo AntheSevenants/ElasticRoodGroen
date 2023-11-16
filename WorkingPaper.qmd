@@ -536,13 +536,13 @@ basic_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-basic-coords-umap}
-#| fig-cap: Visual representations of the semantic space in UMAP
+#| fig-cap: Visual representations of the semantic space in MDS
 #| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 5
 #| fig-height: 5
 
-basic_umap_plot %>% print()
+basic_mds_plot %>% print()
 ```
 
 The three constellations of distributional vectors do not immediately show a clear-cut emergent structure which we can relate to our red and green word order. At the same time, any 'manual' grouping we would make would be undesirable anyway, since it would likely be biased by human perception. Therefore, we instead focussed on clustering and spatial modelling of the semantic coordinates. In the next section, we will discuss two ways we attempted to group the data and how we tried to avoid choosing a specific clustering ourselves.
@@ -687,13 +687,13 @@ lm_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-lm}
-#| fig-cap: Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)
+#| fig-cap: Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
 #| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
 
-lm_umap_plot
+lm_mds_plot
 ```
 
 A linear model is far too simple to accurately represent a semantic space. This is of course inherent to the design of such models, since they can only model the two axes linearly.
@@ -725,21 +725,16 @@ gam_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-gam}
-#| fig-cap: Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)
+#| fig-cap: Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
 #| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
-#| fig-subcap:
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
 
-gam_umap_plot
+gam_mds_plot
 ```
 
-It is immediately clear that a GAM model is much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green.[^effect-notice]. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
-
-[^effect-notice]: The potential of GAM models is especially obvious for the MDS and TSNE plots, which can be found in the appendix.
+It is immediately clear that a GAM model is much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
 
 With the affirmation of the existence of these red and green lexical areas, the question arises *what* verbs we find in these areas. What semantic properties make a verb particularly red or green? To investigate the contents of the different semantic areas, we attempted to find an explanation in two ways: the overall adjectiveness value in different semantic areas, and their respective densities.
 
@@ -761,12 +756,12 @@ squares_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-gam-squares-umap}
-#| fig-cap: "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, UMAP (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
+#| fig-cap: "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 #| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
 
-squares_umap_plot
+squares_mds_plot
 ```
 
 Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares-umap indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
@@ -930,18 +925,18 @@ To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elasti
 ### Distributional plots
 
 ```{r #fig-basic-coords-extra}
-#| fig-cap: Visual representations of the semantic space in MDS and TSNE
+#| fig-cap: Visual representations of the semantic space in TSNE and UMAP
 #| column: screen-inset-shaded
 #| layout-ncol: 2
 #| fig-width: 5
 #| fig-height: 5
 #| fig-subcap:
-#|   - "Visual representation of the semantic space, MDS dimension reduction"
 #|   - "Visual representation of the semantic space, TSNE dimension reduction"
-
-basic_mds_plot
+#|   - "Visual representation of the semantic space, UMAP dimension reduction"
 
 basic_tsne_plot
+
+basic_umap_plot
 ```
 
 ```{r #fig-lm-extra}
@@ -951,12 +946,12 @@ basic_tsne_plot
 #| fig-width: 6
 #| fig-height: 5
 #| fig-subcap:
-#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
 #|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
-
-lm_mds_plot
+#|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)"
 
 lm_tsne_plot
+
+lm_umap_plot
 ```
 
 ```{r #fig-gam-extra}
@@ -966,12 +961,12 @@ lm_tsne_plot
 #| fig-width: 6
 #| fig-height: 5
 #| fig-subcap:
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)"
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
-
-gam_mds_plot
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, UMAP (non-eliminated types only)"
 
 gam_tsne_plot
+
+gam_umap_plot
 ```
 
 ```{r #fig-gam-squares-extra}
@@ -981,12 +976,12 @@ gam_tsne_plot
 #| fig-width: 6
 #| fig-height: 5
 #| fig-subcap:
-#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, TSNE (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
-
-squares_mds_plot
+#|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, UMAP (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 
 squares_tsne_plot
+
+squares_umap_plot
 ```
 
 ### Xpath queries
