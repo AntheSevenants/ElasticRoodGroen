@@ -561,7 +561,7 @@ To investigate the best clustering among the 39 clusterings we made, we built a 
 $$
 coefficient \sim cluster
 $$
-A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the UMAP dimension reduction technique by $k$ value. An overview of the other dimension reduction plots can be found in the appendix.
+A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the different reduction techniques by $k$ value.
 
 ```{r pam-load}
 #| output: false
@@ -580,14 +580,22 @@ pam_umap_plot <- recordPlot()
 ```
 
 ```{r #fig-pam-r2-umap}
-#| fig-cap: Overview of the R^2^ values for each $k$-model for UMAP
+#| fig-cap: Overview of the R^2^ values for each $k$-model for MDS, TSNE and UMAP
 #| column: screen-inset-shaded
-#| layout-ncol: 1
+#| layout-ncol: 3
+#| fig-subcap:
+#|   - "R^2^ value of each model by $k$ value, MDS"
+#|   - "R^2^ value of each model by $k$ value, TSNE"
+#|   - "R^2^ value of each model by $k$ value, UMAP"
+
+pam_mds_plot
+
+pam_tsne_plot
 
 pam_umap_plot
 ```
 
-It is unclear from the plot why certain $k$ values yields the better results. In order to get a better understanding of how well our regression models capture the patterns in the data, we assigned random clusterings to the data points and built 'garbage' regression models based on these assigned clusters. We then used Vuong's test [@vuong_likelihood_1989; implementation in `nonnest2` R package by @merkle_nonnest2_2020, function `vuongtest`] to check whether there was a statistically significant difference between the models based on the real clusters and the models based on the randomly assigned clusters. If a difference was found, we checked whether the real model performed significantly better than the garbage model (or vice versa). The test showed that not a single model was substantially different from the garbage model (p > 0.05). This means that the clustering using PAM essentially failed, since one could just as well use randomised clusterings and obtain comparable results.
+While it seems that the UMAP-reduced space has the worst $R^2$ values overall, it is unclear from the plot why certain $k$ values yield better results. In order to get a better understanding of how well our regression models capture the patterns in the data, we assigned random clusterings to the data points and built 'garbage' regression models based on these assigned clusters. We then used Vuong's test [@vuong_likelihood_1989; implementation in `nonnest2` R package by @merkle_nonnest2_2020, function `vuongtest`] to check whether there was a statistically significant difference between the models based on the real clusters and the models based on the randomly assigned clusters. If a difference was found, we checked whether the real model performed significantly better than the garbage model (or vice versa). The test showed that not a single model was substantially different from the garbage model (p > 0.05). This means that the clustering using PAM essentially failed, since one could just as well use randomised clusterings and obtain comparable results.
 
 ##### Dbscan
 
@@ -934,19 +942,6 @@ To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elasti
 basic_mds_plot
 
 basic_tsne_plot
-```
-
-```{r #fig-pam-r2-extra}
-#| fig-cap: Overview of the R^2^ values for each $k$-model for MDS and TSNE
-#| column: screen-inset-shaded
-#| layout-ncol: 2
-#| fig-subcap:
-#|   - "R^2^ value of each model by $k$ value, MDS"
-#|   - "R^2^ value of each model by $k$ value, TSNE"
-
-pam_mds_plot
-
-pam_tsne_plot
 ```
 
 ```{r #fig-lm-extra}
