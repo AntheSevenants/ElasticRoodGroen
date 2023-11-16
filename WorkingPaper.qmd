@@ -561,7 +561,7 @@ To investigate the best clustering among the 39 clusterings we made, we built a 
 $$
 coefficient \sim cluster
 $$
-A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the UMAP dimension reduction technique by $k$ value. An overview for different plots is in the appendix.
+A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the UMAP dimension reduction technique by $k$ value. An overview of the other dimension reduction plots can be found in the appendix.
 
 ```{r pam-load}
 #| output: false
