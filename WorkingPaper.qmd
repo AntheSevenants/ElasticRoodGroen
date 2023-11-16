@@ -662,7 +662,7 @@ lm_umap <- build_lm(df, "umap", "non_zero")
 lm_umap %>% format_table()
 ```
 
-However, if we *plot* the predictions of the linear model (@fig-lm), it becomes immediately clear that using two linear predictors for spatial data -- in this case *virtual* spatial data -- is not ideal[^gaps]. Note that the data points eliminated in the elastic net regression are not part of the model.
+However, if we *plot* the predictions of the linear model (@fig-lm), it becomes immediately clear that using two linear predictors for spatial data -- in this case *virtual* spatial data -- is not ideal.[^gaps] Note that the data points eliminated in the elastic net regression are not part of the model.
 
 [^gaps]: Extrapolations are only shown 0.1 units away from the furthest data point.
 
