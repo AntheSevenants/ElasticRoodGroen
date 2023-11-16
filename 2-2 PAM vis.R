@@ -17,6 +17,7 @@ plot_bar <- function(results, fill_column) {
       x = k,
       y = eval(as.name(fill_column)),
     ), stat="identity") +
+    scale_y_continuous(limits = c(0, 0.015)) +
     labs(y = fill_column)
 }
 
