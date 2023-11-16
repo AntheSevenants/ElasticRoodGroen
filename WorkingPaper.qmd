@@ -517,7 +517,7 @@ As a basis for our semantic analysis, we used the 'count' snaut vectors for Dutc
 
 One of the other properties of semantic vectors is that they are high-dimensional. For example, a snaut vector has a length of 200, which means that a single word is represented by 200 numbers. If we want to inspect the vector space of our words visually, we have to reduce the vectors to two or three dimensions. Typically, this is done by first computing a distance matrix, i.e. a matrix which shows the pairwise distances between each word, and then applying dimension reduction to that matrix. The dimension reduction technique will attempt to capture the information found in the high-dimensional space as well as possible in the lower-dimensional space. While there are several dimension reduction techniques available, we chose MDS [@douglas_carroll_multidimensional_1998], TSNE [@hinton_stochastic_2002] and UMAP [@mcinnes_umap_2020], following @montes_cloudspotting_2021.
 
-The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the MDS dimension reduction technique, see @fig-basic-coords-umap. The plots for the other dimension reduction techniques are available in the appendix.
+The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the MDS dimension reduction technique, see @fig-basic-coords-mds. The plots for the other dimension reduction techniques are available in the appendix.
 
 ```{r visualisation-load}
 #| output: false
@@ -535,7 +535,7 @@ plot_basic_coords("umap", TRUE)
 basic_umap_plot <- recordPlot()
 ```
 
-```{r #fig-basic-coords-umap}
+```{r #fig-basic-coords-mds}
 #| fig-cap: Visual representations of the semantic space in MDS
 #| column: screen-inset-shaded
 #| layout-ncol: 1
@@ -561,7 +561,7 @@ To investigate the best clustering among the 39 clusterings we made, we built a 
 $$
 coefficient \sim cluster
 $$
-A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-umap gives an overview of the $R^2$ values for each model for the different reduction techniques by $k$ value.
+A 'good' clustering for our purpose would be a clustering on the basis of which one can accurately predict the relative preference for the red or green word order. To measure the predictive performance of clusters, the $R^2$ measure is used [implementation in `MuMIn` R package by @barton_mumin_2023, `r.squaredGLMM` function]. @fig-pam-r2-all gives an overview of the $R^2$ values for each model for the different reduction techniques by $k$ value.
 
 ```{r pam-load}
 #| output: false
@@ -579,7 +579,7 @@ plot_bar(umap_results_pam, "r2")
 pam_umap_plot <- recordPlot()
 ```
 
-```{r #fig-pam-r2-umap}
+```{r #fig-pam-r2-all}
 #| fig-cap: Overview of the R^2^ values for each $k$-model for MDS, TSNE and UMAP
 #| column: screen-inset-shaded
 #| layout-ncol: 3
@@ -738,7 +738,7 @@ It is immediately clear that a GAM model is much better at capturing patterns in
 
 With the affirmation of the existence of these red and green lexical areas, the question arises *what* verbs we find in these areas. What semantic properties make a verb particularly red or green? To investigate the contents of the different semantic areas, we attempted to find an explanation in two ways: the overall adjectiveness value in different semantic areas, and their respective densities.
 
-To investigate both aspects, we first subdivided the semantic space into nine square subareas. In the top-left corner of each square, we show the number of data points in that square (first line) and the mean adjectiveness of the points in that square (second line). Each square is assigned a so-called 'dominant colour'. This dominant colour is based on a t-test of the coefficients of the data points in that square. The null hypothesis for each square is that the coefficients do not specifically pull towards either word order. If significance was not attained in the t-test, the square receives a grey outline to indicate the lack of a dominant colour. If significance was attained in the t-test for that square, we assumed a dominant colour on the basis of the t-test estimate's sign; a negative estimate shows a square's pull towards the green order, a positive estimate shows a pull towards the red order. @fig-gam-squares-umap shows an overview of the squares and their dominant colours (other dimension reduction techniques in appendix).
+To investigate both aspects, we first subdivided the semantic space into nine square subareas. In the top-left corner of each square, we show the number of data points in that square (first line) and the mean adjectiveness of the points in that square (second line). Each square is assigned a so-called 'dominant colour'. This dominant colour is based on a t-test of the coefficients of the data points in that square. The null hypothesis for each square is that the coefficients do not specifically pull towards either word order. If significance was not attained in the t-test, the square receives a grey outline to indicate the lack of a dominant colour. If significance was attained in the t-test for that square, we assumed a dominant colour on the basis of the t-test estimate's sign; a negative estimate shows a square's pull towards the green order, a positive estimate shows a pull towards the red order. @fig-gam-squares-mds shows an overview of the squares and their dominant colours (other dimension reduction techniques in appendix).
 
 ```{r #fig-gam-squares-save}
 #| output: FALSE
@@ -755,7 +755,7 @@ squares_umap_plot <- recordPlot()
 
 ```
 
-```{r #fig-gam-squares-umap}
+```{r #fig-gam-squares-mds}
 #| fig-cap: "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 #| layout-ncol: 1
 #| fig-width: 6
@@ -764,7 +764,7 @@ squares_umap_plot <- recordPlot()
 squares_mds_plot
 ```
 
-Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares-umap indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
+Interestingly, the plot of each dimension reduction technique only shows four squares with a dominant colour, which is always green. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is more evenly dispersed over the whole plane. To find an explanation for the presence or absence of a dominant colour of a square, we turned to adjectiveness, as it is explained to be the most important external factor in deciding between red and green [@de_sutter_rood_2005, 305]. We conducted pairwise t-tests of the adjectiveness values of the verbs in each square: this means that we conducted t-tests between each combination of squares. @fig-gam-squares-mds indicates which squares have significantly differing adjectiveness values through the means of a line connecting significantly different pairs. There does not seem to be any sort of pattern where all dominantly green squares differ significantly from squares with a non-dominant colour. On the contrary, we even find significant differences in adjectivity *among* green squares. This indicates that the multifactorial control in the regression analysis, where adjectiveness is included as a fixed effect, worked as intended, and that there is no lingering 'effect' of this variable in the semantic space.
 
 Next, we turned to the density of each square, i.e. the number of data points found in each square. We built a regression model for each dimension reduction technique:
 
