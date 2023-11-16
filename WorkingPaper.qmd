@@ -729,7 +729,9 @@ gam_umap_plot <- recordPlot()
 gam_umap_plot
 ```
 
-It is immediately clear that a GAM model is much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red, more green or just 'neutral'. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
+It is immediately clear that a GAM model is much better at capturing patterns in the semantic space. We also see general semantic areas appearing, where the model predicts data points to generally be more red or more green.[^effect-notice]. Still, if we look at the actual data points, the semantic space remains quite messy. Nonetheless, it seems that the GAM models are much better at dealing with semantic noise than the clustering algorithms.
+
+[^effect-notice]: The potential of GAM models is especially obvious for the MDS and TSNE plots, which can be found in the appendix.
 
 With the affirmation of the existence of these red and green lexical areas, the question arises *what* verbs we find in these areas. What semantic properties make a verb particularly red or green? To investigate the contents of the different semantic areas, we attempted to find an explanation in two ways: the overall adjectiveness value in different semantic areas, and their respective densities.
 
