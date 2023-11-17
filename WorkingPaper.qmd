@@ -527,6 +527,8 @@ source("2-1 Visualisation basic.R")
 ```{r #fig-coords-save}
 #| echo: FALSE
 #| output: FALSE
+#| fig-width: 5
+#| fig-height: 5
 plot_basic_coords("mds", TRUE)
 basic_mds_plot <- recordPlot()
 plot_basic_coords("tsne", TRUE)
