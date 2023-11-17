@@ -537,7 +537,6 @@ basic_umap_plot <- recordPlot()
 
 ```{r #fig-basic-coords-mds}
 #| fig-cap: Visual representations of the semantic space in MDS
-#| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 5
 #| fig-height: 5
@@ -688,7 +687,6 @@ lm_umap_plot <- recordPlot()
 
 ```{r #fig-lm}
 #| fig-cap: Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
-#| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
@@ -726,7 +724,6 @@ gam_umap_plot <- recordPlot()
 
 ```{r #fig-gam}
 #| fig-cap: Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
-#| column: screen-inset-shaded
 #| layout-ncol: 1
 #| fig-width: 6
 #| fig-height: 5
@@ -774,7 +771,6 @@ $$
 
 ```{r #tbl-data-point-glm}
 #| tbl-cap: Summaries of the regression models predicting the presence of a dominant colour
-#| column: screen-inset-shaded
 #| layout-ncol: 1
 #| tbl-subcap:
 #|   - "Summary of the regression model predicting the presence of a dominant colour, MDS"
@@ -926,7 +922,6 @@ To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elasti
 
 ```{r #fig-basic-coords-extra}
 #| fig-cap: Visual representations of the semantic space in TSNE and UMAP
-#| column: screen-inset-shaded
 #| layout-ncol: 2
 #| fig-width: 5
 #| fig-height: 5
@@ -941,7 +936,6 @@ basic_umap_plot
 
 ```{r #fig-lm-extra}
 #| fig-cap: Visualisations of the regression models predicting the elastic net coefficients based on the semantic space
-#| column: screen-inset-shaded
 #| layout-ncol: 2
 #| fig-width: 6
 #| fig-height: 5
@@ -956,7 +950,6 @@ lm_umap_plot
 
 ```{r #fig-gam-extra}
 #| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space
-#| column: screen-inset-shaded
 #| layout-ncol: 2
 #| fig-width: 6
 #| fig-height: 5
@@ -971,7 +964,6 @@ gam_umap_plot
 
 ```{r #fig-gam-squares-extra}
 #| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated
-#| column: screen-inset-shaded
 #| layout-ncol: 2
 #| fig-width: 6
 #| fig-height: 5
