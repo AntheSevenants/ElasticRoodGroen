@@ -1,7 +1,7 @@
 source("2-4 GAM.R")
 
-squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
-             too.far=NA) {
+squares_test_df <- function(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
+                            too.far=NA) {
   fit <- build_gam(df, technique, kind)
   squares_df <- compute_squares_stats(df, fit, technique, kind, spawn.x, spawn.y, width, squares_per_row, too.far)
   
@@ -18,6 +18,22 @@ squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_p
   df_copy$square <- squares_vector
   
   pairwise_t <- pairwise.t.test(df_copy$adjectiveness, df_copy$square)
+  
+  return_list <- list("fit" = fit,
+                      "squares_df" = squares_df,
+                      "pairwise_t" = pairwise_t)
+  
+  return(return_list)
+}
+
+squares_test <- function(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
+             too.far=NA) {
+  output <- squares_test_df(df, technique, kind, spawn.x, spawn.y, width, squares_per_row,
+                                too.far=NA)
+  
+  fit <- output[["fit"]]
+  squares_df <- output[["squares_df"]]
+  pairwise_t <- output[["pairwise_t"]]
   
   plot_gam_squares(df, fit, technique, kind, squares_df, pairwise_t, too.far)
 }
