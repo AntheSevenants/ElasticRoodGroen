@@ -21,7 +21,7 @@ format:
     toc: true
   docx:
     toc: false
-editor: visual
+editor: source
 title-block-banner: true
 bibliography: references.bib
 toc: true
