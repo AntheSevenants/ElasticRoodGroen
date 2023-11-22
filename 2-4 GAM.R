@@ -269,11 +269,11 @@ plot_gam_squares <-
     output_plot <- output_plot +
       new_scale_color() +
       geom_segment(
-        aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index,
+        aes(x = x_start, y = y_start, xend = x_end, yend = y_end,
             linetype = bonf_sigs %>% as.factor() %>% fct_rev()),
         lineend = "butt",
         linewidth = 1,
-        position=position_jitter(w = 0.2, h = 0),
+        position=position_jitter(w = 0.25, h = 0.0),
         data=pairwise_adjectiveness_differences
       ) +
       scale_color_manual(values=glasbey() %>% unname() %>% unname(),
