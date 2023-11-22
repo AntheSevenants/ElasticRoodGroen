@@ -4,6 +4,7 @@ library(mgcv) # GAM
 library(tidyr) # expand_grid
 library(ggnewscale) # for colour scales
 library(pals) # for elaborate colour palettes
+library(forcats) # for fct_rev
 
 df <-
   read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
@@ -135,8 +136,8 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
       )
     ) +
     scale_color_manual(values = c("green", "red")) +
-    xlab(x_column) +
-    ylab(y_column)
+    xlab("x") +
+    ylab("y")
   
   return(output_plot)
 }
