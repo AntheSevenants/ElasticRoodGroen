@@ -267,7 +267,7 @@ plot_gam_squares <-
       new_scale_color() +
       geom_segment(
         aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color=index,
-            linetype = bonf_sigs),
+            linetype = bonf_sigs %>% as.factor() %>% fct_rev()),
         lineend = "butt",
         linewidth = 1,
         position=position_jitter(w = 0.2, h = 0),
