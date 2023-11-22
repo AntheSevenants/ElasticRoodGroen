@@ -10,7 +10,7 @@ plot_basic_coords <- function(technique, legend=FALSE) {
   x_column <- paste0(technique, ".all.x")
   y_column <- paste0(technique, ".all.y")
   
-  par(mar=c(2, 2, 1, 1))
+  par(mar=c(4, 4, 1, 1))
   
   plot(
     df[, x_column],
@@ -18,10 +18,9 @@ plot_basic_coords <- function(technique, legend=FALSE) {
     pch = 19,
     cex = 0.5,
     col = colours[factor(df$order)],
-    xlab = "",
-    ylab = "",
-    asp = 1,
-    mar = c(1, 1, 1, 1)
+    xlab = "x",
+    ylab = "y",
+    asp = 1
   )
   
   if (legend) {
