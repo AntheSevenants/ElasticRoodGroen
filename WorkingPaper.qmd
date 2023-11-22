@@ -690,7 +690,7 @@ lm_umap_plot <- recordPlot()
 ```{r #fig-lm}
 #| fig-cap: Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
 #| layout-ncol: 1
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 
 lm_mds_plot
@@ -727,7 +727,7 @@ gam_umap_plot <- recordPlot()
 ```{r #fig-gam}
 #| fig-cap: Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, MDS (non-eliminated types only)
 #| layout-ncol: 1
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 
 gam_mds_plot
@@ -757,7 +757,7 @@ squares_umap_plot <- recordPlot()
 ```{r #fig-gam-squares-mds}
 #| fig-cap: "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, MDS (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
 #| layout-ncol: 1
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 
 squares_mds_plot
@@ -939,7 +939,7 @@ basic_umap_plot
 ```{r #fig-lm-extra}
 #| fig-cap: Visualisations of the regression models predicting the elastic net coefficients based on the semantic space
 #| layout-ncol: 2
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 #| fig-subcap:
 #|   - "Visualisation of the regression model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
@@ -953,7 +953,7 @@ lm_umap_plot
 ```{r #fig-gam-extra}
 #| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space
 #| layout-ncol: 2
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 #| fig-subcap:
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, TSNE (non-eliminated types only)"
@@ -967,7 +967,7 @@ gam_umap_plot
 ```{r #fig-gam-squares-extra}
 #| fig-cap: Visualisations of the GAM models predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated
 #| layout-ncol: 2
-#| fig-width: 6
+#| fig-width: 7
 #| fig-height: 5
 #| fig-subcap:
 #|   - "Visualisation of the GAM model predicting the elastic net coefficients based on the semantic space, with subdivision squares and significantly differing squares indicated, TSNE (non-eliminated types only). Each line connects areas with significantly differing adjectiveness values."
