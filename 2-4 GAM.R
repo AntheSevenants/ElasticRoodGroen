@@ -121,7 +121,9 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
       y = eval(as.name(y_column)),
       fill = fit
     )) +
-    scale_fill_gradientn(colours = c("#96E637", "#FEFEBD", "#DE193E"), limits=c(-0.5, 0.5)) +
+    scale_fill_gradientn("Model-predicted coefficient",
+                         colours = c("#96E637", "#FEFEBD", "#DE193E"),
+                         limits=c(-0.5, 0.5)) +
     #geom_contour(data=df_pred, aes(x=x, y=y, z = fit), colour = "white")
     geom_point(
       data = df,
@@ -135,7 +137,7 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
         color = sign
       )
     ) +
-    scale_color_manual(values = c("green", "red")) +
+    scale_color_manual("Participle preference", values = c("green", "red")) +
     xlab("x") +
     ylab("y")
   
@@ -275,7 +277,8 @@ plot_gam_squares <-
         data=pairwise_adjectiveness_differences
       ) +
       scale_color_manual(values=glasbey() %>% unname() %>% unname(),
-                         guide="none")
+                         guide="none") +
+      labs(linetype = "Significant after Bonferroni?")
     
     return(output_plot)
   }
