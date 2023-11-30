@@ -61,6 +61,8 @@ formatd <- function(number, nsmall=2) {
 formatp <- function(number) {
     label_percent()(number)
 }
+
+suppress_gloss <- TRUE
 ```
 
 ## Introduction
@@ -208,6 +210,7 @@ One area where lexical-semantic effects have long been thought to be important i
 
 ```{r, red-gloss}
 #| tbl-cap: Red word order example
+if (!suppress_gloss) {
 red_example <- as_gloss(
   "Vandaar dat hij ons opnieuw is~AUX~ aangeboden~PART~.",
   "hence that he us again was offered",
@@ -216,9 +219,11 @@ red_example <- as_gloss(
   source = "[AUX + PART]: red order (WR-P-P-G-0000250935.p.3.s.1[^gloss-source])"
 )
 red_example
+}
 ```
 
 ```{r, green-gloss}
+if (!suppress_gloss) {
 #| tbl-cap: Green word order example
 green_example <- as_gloss(
   "Zolang ge god maar aanbeden~PART~ hebt~AUX~.",
@@ -228,6 +233,7 @@ green_example <- as_gloss(
   source = "[PART + AUX]: green order (WR-P-E-A-0000223098.p.4.s.2)"
 )
 green_example
+}
 ```
 
 [^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
@@ -244,6 +250,7 @@ Another source of influence is that of prosody. The most important prosodical in
 
 ```{r, prosody-green-gloss}
 #| tbl-cap: Green word order prosody example
+if (!suppress_gloss) {
 prosody_green_example <- as_gloss(
   "dat ik hier mijn selectie °definitief °afgedwongen heb .",
   "that I here my selection definitively enforced have .",
@@ -252,12 +259,14 @@ prosody_green_example <- as_gloss(
   source = "[PART + AUX] adapted green order (WR-P-P-G-0000198602.p.7.s.4)"
 )
 prosody_green_example
+}
 ```
 
 If both *definitief* 'definitively' and *afgedwongen* 'enforced' are stressed, as they would typically be in Dutch, there would be two consecutive stresses. If one uses the red word order, this chain of stresses can be avoided:
 
 ```{r, prosody-red-gloss}
 #| tbl-cap: Red word order prosody example
+if (!suppress_gloss) {
 prosody_red_example <- as_gloss(
   "dat ik hier mijn selectie °definitief heb °afgedwongen .",
   "that I here my selection definitively have enforced .",
@@ -266,6 +275,7 @@ prosody_red_example <- as_gloss(
   source = "[AUX + PART] actual red order (WR-P-P-G-0000198602.p.7.s.4)"
 )
 prosody_red_example
+}
 ```
 
 [^separable-example]: e.g. *ik zoek~root~ het adres op~preposition~*, literally 'I search up the address'
