@@ -546,7 +546,7 @@ basic_umap_plot <- recordPlot()
 basic_mds_plot %>% print()
 ```
 
-The three constellations of distributional vectors do not immediately show a clear-cut emergent structure which we can relate to our red and green word order. At the same time, any 'manual' grouping we would make would be undesirable anyway, since it would likely be biased by human perception. Therefore, we instead focussed on clustering and spatial modelling of the semantic coordinates. In the next section, we will discuss two ways we attempted to group the data and how we tried to avoid choosing a specific clustering ourselves.
+The three constellations of distributional vectors do not immediately show a clear-cut emergent structure which we can relate to our red and green word order. At the same time, any 'manual' grouping we would make would be undesirable anyway, since it would likely be biased by human perception. Therefore, we instead focused on clustering and spatial modelling of the semantic coordinates. In the next section, we will discuss two ways we attempted to group the data and how we tried to avoid choosing a specific clustering ourselves.
 
 #### Clustering
 
