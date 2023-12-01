@@ -659,9 +659,9 @@ format_table <- function(df) {
 
   #df$sig <- ifelse(df$p.value <= 0.05, "*", "")
   
-  df$estimate <- df$estimate %>% formatd(4)
-  df$std.error <- df$std.error %>% formatd(4)
-  df$statistic <- df$statistic %>% formatd(4)
+  df$estimate <- df$estimate %>% formatd(3)
+  df$std.error <- df$std.error %>% formatd(3)
+  df$statistic <- df$statistic %>% formatd(3)
   df$p.value <- df$p.value %>% format_num_col()
 
   return(df)
