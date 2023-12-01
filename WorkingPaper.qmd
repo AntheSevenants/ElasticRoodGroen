@@ -649,7 +649,7 @@ format_num_col <- function(p_value) {
   if (p_value < 0.01) {
     return("<0.01")
   } else {s
-    return(formatd(p_value, 4))
+    return(formatd(p_value, 3))
   }
 }
 format_num_col <- Vectorize(format_num_col)
