@@ -103,7 +103,7 @@ get_predictions_df <- function(df, fit, technique, kind, too.far=NA) {
 }
 
 # Can also be used to plot linear models, but would be kind of useless...
-plot_gam <- function(df, fit, technique, kind, too.far=NA) {
+plot_gam <- function(df, fit, technique, kind, too.far=NA, vertical=FALSE) {
   check_kind(kind)
   
   x_column <- paste0(technique, ".", kind, ".x")
@@ -140,6 +140,11 @@ plot_gam <- function(df, fit, technique, kind, too.far=NA) {
     scale_color_manual("Participle preference", values = c("green", "red")) +
     xlab("x") +
     ylab("y")
+
+    if (vertical) {
+      output_plot <- output_plot +
+        theme(legend.position="bottom", legend.box = "vertical")
+    }
   
   return(output_plot)
 }
