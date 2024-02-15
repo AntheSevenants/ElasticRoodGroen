@@ -22,8 +22,8 @@ df$country <- as.factor(df$country)
 ds <- dataset(df=df,
               response_variable_column="order",
               to_binary_columns=c("participle"),
-              other_columns=list("country", "separable", "adjectiveness", 
-                                 "priming_rate", "logfreq", "edited"))
+              other_columns=c("country", "separable", "adjectiveness", 
+                              "priming_rate", "logfreq", "edited"))
 
 # Get the list of features
 # In our case, this is the list of participles
