@@ -18,10 +18,15 @@ df$participle <- as.factor(df$participle)
 # Coerce the country column to a factor
 df$country <- as.factor(df$country)
 
+# Make sure auxiliary lemma is recognised as a non-verbal variable
+df$auxiliary_lemma <- paste0("_is_", df$auxiliary_lemma)
+# Coerce the auxiliary lemma column to a factor
+df$auxiliary_lemma <- as.factor(df$auxiliary_lemma)
+
 # Create an ElasticTools dataset
 ds <- dataset(df=df,
               response_variable_column="order",
-              to_binary_columns=c("participle"),
+              to_binary_columns=c("participle", "auxiliary_lemma"),
               other_columns=c("country", "separable", "adjectiveness", 
                               "priming_rate", "logfreq", "edited"))
 
