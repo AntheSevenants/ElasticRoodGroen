@@ -53,7 +53,6 @@ distributional_coords_outside_sd <-
 
 # Define the clustering function
 do_clustering <- function(df,
-                          coords,
                           clustering_algorithm="kmeans",
                           mode="all") {
   # Mode can be "all", "non_zero", "outside_sd"
@@ -97,9 +96,9 @@ do_clustering <- function(df,
   return(coefficients_go)  
 }
 
-df <- do_clustering(df, distributional_coords, "kmeans", "all")
-df <- do_clustering(df, distributional_coords, "kmeans", "non_zero")
-df <- do_clustering(df, distributional_coords, "kmeans", "outside_sd")
+df <- do_clustering(df, "kmeans", "all")
+df <- do_clustering(df, "kmeans", "non_zero")
+df <- do_clustering(df, "kmeans", "outside_sd")
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors.csv", 
           row.names=FALSE)
