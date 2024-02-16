@@ -1,4 +1,7 @@
 # In this script, we add distributional vectors
+library(magrittr)
+
+options(scipen=999)
 
 # Use DistributionalSemanticsR scripts
 source("DistributionalSemanticsR/VectorSpace.R")
@@ -99,6 +102,45 @@ do_clustering <- function(df,
 df <- do_clustering(df, "kmeans", "all")
 df <- do_clustering(df, "kmeans", "non_zero")
 df <- do_clustering(df, "kmeans", "outside_sd")
+
+# Correlation analysis
+do_correlation_analysis <- function(df, exclude_features, coords) {
+  df <- df[!(df$feature %in% exclude_features),]
+  
+  dimensions <- dim(coords)[2]
+  
+  print(df$feature %>% length)
+  print(coords %>% rownames %>% length)
+  
+  p_values <- double()
+  correlations <- double()
+  
+  for (index in 1:dimensions) {
+    test <- cor.test(coords[,index], df$coefficient)
+    
+    p_values <- append(p_values, test$p.value)
+    correlations <- append(correlations, test$estimate)
+  }
+  
+  return_df <- data.frame(p = p_values,
+                          correlation = correlations)
+  
+  return (return_df)
+}
+
+correlation_all_df <- 
+  do_correlation_analysis(df, no_vector_features, distributional_coords_all)
+
+correlation_non_zero_df <-
+  do_correlation_analysis(df, c(zero_features, no_vector_features),
+                          distributional_coords_non_zero)
+
+correlation_outside_sd_df <-
+  do_correlation_analysis(df, c(within_sd_features, no_vector_features),
+                          distributional_coords_outside_sd)
+
+dim(distributional_coords_all)
+distributional_coords_all[,1]
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors.csv", 
           row.names=FALSE)
