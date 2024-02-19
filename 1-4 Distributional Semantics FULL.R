@@ -139,6 +139,26 @@ correlation_outside_sd_df <-
   do_correlation_analysis(df, c(within_sd_features, no_vector_features),
                           distributional_coords_outside_sd)
 
+# Add vector dimensions to the dataframe
+dimensions <- dim(distributional_coords)[2]
+# df$id <- 1:nrow(df)
+for (index in 1:dimensions) {
+  df[[paste0("dim_", index)]] <- distributional_coords[,index]
+  
+  # merger_df <- distributional_coords_all[,index] %>% as.data.frame()
+  # features <- rownames(merger_df)
+  # merger_df$feature <- features
+  # colnames(merger_df) <- c(paste0("dim_", index), "feature")
+  # 
+  # df <- merge(df, merger_df, by="feature", all.x=TRUE)
+}
+
+
+# Reinstate the ordering
+df <- df[order(df$id), ]
+# Throw away id column
+df$id <- NULL
+
 dim(distributional_coords_all)
 distributional_coords_all[,1]
 
