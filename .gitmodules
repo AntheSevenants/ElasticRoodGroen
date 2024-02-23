@@ -7,3 +7,9 @@
 [submodule "naive-dt-fix"]
 	path = naive-dt-fix
 	url = https://github.com/AntheSevenants/naive-dt-fix.git
+[submodule "naive_dt_fix_py"]
+	path = naive_dt_fix_py
+	url = https://github.com/AntheSevenants/naive_dt_fix_py.git
+[submodule "filter-dataset/naive_dt_fix_py"]
+	path = filter-dataset/naive_dt_fix_py
+	url = https://github.com/AntheSevenants/naive_dt_fix_py.git
