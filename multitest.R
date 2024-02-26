@@ -29,8 +29,8 @@ grouped_df <- adf %>%
 grouped_df <- grouped_df %>% 
   group_by(component) %>%
   arrange(paragraph_no) %>%
-  mutate(red_paragraph_primes = lag(rollapply(red_counts, PRIMING_PARAGRAPHS_NO, sum, fill = 0, partial=T, align='right'), default = 0),
-         green_paragraph_primes = lag(rollapply(green_counts, PRIMING_PARAGRAPHS_NO, sum, fill = 0, partial=T, align='right'), default = 0))
+  mutate(red_paragraph_primes = slide_index_sum(red_counts, paragraph_no, before = 1, after = -1, complete = FALSE),
+         green_paragraph_primes = slide_index_sum(green_counts, paragraph_no, before = 1, after = -1, complete = FALSE))
 
 adf <- merge(adf,
       grouped_df[, c("component", "paragraph_no", "red_paragraph_primes", "green_paragraph_primes")],
