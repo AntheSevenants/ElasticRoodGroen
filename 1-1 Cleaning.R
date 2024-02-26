@@ -1,6 +1,7 @@
 library(stringr)
 library(parallel)
 library(data.table)
+library(slider)
 
 # Import the dt fixing library
 source("naive-dt-fix/naive-dt-fix.R")
@@ -173,72 +174,55 @@ print(paste("Removed", difference_third_stage, "items"))
 
 # Priming information
 # WARNING: very intensive process!
-dt <- as.data.table(df)
+# (new code should take around 10 minutes to complete)
+
+df$paragraph_no <- gsub("(.*\\.)(\\d+)(\\.s\\.)(\\d+)", "\\2", df$sentence_id, ignore.case=T) %>% as.numeric()
+df$sentence_no <- gsub("(.*\\.)(\\d+)(\\.s\\.)(\\d+)", "\\4", df$sentence_id, ignore.case=T) %>% as.numeric()
 
 PRIMING_PARAGRAPHS_NO = 1
-paragraph_information <- str_match_all(df$sentence_id,
-                                       "(.*p\\.)(\\d+)(\\.s\\.)(\\d+)")
 
 start.time <- Sys.time()
-priming_info <- mclapply(paragraph_information, function(paragraph_tuple) {
-  prefix <- paragraph_tuple[, 2]
-  paragraph_no <- as.numeric(paragraph_tuple[, 3])
-  infix <- paragraph_tuple[,4]
-  sentence_no <- as.numeric(paragraph_tuple[,5])
-  
-  priming_paragraph_start <-
-    max(1, paragraph_no - PRIMING_PARAGRAPHS_NO)
-  priming_paragraph_end <- max(1, paragraph_no - 1)
-  priming_range <- priming_paragraph_start:priming_paragraph_end
-  
-  primers <- list("red" = 0, "green" = 0)
-  
-  for (primer_index in priming_range) {
-    needle <- paste0(prefix, primer_index)
-    primer_rows <- dt[startsWith(dt$sentence_id, needle),]
 
-    if (dim(primer_rows)[1] > 0) {
-      for (i in 1:nrow(primer_rows)) {
-        row <- primer_rows[i,]
-        
-        primers[[row$order]] = primers[[row$order]] + 1
-      }
-    }
-  }
-  
-  priming_sentence_start <- 1
-  priming_sentence_end <- max(1, sentence_no - 1)
-  priming_range <- priming_sentence_start:priming_sentence_end
+### Paragraph level priming
 
-  for (primer_index in priming_range) {
-    needle <- paste0(prefix, paragraph_no, infix, primer_index)
-    #print(needle)
-    primer_rows <- dt[startsWith(dt$sentence_id, needle),]
+grouped_df <- df %>%
+  group_by(component, paragraph_no) %>%
+  arrange(component, paragraph_no, sentence_no) %>%
+  mutate(red_count = cumsum(order == "red"),
+         green_count = cumsum(order == "green")) %>%
+  summarize(red_counts = last(red_count),
+            green_counts = last(green_count)) %>%
+  ungroup()
 
-    if (dim(primer_rows)[1] > 0) {
-      for (i in 1:nrow(primer_rows)) {
-        row <- primer_rows[i,]
+grouped_df <- grouped_df %>% 
+  group_by(component) %>%
+  arrange(paragraph_no) %>%
+  mutate(red_paragraph_primes = slide_index_sum(red_counts, paragraph_no, before = 1, after = -1, complete = FALSE),
+         green_paragraph_primes = slide_index_sum(green_counts, paragraph_no, before = 1, after = -1, complete = FALSE))
 
-        primers[[row$order]] = primers[[row$order]] + 1
-      }
-    }
-  }
-  
-  rm(primer_rows)
-  #gc()
-  
-  return(primers)
-}
-, mc.cores = min(detectCores(), 8), mc.preschedule=TRUE)
+df <- merge(df,
+            grouped_df[, c("component", "paragraph_no", "red_paragraph_primes", "green_paragraph_primes")],
+            by = c("component", "paragraph_no"), all.x = TRUE)
+
+### Sentence level priming
+
+grouped_df <- df %>%
+  group_by(component, paragraph_no) %>%
+  arrange(component, paragraph_no, sentence_no) %>%
+  mutate(red_sentence_primes = lag(cumsum(order == "red"), default=0),
+         green_sentence_primes = lag(cumsum(order == "green"), default=0)) %>%
+  ungroup()
+
+df <- merge(df,
+            grouped_df[, c("component", "paragraph_no", "sentence_no", "red_sentence_primes", "green_sentence_primes")],
+            by = c("component", "paragraph_no", "sentence_no"), all.x = TRUE)
+
+df$red_primes <- df$red_paragraph_primes + df$red_sentence_primes
+df$green_primes <- df$green_paragraph_primes + df$green_sentence_primes
+
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
-
-priming_df <- as.data.frame(do.call(rbind, priming_info))
-colnames(priming_df) <- c("red_primes", "green_primes")
-
-df$red_primes <- as.numeric(priming_df$red_primes)
-df$green_primes <- as.numeric(priming_df$green_primes)
 
 INCREMENT <- 0.001
 
