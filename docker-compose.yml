@@ -9,4 +9,4 @@ services:
     environment:
       DISABLE_AUTH: true
     volumes:
-      - .:/home/rstudio/ElasticRoodGroen/
+      - .:/home/rstudio/ElasticRoodGroen/:Z
