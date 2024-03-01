@@ -128,16 +128,29 @@ do_correlation_analysis <- function(df, exclude_features, coords) {
   return (return_df)
 }
 
+do_bonferroni <- function(df) {
+  df$bon_sig <- df$p <= 0.05 / dim(df)[1]
+  
+  return(df)
+}
+
+# Trying to find correlation between dimensions and red-green coefficients
+# I'm even applying Bonferroni correction, but too it still looks like fishing
+# for spurious correlations (which is not in the scientific spirit)
+
 correlation_all_df <- 
-  do_correlation_analysis(df, no_vector_features, distributional_coords_all)
+  do_correlation_analysis(df, no_vector_features, distributional_coords_all) %>%
+  do_bonferroni()
 
 correlation_non_zero_df <-
   do_correlation_analysis(df, c(zero_features, no_vector_features),
-                          distributional_coords_non_zero)
+                          distributional_coords_non_zero) %>%
+  do_bonferroni()
 
 correlation_outside_sd_df <-
   do_correlation_analysis(df, c(within_sd_features, no_vector_features),
-                          distributional_coords_outside_sd)
+                          distributional_coords_outside_sd) %>%
+  do_bonferroni()
 
 # Add vector dimensions to the dataframe
 dimensions <- dim(distributional_coords)[2]
