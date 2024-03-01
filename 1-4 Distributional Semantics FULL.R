@@ -54,6 +54,45 @@ distributional_coords_non_zero <-
 distributional_coords_outside_sd <-
   distributional_coords[-within_sd_indices,]
 
+do_dimension_reduction_pca <- function(dims=2, mode="all") {
+  # Mode can be "all", "non_zero", "outside_sd"
+  
+  if (mode == "non_zero") {
+    coords <- distributional_coords_non_zero
+  } else if (mode == "outside_sd") {
+    # Keep only zero coefficient features
+    coords <- distributional_coords_outside_sd
+  } else if (mode == "all") {
+    # Else, just keep all
+    coords <- distributional_coords_all
+  }
+  
+  clustering <- prcomp(coords, scale = FALSE)$x[,1:dims]
+  
+  return(clustering)
+}
+
+get_color <- function(df, mat) {
+  origin <- data.frame(feature = rownames(mat))
+  
+  merged_df <- merge(origin, df, by="feature", all.x=TRUE)
+  
+  merged_df$order <- ifelse(merged_df$coefficient < 0, "green",
+                     ifelse(merged_df$coefficient > 0, "red", "grey"))
+  
+  return(merged_df$order)
+}
+
+do_plot <- function(mat) {
+  colors <- get_color(df, mat)
+  
+  plot(mat, col = colors)
+}
+
+do_dimension_reduction_pca(2, "all") %>% do_plot
+do_dimension_reduction_pca(2, "non_zero") %>% do_plot
+do_dimension_reduction_pca(2, "outside_sd") %>% do_plot
+
 # Define the clustering function
 do_clustering <- function(df,
                           clustering_algorithm="kmeans",
