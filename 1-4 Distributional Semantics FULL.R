@@ -54,22 +54,31 @@ distributional_coords_non_zero <-
 distributional_coords_outside_sd <-
   distributional_coords[-within_sd_indices,]
 
-do_dimension_reduction_pca <- function(dims=2, mode="all") {
-  # Mode can be "all", "non_zero", "outside_sd"
-  
-  if (mode == "non_zero") {
-    coords <- distributional_coords_non_zero
-  } else if (mode == "outside_sd") {
-    # Keep only zero coefficient features
-    coords <- distributional_coords_outside_sd
-  } else if (mode == "all") {
-    # Else, just keep all
-    coords <- distributional_coords_all
-  }
-  
+dist_mat <- function(coords) {
+  mat <- dist(coords, method="euclidean", diag=T, upper=T)
+  mat <- as.matrix(mat)
+  return(mat)
+}
+
+do_pca <- function(coords, dims=2) {
   clustering <- prcomp(coords, scale = FALSE)$x[,1:dims]
   
   return(clustering)
+}
+
+do_mds <- function(coords, dims=2) {
+  
+}
+
+do_tsne <- function(coords, dims=2) {
+  clustering <- Rtsne(coords, is_distance=TRUE, dims=dims)$Y %>% as.matrix()
+  rownames(clustering) <- rownames(coords)
+  
+  return(clustering)
+}
+
+do_umap <- function(coords, dims=2) {
+  umap(coords)$layout
 }
 
 get_color <- function(df, mat) {
@@ -89,19 +98,13 @@ do_plot <- function(mat) {
   plot(mat, col = colors)
 }
 
-do_dimension_reduction_pca(2, "all") %>% do_plot
-do_dimension_reduction_pca(2, "non_zero") %>% do_plot
-do_dimension_reduction_pca(2, "outside_sd") %>% do_plot
+get_coords("all") %>% do_pca(2) %>% do_plot
+get_coords("non_zero") %>% do_pca(2) %>% do_plot
+get_coords("outside_sd") %>% do_pca(2) %>% do_plot
 
-# Define the clustering function
-do_clustering <- function(df,
-                          clustering_algorithm="kmeans",
-                          mode="all") {
+get_coords <- function(mode) {
   # Mode can be "all", "non_zero", "outside_sd"
-  
-  # Needed to keep the ordering
-  df$id  <- 1:nrow(df)
-  
+
   if (mode == "non_zero") {
     coords <- distributional_coords_non_zero
   } else if (mode == "outside_sd") {
@@ -112,6 +115,18 @@ do_clustering <- function(df,
     coords <- distributional_coords_all
   }
   
+  return(coords)
+}
+
+# Define the clustering function
+do_clustering <- function(df,
+                          coords,
+                          clustering_algorithm="kmeans",
+                          mode="all",
+                          extra="") {
+  # Needed to keep the ordering
+  df$id  <- 1:nrow(df)
+  
   if (clustering_algorithm == "kmeans") {
     # "all" mode should cluster into three categories, other modes two
     k <- ifelse(mode == "all", 3, 2)
@@ -119,13 +134,12 @@ do_clustering <- function(df,
     
     # Create a dataframe for merging
     return_dataframe <- data.frame(feature = names(clustering$cluster))
-    return_dataframe[[paste0(mode, ".", clustering_algorithm)]] = 
+    return_dataframe[[paste0(mode, ".", clustering_algorithm, ".", extra)]] = 
       as.numeric(unname(clustering$cluster))
     
   } else if (clustering_algorithm == "dbscan") {
     print("TODO")
   }
-  
   
   coefficients_go <- merge(df, return_dataframe,
                            by="feature", all.x=TRUE)
@@ -138,9 +152,27 @@ do_clustering <- function(df,
   return(coefficients_go)  
 }
 
-df <- do_clustering(df, "kmeans", "all")
-df <- do_clustering(df, "kmeans", "non_zero")
-df <- do_clustering(df, "kmeans", "outside_sd")
+df <- do_clustering(df, get_coords("all"), "kmeans", "all", "full")
+df <- do_clustering(df, get_coords("non_zero"), "kmeans", "non_zero", "full")
+df <- do_clustering(df, get_coords("outside_sd"), "kmeans", "outside_sd", "full")
+
+df <- do_clustering(df, get_coords("all") %>% dist_mat() %>% do_pca(2), "kmeans", "all", "pca2d")
+df <- do_clustering(df, get_coords("non_zero") %>% dist_mat() %>% do_pca(2), "kmeans", "non_zero", "pca2d")
+df <- do_clustering(df, get_coords("outside_sd") %>% dist_mat() %>% do_pca(2), "kmeans", "outside_sd", "pca2d")
+
+df <- do_clustering(df, get_coords("all") %>% dist_mat() %>% do_pca(10), "kmeans", "all", "pca10d")
+df <- do_clustering(df, get_coords("non_zero") %>% dist_mat() %>% do_pca(10), "kmeans", "non_zero", "pca10d")
+df <- do_clustering(df, get_coords("outside_sd") %>% dist_mat() %>% do_pca(10), "kmeans", "outside_sd", "pca10d")
+
+df <- do_clustering(df, get_coords("all") %>% dist_mat() %>% do_tsne(2), "kmeans", "all", "tsne2d")
+df <- do_clustering(df, get_coords("non_zero") %>% dist_mat() %>% do_tsne(2), "kmeans", "non_zero", "tsne2d")
+df <- do_clustering(df, get_coords("outside_sd") %>% dist_mat() %>% do_tsne(2), "kmeans", "outside_sd", "tsne2d")
+
+df <- do_clustering(df, get_coords("all") %>% dist_mat() %>% do_tsne(3), "kmeans", "all", "tsne3d")
+df <- do_clustering(df, get_coords("non_zero") %>% dist_mat() %>% do_tsne(3), "kmeans", "non_zero", "tsne3d")
+df <- do_clustering(df, get_coords("outside_sd") %>% dist_mat() %>% do_tsne(3), "kmeans", "outside_sd", "tsne3d")
+
+
 
 # Correlation analysis
 do_correlation_analysis <- function(df, exclude_features, coords) {
