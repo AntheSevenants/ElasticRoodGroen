@@ -16,7 +16,7 @@ df <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
 #
 
 # Load a vector space
-embeddings <- as.matrix(read.table('data/embeddings_sparse.txt',
+embeddings <- as.matrix(read.table('data/embeddings_sparse_nonneg.txt',
                                    sep=' ', row.names=1, skip = 1))
 
 # Check for leading space NAs
@@ -34,8 +34,11 @@ distributional_coords <-
 # Stop! Not all features will have distributional values
 # Especially considering extra features like region etc.
 # We check where the coordinates are all zeroes
-no_vector_features <- df[distributional_coords[,11] == 0.0,]$feature
-no_vector_indices <- which(distributional_coords[,11] == 0.0)
+non_vector_bin <- sapply(1:nrow(distributional_coords), function(i) {
+  all(distributional_coords[i,] == 0)
+})
+no_vector_features <- df[non_vector_bin,]$feature
+no_vector_indices <- which(non_vector_bin)
 
 # Then, check which features have a zero coefficient
 zero_features <- df[df$coefficient == 0,]$feature
