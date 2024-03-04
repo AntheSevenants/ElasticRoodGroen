@@ -8,13 +8,14 @@ parser = argparse.ArgumentParser(
     description='filter-embeddings - filter only the required embeddings from a larger embeddings file')
 parser.add_argument('embeddings_path', type=str, help='Path to the embeddings')
 parser.add_argument('coefficients_path', type=str, help='Path to the coefficients')
+parser.add_argument('key_column', type=str, help='Column for which to extract embeddings (e.g. \'feature\' or \'lemma\')')
 parser.add_argument('--output_filename', type=str, default="../output/embeddings.txt",
                     help='Filename for the output file')
 args = parser.parse_args()
 
 # Load the coefficients dataset to check for which words we have to get embeddigns
 coefficients = pd.read_csv(args.coefficients_path)
-features = coefficients["feature"].tolist()
+features = coefficients[args.key_column].tolist()
 
 # Holds the filtered embedding lines
 output_text = ""
