@@ -16,7 +16,7 @@ df <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
 #
 
 # Load a vector space
-embeddings <- as.matrix(read.table('data/embeddings_sparse_nonneg.txt',
+embeddings <- as.matrix(read.table('data/embeddings_lemma.txt',
                                    sep=' ', row.names=1, skip = 1))
 
 # Check for leading space NAs
@@ -29,7 +29,9 @@ vector_space_ <- vector_space(space=embeddings)
 
 # Get the distributional coordinates
 distributional_coords <- 
-  vector_space_$get_distributional_values(df$feature)
+  vector_space_$get_distributional_values(df$lemma)
+
+rownames(distributional_coords) <- df$feature
 
 # Stop! Not all features will have distributional values
 # Especially considering extra features like region etc.
