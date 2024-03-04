@@ -16,9 +16,16 @@ df <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
 #
 
 # Load a vector space
-vector_space_ <- vector_space(space=as.matrix(
-                  read.table('data/embeddings.txt', 
-                             sep=' ', row.names=1, skip = 1)))
+embeddings <- as.matrix(read.table('data/embeddings_sparse.txt',
+                                   sep=' ', row.names=1, skip = 1))
+
+# Check for leading space NAs
+if (all(is.na(embeddings[,ncol(embeddings)]))) {
+  embeddings <- embeddings[,-ncol(embeddings)]
+}
+
+# Define vector space
+vector_space_ <- vector_space(space=embeddings)
 
 # Get the distributional coordinates
 distributional_coords <- 
