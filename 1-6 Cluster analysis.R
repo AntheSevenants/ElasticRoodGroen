@@ -18,9 +18,35 @@ cluster_stats <- function(grouping_col) {
               greenness = (table(order) / length(coefficient))[["green"]]) 
 }
 
-cluster_stats("all.kmeans")
-cluster_stats("non_zero.kmeans")
-cluster_stats("outside_sd.kmeans")
+### FULL
+
+cluster_stats("all.kmeans.full")
+cluster_stats("non_zero.kmeans.full")
+cluster_stats("outside_sd.kmeans.full")
+
+### PCA2D
+
+cluster_stats("all.kmeans.pca2d")
+cluster_stats("non_zero.kmeans.pca2d")
+cluster_stats("outside_sd.kmeans.pca2d")
+
+### PCA10D
+
+cluster_stats("all.kmeans.pca10d")
+cluster_stats("non_zero.kmeans.pca10d")
+cluster_stats("outside_sd.kmeans.pca10d")
+
+### TSNE2D
+
+cluster_stats("all.kmeans.tsne2d")
+cluster_stats("non_zero.kmeans.tsne2d")
+cluster_stats("outside_sd.kmeans.tsne2d")
+
+### TSNE3D
+
+cluster_stats("all.kmeans.tsne3d")
+cluster_stats("non_zero.kmeans.tsne3d")
+cluster_stats("outside_sd.kmeans.tsne3d")
 
 # Frequency counts
 table(df$all.kmeans)
