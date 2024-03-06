@@ -170,8 +170,8 @@ do_clustering <- function(df,
   if (clustering_algorithm == "kmeans") {
     # "all" mode should cluster into three categories, other modes two
     #k <- ifelse(mode == "all", 3, 2)
-    k <- 3
-    clustering <- kmeans(coords, centers=k, iter.max=25)
+    k <- 13
+    clustering <- kmeans(coords, centers=k, iter.max=100)
     
     # Create a dataframe for merging
     return_dataframe <- data.frame(feature = names(clustering$cluster))
