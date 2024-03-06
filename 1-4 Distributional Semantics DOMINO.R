@@ -1,5 +1,8 @@
 # In this script, we add distributional vectors
 library(magrittr)
+library(ggforce)
+library(cluster)
+library(useful)
 
 options(scipen=999)
 
@@ -91,6 +94,7 @@ get_color <- function(df, mat) {
   return(merged_df$order)
 }
 
+
 set.seed(2204355)
 
 plot.kmeans <- function (x, data = NULL, class = NULL, size = 2, legend.position = c("right", 
@@ -110,11 +114,9 @@ plot.kmeans <- function (x, data = NULL, class = NULL, size = 2, legend.position
     labs(title = title, x = xlab, y = ylab)
 }
 
-library(useful)
-
 wineTrain <- get_coords("non_zero")
 classes <- get_color(df, wineTrain)
-wineK3 <- kmeans(x=wineTrain, centers=2, nstart=25)
+wineK3 <- kmeans(x=wineTrain, centers=13, nstart=25, iter.max=100)
 wineK3$size
 
 plot.kmeans(wineK3, data=wineTrain, class=classes)
@@ -134,7 +136,28 @@ library(cluster)
 
 source("snippets/clusgap.R")
 
+options(mc.cores = 15)
+
 theGap <- clusGap(wineTrain, FUNcluster=pam, K.max=20, do_parallel=TRUE)
 gapDF <- as.data.frame(theGap$Tab)
 gapDF
 
+#write.csv(gapDF, "output/gap_df.csv", row.names=FALSE)
+
+gapDF <- read.csv("output/gap_df.csv")
+
+gapDF %>% View
+
+ggplot(gapDF, aes(x = 1:nrow(gapDF))) +
+  geom_line(aes(y = logW), color = "blue") +
+  geom_point(aes(y = logW), color = "blue") +
+  geom_line(aes(y = E.logW), color = "green") +
+  geom_point(aes(y = E.logW), color = "green") +
+  labs(x = "Number of Clusters")
+
+# gap curve
+ggplot(gapDF, aes(x = 1:nrow(gapDF))) +
+  geom_line(aes(y = gap), color = "red") +
+  geom_point(aes(y = gap), color = "red") +
+  geom_errorbar(aes(ymin = gap - SE.sim, ymax = gap + SE.sim), color = "red") +
+  labs(x = "Number of Clusters", y = "Gap")
