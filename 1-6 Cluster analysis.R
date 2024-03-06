@@ -15,7 +15,9 @@ cluster_stats <- function(grouping_col) {
               count = length(coefficient),
               adjectiveness = mean(adjectiveness),
               redness = (table(order) / length(coefficient))[["red"]],
-              greenness = (table(order) / length(coefficient))[["green"]]) 
+              greenness = (table(order) / length(coefficient))[["green"]],
+              t.test = t.test(coefficient)$p.value <= 0.05) %>%
+    filter(!is.na(!! sym(grouping_col)))
 }
 
 ### FULL
