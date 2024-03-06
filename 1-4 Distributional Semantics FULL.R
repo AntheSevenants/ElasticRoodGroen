@@ -90,7 +90,7 @@ do_tsne <- function(coords, dims=2) {
 }
 
 do_umap <- function(coords, dims=2) {
-  umap(coords)$layout
+  umap(coords, n_components=dims)$layout
 }
 
 get_color <- function(df, mat) {
@@ -104,15 +104,43 @@ get_color <- function(df, mat) {
   return(merged_df$order)
 }
 
-do_plot <- function(mat) {
-  colors <- get_color(df, mat)
+do_plot <- function(mat, colors=NA) {
+  if (is.na(colors)) {
+    colors <- get_color(df, mat)
+  }
   
   plot(mat, col = colors)
 }
 
+do_3d_plot <- function(mat, name) {
+  colors <- get_color(df, mat)
+  
+  plot3d(mat[,1], mat[,2], mat[,3], col=colors)
+  
+  htmlwidgets::saveWidget(rglwidget(width = 520, height = 520), 
+                          file = paste0("widgets/", name, ".html"),
+                          libdir = "libs",
+                          selfcontained = FALSE
+  )
+}
+
+get_coords("non_zero") %>% dist_mat() %>% do_pca(3) %>% do_3d_plot("full_pca_non_zero")
+get_coords("non_zero") %>% dist_mat() %>% do_tsne(3) %>% do_3d_plot("full_tsne_non_zero")
+get_coords("non_zero") %>% do_umap(3) %>% do_3d_plot("full_umap_non_zero")
+
 get_coords("all") %>% do_pca(2) %>% do_plot
 get_coords("non_zero") %>% do_pca(2) %>% do_plot
 get_coords("outside_sd") %>% do_pca(2) %>% do_plot
+
+get_coords("all") %>% dist_mat() %>% do_tsne(2) %>% do_plot
+get_coords("non_zero") %>% dist_mat() %>% do_tsne(2) %>% do_plot
+get_coords("outside_sd") %>% dist_mat() %>% do_tsne(2) %>% do_plot
+
+get_coords("all") %>% do_umap(2) %>% do_plot
+get_coords("non_zero") %>% do_umap(2) %>% do_plot
+get_coords("outside_sd") %>% do_umap(2) %>% do_plot
+
+
 
 get_coords <- function(mode) {
   # Mode can be "all", "non_zero", "outside_sd"
@@ -141,7 +169,8 @@ do_clustering <- function(df,
   
   if (clustering_algorithm == "kmeans") {
     # "all" mode should cluster into three categories, other modes two
-    k <- ifelse(mode == "all", 3, 2)
+    #k <- ifelse(mode == "all", 3, 2)
+    k <- 3
     clustering <- kmeans(coords, centers=k, iter.max=25)
     
     # Create a dataframe for merging
