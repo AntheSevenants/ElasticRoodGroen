@@ -16,8 +16,8 @@ original_items_count <- nrow(df)
 df$participle <- gsub("[().»«?-]", "", df$participle)
 df$participle <- tolower(df$participle)
 
-# Remove duplicates (no longer needed)
-# df <- df[!duplicated(df[ , c("sentence", "participle")]),]
+# Remove duplicates (still needed)
+df <- df[!duplicated(df[ , c("sentence_id", "participle_index", "auxiliary_index")]),]
 
 # Automatic dt fixing
 df <- fix_participle_dt(df, "participle")
