@@ -229,3 +229,5 @@ cython_debug/
 
 # Quarto wrapper binary
 /quarto
+
+WorkingPaperShim.qmd
