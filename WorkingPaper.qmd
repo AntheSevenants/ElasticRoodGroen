@@ -519,6 +519,7 @@ other_coefficients <- other_coefficients[, names(other_coefficients) %in% c("coe
 # Re-order
 other_coefficients <- other_coefficients[,c(3, 1, 2)]
 # Sort
+other_coefficients$coefficient <- as.numeric(other_coefficients$coefficient)
 other_coefficients <- other_coefficients[order(other_coefficients$coefficient,
                                                decreasing=TRUE),]
 # Remove row indices
