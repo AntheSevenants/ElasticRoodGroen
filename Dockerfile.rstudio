@@ -1,6 +1,8 @@
 FROM anthesevenants/roodgroen:base
 # We start from the R Studio base
 
+RUN apt-get install -y lsof
+
 # Let's set the working directory correctly (also for the R environment itself)
 RUN echo "setwd(\"/home/rstudio/ElasticRoodGroen/\")" > ~/../home/rstudio/.Rprofile
 RUN mkdir -p "/home/rstudio/.local/share/rstudio/projects_settings/"
