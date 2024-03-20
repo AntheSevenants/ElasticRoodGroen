@@ -452,7 +452,7 @@ Out of the `r coefficients_count %>% formatn` coefficients in our elastic net mo
 coefficients were removed and 
 `r removed_distribution[["FALSE"]] %>% formatn` (`r removed_distribution_prop[["FALSE"]] %>% formatp`)
 coefficients were retained (@fig-coefficient-plots-1).
-All removed coefficients belong to the `Participle` predictor, which means all our 'traditional' predictors were retained by the model.
+All except for one removed coefficients belong to the `Participle` predictor, which means all but one of our 'traditional' predictors were retained by the model.
 
 ##### Lexical effects
 
@@ -497,7 +497,7 @@ boxplot(coefficient ~ order, col=c("green","red"), pch=19,
 
 ##### Other effects and intercept
 
-Recall that we added six additional predictors under multifactorial control in order to make sure that we did not lump together variation from other sources into our lexical effects. As was mentioned before, all these additional predictors were retained by the elastic net regression, which means that they are useful to model the choice between the red and green word order. This is, of course, unsurprising, since we based ourselves on previous research for the selection of these predictors. @tbl-other-coefficients shows an overview of the additional predictors and their coefficient values. Note that though elastic net regression does not provide significance levels, whether a predictor is retained also reflects the importance of that predictor in the model.
+Recall that we added seven additional predictors under multifactorial control in order to make sure that we did not lump together variation from other sources into our lexical effects. As was mentioned before, all but one of these additional predictors were retained by the elastic net regression, which means that they are useful to model the choice between the red and green word order. This is, of course, unsurprising, since we based ourselves on previous research for the selection of these predictors. @tbl-other-coefficients shows an overview of the additional predictors and their coefficient values. Note that though elastic net regression does not provide significance levels, whether a predictor is retained also reflects the importance of that predictor in the model.
 
 ```{r #tbl-other-coefficients}
 #| label: tbl-other-coefficients
