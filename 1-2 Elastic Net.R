@@ -19,7 +19,7 @@ df$participle <- as.factor(df$participle)
 df$country <- as.factor(df$country)
 
 # Make sure auxiliary lemma is recognised as a non-verbal variable
-df$auxiliary_lemma <- paste0("_is_", df$auxiliary_lemma)
+df$auxiliary_lemma <- paste0("_is_aux_", df$auxiliary_lemma)
 # Coerce the auxiliary lemma column to a factor
 df$auxiliary_lemma <- as.factor(df$auxiliary_lemma)
 
