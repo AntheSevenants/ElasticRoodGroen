@@ -17,7 +17,7 @@ df$participle <- gsub("[().»«?-]", "", df$participle)
 df$participle <- tolower(df$participle)
 
 # Remove duplicates (still needed)
-df <- df[!duplicated(df[ , c("sentence_id", "participle_index", "auxiliary_index")]),]
+df <- df[!duplicated(df[ , c("sentence", "participle_index", "auxiliary_index")]),]
 
 # Automatic dt fixing
 df <- fix_participle_dt(df, "participle")
