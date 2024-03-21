@@ -229,6 +229,15 @@ INCREMENT <- 0.001
 df$priming_rate <-
   log((df$red_primes + INCREMENT) / (df$green_primes + INCREMENT))
 
+#
+# Middle field column
+#
+df$middle_field_length <- pmin(df$participle_index, df$auxiliary_index) - df$clause_start_index
+# Issue: for some middle fields, the length is zero (thank you online corpus)
+# I just replace it with 1 to get a reasonable log
+df[df$middle_field_length == 0,]$middle_field_length <- 1
+df$log_middle_field_length <- log10(df$middle_field_length)
+
 # For inspection
 write.csv(data.frame(participle=unique(df$participle)), "unique.csv",
           row.names=FALSE)
