@@ -343,7 +343,7 @@ Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` clusters
 The mean priming rate among our attestations is `r df_filtered$priming_rate %>% mean() %>% formatd()` (median `r df_filtered$priming_rate %>% median() %>% formatd()`). 
 `r editing_distribution[["TRUE"]] %>% formatn` clusters (`r editing_distribution_prop[["TRUE"]] %>% formatp`) belong to a subcorpus with assumed edited language. 
 Of course, because the SoNaR corpus is a corpus of written language, there is a skew towards edited language. 
-The mean type frequency of the participles in the verb clusters is `r df_filtered$FREQcount %>% mean() %>% round() %>% formatn()` (median `r df_filtered$FREQcount %>% median() %>% round() %>% formatn()`). For an overview of the proportions and distributions of the additional predictor values, see @fig-descriptive-plots.
+The mean type frequency of the participles in the verb clusters is `r df_filtered$FREQcount %>% mean() %>% round() %>% formatn()` (median `r df_filtered$FREQcount %>% median() %>% round() %>% formatn()`). The mean length of the middle field is `r df_filtered$middle_field_length %>% mean() %>% round() %>% formatn()` (median `r df_filtered$log_middle_field_length %>% median() %>% round() %>% formatn()`). For an overview of the proportions and distributions of the additional predictor values, see @fig-descriptive-plots.
 
 ```{r}
 #| label: fig-descriptive-plots
@@ -358,6 +358,7 @@ The mean type frequency of the participles in the verb clusters is `r df_filtere
 #|   - "Distribution of priming rate in the dataset." 
 #|   - "Proportion of edited and unedited genres in the dataset" 
 #|   - "Frequency distribution of types in the dataset (log10 scale)" 
+#|   - "Lengths of the middle field in the dataset (log10 scale)" 
 options(scipen=999)
 
 # Adjectiveness
@@ -393,6 +394,9 @@ barplot(editing_distribution %>% sort(decreasing=TRUE),
 
 # Log frequency
 boxplot(df_filtered$logfreq, horizontal=T)
+
+# Log middle field
+boxplot(df_filtered$log_middle_field_length, horizontal=T)
 ```
 
 ### Computing semantic pull using elastic net regression
@@ -908,6 +912,8 @@ $0$ denotes no adjectival use, $1$ denotes maximal adjectival use. We computed a
 [^adjectiveness-dataset]: The adjectiveness dataset is published as a separate dataset for re-use by other researchers. See @sevenants_adjectiveness_2023.
 
 Because the Alpino syntactic parser marks separable verbs by infixing an underscore (`_`) between the preposition and verb root, we can exploit this behaviour to automatically infer whether a verb cluster contains a separable verb.
+
+To compute the length of the middle field, we calculated the number of words between the start of the clause and the verbal cluster itself. This information is based on the tokenisation of the SoNaR corpus.
 
 We included frequency information from the SUBTLEX dataset [@keuleers_subtlex-nl_2010] in order be able to assess the effect of frequency. Because frequency is typically Zipfian [@zipf_psycho-biology_1965], we transformed the frequency information using the natural logarithm for a multitude of reasons: (i) to compress the frequency variation among the types in our dataset (ii) to make the distribution of priming more normal (iii) because it makes the distribution more psychologically real.
 
