@@ -280,6 +280,8 @@ prosody_red_example
 
 [^separable-example]: e.g. *ik zoek~root~ het adres op~preposition~*, literally 'I search up the address'
 
+Another prosody-related effect is the length of the 'middle field' in Dutch. In our case, in subordinate sentences, the middle field is the area between the conjunction and the verbal cluster ("ik hier mijn selectie definitief" in the example above). Both in @de_sutter_rood_2005 [153-154] and @bloem_processing_2021 [25] it is found that the longer this middle field is, the higher the probability is of choosing the red word order. @de_sutter_rood_2005 [153] hypothesises that a longer middle field gives rise to a higher probability of consecutive stresses, which, as stated above, can be remedied by using the red word order.
+
 #### Influence of frequency
 
 @de_sutter_rood_2005 [289-295] found that the frequency of a participle's lemma positively correlates with the probability of that participle appearing in the red order. @bloem_processing_2021 [24] repeated the experiment and also found an effect in the same direction. @de_sutter_rood_2005 [323-324] argue that frequently appearing participles are easier to recover from memory, leaving more time for the language user to spend on (more difficult) stylistic encoding, which @de_sutter_rood_2005 then assume is the red order. 
