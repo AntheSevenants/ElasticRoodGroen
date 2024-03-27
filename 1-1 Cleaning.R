@@ -143,6 +143,10 @@ df <- merge(x=df, y=adjectiveness_df,
                           by="participle",
                           all.x=TRUE)
 
+# Get rid of all for which adjectiveness is too high (mistaggings)
+MAXIMUM_ADJECTIVENESS = 0.9
+df <- subset(df, adjectiveness < MAXIMUM_ADJECTIVENESS)
+
 # Load frequency data and do a left join
 frequency_df <- read.delim("data/SUBTLEX.txt", quote = "")
 frequency_df <- frequency_df[,c("Word", "FREQcount")]
