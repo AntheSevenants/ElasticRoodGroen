@@ -510,8 +510,6 @@ Recall that we added eight additional predictors under multifactorial control in
 #| label: tbl-other-coefficients
 #| tbl-cap: "Overview of the additional predictors, their values and whether they were retained by the elastic net regression" 
 
-# TODO: add auxiliary type
-
 # All other coefficients start with an underscore
 other_coefficients <- coefficients[coefficients$feature %>% substr(1,1) == "_",]
 # Change "removed" to "retained"
