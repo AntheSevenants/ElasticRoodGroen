@@ -519,7 +519,7 @@ other_coefficients$retained = ifelse(other_coefficients$removed, "no", "yes")
 # Friendly names
 other_coefficients$feature <- gsub("_(.+)", "\\1", other_coefficients$feature)
 other_coefficients$feature <- gsub("(is|_)", " ", other_coefficients$feature)
-other_coefficients$feature <- gsub("(aux)", "auxiliary", other_coefficients$feature)
+other_coefficients$feature <- gsub("(aux) (.+)", "auxiliary '\\2'", other_coefficients$feature)
 other_coefficients$predictor <- other_coefficients$feature
 other_coefficients$coefficient <- other_coefficients$coefficient %>% formatd(3)
 # Only keep interesting columns
