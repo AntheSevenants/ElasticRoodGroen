@@ -89,7 +89,7 @@ df$separable <- grepl("_", df$participle_lemma, fixed=TRUE)
 participle_counts <- table(df$participle)
 
 # Add minimum frequency
-MINIMUM_FREQUENCY = 10
+MINIMUM_FREQUENCY = 100
 df <- subset(df,
         participle %in% 
         names(participle_counts[participle_counts >= MINIMUM_FREQUENCY]))
