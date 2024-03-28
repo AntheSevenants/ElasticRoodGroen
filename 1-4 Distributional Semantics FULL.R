@@ -1,5 +1,6 @@
 # In this script, we add distributional vectors
 library(magrittr)
+library(useful)
 
 options(scipen=999)
 
@@ -158,6 +159,23 @@ get_coords <- function(mode) {
   return(coords)
 }
 
+n_cluster_search <- FitKMeans(get_coords("all"), max.clusters=20,
+                              nstart=25, seed=2204355, iter.max=100)
+n_cluster_search
+
+# We look for the cluster count where adding a cluster doesn't improve
+# the model anymore
+# So, I filter for the first non-increasing cluster, then subtract one
+n_cluster <- n_cluster_search %>% filter(!AddCluster) %>% first %>% .$Cluster - 1
+# n_cluster <- 13
+# The output is, for some reason, not deterministic, even with a seed
+# It hovers from 13 to 17
+# I picked 13, since that's the value I got first
+
+PlotHartigan(n_cluster_search)
+
+n_cluster_search[order()]
+
 # Define the clustering function
 do_clustering <- function(df,
                           coords,
@@ -170,7 +188,7 @@ do_clustering <- function(df,
   if (clustering_algorithm == "kmeans") {
     # "all" mode should cluster into three categories, other modes two
     #k <- ifelse(mode == "all", 3, 2)
-    k <- 13
+    k <- n_cluster
     clustering <- kmeans(coords, centers=k, iter.max=100)
     
     # Create a dataframe for merging
