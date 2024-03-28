@@ -28,7 +28,8 @@ ds <- dataset(df=df,
               response_variable_column="order",
               to_binary_columns=c("participle", "auxiliary_lemma"),
               other_columns=c("country", "separable", "adjectiveness", 
-                              "priming_rate", "logfreq", "edited"))
+                              "priming_rate", "logfreq", "edited",
+                              "log_middle_field_length"))
 
 # Get the list of features
 # In our case, this is the list of participles
