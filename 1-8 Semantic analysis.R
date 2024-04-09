@@ -1,4 +1,5 @@
 library(xml2)
+library(parallel)
 
 # First, load all semcor files which match the verb type
 semcor_path <- "data/dutsemcor/*.v.xml"
@@ -33,12 +34,25 @@ get_senses_memory_safe <- function(filepath) {
   
   close(con)
   
-  return(senses)
+  topmost_sense <- senses %>% table %>% sort %>% names %>% first
+  
+  return(topmost_sense)
 }
 
-semcor$path %>% lapply(function(path) {
-  get_senses_memory_safe(path) %>% table %>% sort %>% names %>% first
-})
+get_topmost_sense <- function(senses) {
+  topmost_sense <- senses %>% table %>% sort %>% names %>% first
+  
+  return(topmost_sense)
+}
+
+get_topmost_sense_from_path <- function(filepath) {
+  senses <- get_senses_memory_safe(filepath)
+  topmost_sense <- get_topmost_sense(senses)
+  
+  return(topmost_sense)
+}
+
+semcor$path %>% lapply(get_topmost_sense_from_path) %>% unlist()
 
 read_xml(semcor$path) %>% xml_find_all("/tokens/token") %>% xml_attr("sense")
 
