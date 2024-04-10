@@ -2,7 +2,7 @@ library(dplyr)
 library(zoo)
 library(slider)
 
-row_count <- 100
+row_count <- 2000000
 PRIMING_PARAGRAPHS_NO <- 1
 
 adf <- data.frame(
@@ -12,10 +12,10 @@ adf <- data.frame(
   order=sample(c("red", "green"), row_count, replace=TRUE)
 )
 
-# adf <- adf[adf$paragraph_no != 3,]
+adf <- adf[adf$paragraph_no != 3,]
 
-# indices <- sample(1:nrow(adf), 29)
-# adf <- adf[-indices,]
+indices <- sample(1:nrow(adf), 29)
+adf <- adf[-indices,]
 
 grouped_df <- adf %>%
   group_by(component, paragraph_no) %>%
@@ -48,6 +48,9 @@ grouped_df <- adf %>%
 adf <- merge(adf,
              grouped_df[, c("component", "paragraph_no", "sentence_no", "red_sentence_primes", "green_sentence_primes")],
              by = c("component", "paragraph_no", "sentence_no"), all.x = TRUE)
+
+adf$red_primes <- adf$red_paragraph_primes + adf$red_sentence_primes
+adf$green_primes <- adf$green_paragraph_primes + adf$green_sentence_primes
 
 counts <- mapply(count_preceding, 
                  adf$component, 
