@@ -1,5 +1,7 @@
 library(dplyr)
 library(magrittr)
+library(forcats)
+library(tidyr)
 
 # Read coefficients output
 df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
@@ -14,41 +16,39 @@ cluster_stats <- function(grouping_col) {
               med = median(coefficient),
               count = length(coefficient),
               adjectiveness = mean(adjectiveness),
+              arousal_num = which(!is.na(arousal)) %>% length,
+              arousal = mean(arousal, na.rm = T),
               redness = (table(order) / length(coefficient))[["red"]],
               greenness = (table(order) / length(coefficient))[["green"]],
               t.test = t.test(coefficient)$p.value <= 0.05) %>%
     filter(!is.na(!! sym(grouping_col)))
 }
 
+cluster_plot <- function(cluster_stats) {
+  # Order by greenness
+  cluster_stats <- cluster_stats[order(cluster_stats$greenness),]
+  # Remember what order the clusters are in
+  cluster_order <- cluster_stats[[1]]
+  # Now, create a row for each redness/greenness value
+  cluster_stats <- cluster_stats %>% pivot_longer(redness:greenness)
+  # Re-instate the cluster order
+  cluster_stats[[1]] <- factor(cluster_stats[[1]], levels=cluster_order)
+  # Extract cluster ids
+  cluster_ids <- cluster_stats[[1]]
+  
+  ggplot(cluster_stats, aes(fill=name, y=value, x=cluster_ids,
+                            linetype=!t.test)) +
+    geom_bar(position="fill", stat="identity", color="black") +
+    scale_fill_manual(values=c("green", "red"))
+}
+
+cluster_stats("non_zero.kmeans.full") 
+
 ### FULL
 
-cluster_stats("all.kmeans.full")
-cluster_stats("non_zero.kmeans.full")
+cluster_stats("all.kmeans.full") %>% cluster_plot()
+cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
 cluster_stats("outside_sd.kmeans.full")
-
-### PCA2D
-
-cluster_stats("all.kmeans.pca2d")
-cluster_stats("non_zero.kmeans.pca2d")
-cluster_stats("outside_sd.kmeans.pca2d")
-
-### PCA10D
-
-cluster_stats("all.kmeans.pca10d")
-cluster_stats("non_zero.kmeans.pca10d")
-cluster_stats("outside_sd.kmeans.pca10d")
-
-### TSNE2D
-
-cluster_stats("all.kmeans.tsne2d")
-cluster_stats("non_zero.kmeans.tsne2d")
-cluster_stats("outside_sd.kmeans.tsne2d")
-
-### TSNE3D
-
-cluster_stats("all.kmeans.tsne3d")
-cluster_stats("non_zero.kmeans.tsne3d")
-cluster_stats("outside_sd.kmeans.tsne3d")
 
 # Frequency counts
 table(df$all.kmeans)
