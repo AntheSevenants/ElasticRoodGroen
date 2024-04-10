@@ -48,6 +48,7 @@ def get_topmost_sense_from_path(path):
 
 tqdm.pandas(desc="Lemmas processed")
 
+# For each lemma, find the most common sense in DutchSemCor (if it exists there)
 semcor["dominant_sense"] = semcor.progress_apply(lambda row: get_topmost_sense_from_path(row["path"]),
                                         axis=1)
 
