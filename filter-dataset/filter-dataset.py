@@ -5,6 +5,7 @@ import pandas as pd
 
 from naive_dt_fix_py.naive_dt_fix import fix_participle_dt
 
+# Read dataframe
 print("[Filter] Loading dataset")
 df = pd.read_csv("../RoodGroenAnthe.csv")
 
