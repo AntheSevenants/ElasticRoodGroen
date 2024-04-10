@@ -51,6 +51,13 @@ output/*
 data/dutch.gz
 data/cow-big.txt
 
+# Do not include DutchSemCor
+data/dutchsemcor
+data/dutsemcor
+
+# Do not include Cornetto
+data/cdb2.0.lu.xml
+
 #
 # Python!
 #
