@@ -5,6 +5,8 @@
 df <- read.csv("output/RoodGroenAnthe_coefficients.csv")
 
 df[df$lemma == "goed_keuren" & df$feature == "gekeurd",]$lemma <- "keuren"
+df[df$lemma == "aan_tekenen" & df$feature == "getekend",]$lemma <- "tekenen"
+df[df$lemma == "in_slaan" & df$feature == "geslagen",]$lemma <- "slaan"
 
 # First, let's handle our separable verbs
 # In the Alpino corpus, the separable parts are split using '_'
