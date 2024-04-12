@@ -8,6 +8,20 @@ cornetto = etree.parse("../data/gelato.le.xml")
 
 print("Cornetto loaded")
 
+def get_semantic_properties(semantic_type):
+    control = False
+    attributive = False
+    spatial = False
+    cognition = False
+    dynamic = False
+
+    if semantic_type == "action":
+        control = True
+        dynamic = True
+    elif semantic_type == "process":
+        dynamic = True
+
+    return control, attributive, spatial, cognition, dynamic
 
 def get_cornetto_info(sense):
     sense_node = cornetto.xpath(f"//Sense[@senseId='{sense}']")
@@ -19,6 +33,8 @@ def get_cornetto_info(sense):
     semantic_type_node = sense_node.xpath("./Semantics-verb/semanticTypes")
     if len(semantic_type_node) != 0:
         semantic_type = semantic_type_node[0].get("semanticType")
+
+    control, attributive, spatial, cognition, dynamic = get_semantic_properties(semantic_type)
 
     polarity = None
     polarity_node = sense_node.xpath("./Sentiment")
@@ -37,7 +53,12 @@ def get_cornetto_info(sense):
             "semantic_type": semantic_type,
             "polarity": polarity,
             "valency": valency,
-            "transitivity": transitivity}
+            "transitivity": transitivity,
+            "control": control, 
+            "attributive": attributive, 
+            "spatial": spatial, 
+            "cognition": cognition, 
+            "dynamic": dynamic}
 
 
 infos = []
