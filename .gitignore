@@ -57,6 +57,7 @@ data/dutsemcor
 
 # Do not include Cornetto
 data/cdb2.0.lu.xml
+data/gelato*.xml
 
 #
 # Python!
