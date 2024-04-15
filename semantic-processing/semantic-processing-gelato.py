@@ -12,14 +12,44 @@ def get_semantic_properties(semantic_type):
     control = False
     attributive = False
     spatial = False
-    cognition = False
+    cognition = False # TODO change to 'cognitive'
     dynamic = False
 
-    if semantic_type == "action":
+    if semantic_type.startswith("action"):
         control = True
         dynamic = True
-    elif semantic_type == "process":
+    elif semantic_type.startswith("echprod"):
+        control = True
         dynamic = True
+        attributive = True
+    elif semantic_type.startswith("mvmt"):
+        control = True
+        dynamic = True
+        spatial = True
+    elif semantic_type.startswith("cognt"):
+        control = True
+        dynamic = True
+        cognition = True
+    elif semantic_type.startswith("state"):
+        # states do not have any positive properties
+        pass
+    elif semantic_type.startswith("possess"):
+        attributive = True
+    elif semantic_type.startswith("location3"):
+        control = True
+        spatial = True
+    elif semantic_type.startswith("location"):
+        spatial = True
+    elif semantic_type.startswith("stcognt"):
+        cognition = True
+    elif semantic_type.startswith("process"):
+        dynamic = True
+    elif semantic_type.startswith("prmvmt"):
+        dynamic = True
+        spatial = True
+    elif semantic_type.startswith("procognt"):
+        dynamic = True
+        cognition = True
 
     return control, attributive, spatial, cognition, dynamic
 
