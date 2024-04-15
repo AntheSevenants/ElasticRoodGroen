@@ -986,7 +986,7 @@ $$
 $$
 We computed the ratio between the number of red and green primes and used Laplace smoothing [@brysbaert_dealing_2013] to prevent division by zero. The natural logarithm attenuates large disparities between red and green *and* turns our priming ratio into a continuous variable ranging from $-\infty$ to $+\infty$.
 
-As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
+As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. For the same reason, participles with an adjectiveness value of over 0.9 were removed. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
 
 #### Converting the dataset
 
