@@ -15,7 +15,10 @@ def get_semantic_properties(semantic_type):
     cognitive = False # TODO change to 'cognitive'
     dynamic = False
 
-    if semantic_type.startswith("action"):
+    # Can be none, check for None type first
+    if semantic_type is None:
+        pass
+    elif semantic_type.startswith("action"):
         control = True
         dynamic = True
     elif semantic_type.startswith("echprod"):
