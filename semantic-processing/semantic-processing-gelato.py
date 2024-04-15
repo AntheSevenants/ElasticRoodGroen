@@ -30,11 +30,16 @@ def get_cornetto_info(sense):
     sense_node = sense_node[0]
 
     semantic_type = None
+    semantic_feature_set = None
     semantic_type_node = sense_node.xpath("./Semantics-verb/semanticTypes")
     if len(semantic_type_node) != 0:
         semantic_type = semantic_type_node[0].get("semanticType")
 
-    control, attributive, spatial, cognition, dynamic = get_semantic_properties(semantic_type)
+        # Semantic feature set available
+        if len(semantic_type_node) == 2:
+            semantic_feature_set = semantic_type_node[1].get("semanticFeatureSet")
+
+    control, attributive, spatial, cognition, dynamic = get_semantic_properties(semantic_feature_set)
 
     polarity = None
     polarity_node = sense_node.xpath("./Sentiment")
@@ -51,6 +56,7 @@ def get_cornetto_info(sense):
 
     return {"sense": sense,
             "semantic_type": semantic_type,
+            "semantic_feature_set": semantic_feature_set,
             "polarity": polarity,
             "valency": valency,
             "transitivity": transitivity,
