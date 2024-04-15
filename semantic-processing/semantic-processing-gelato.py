@@ -12,7 +12,7 @@ def get_semantic_properties(semantic_type):
     control = False
     attributive = False
     spatial = False
-    cognition = False # TODO change to 'cognitive'
+    cognitive = False # TODO change to 'cognitive'
     dynamic = False
 
     if semantic_type.startswith("action"):
@@ -29,7 +29,7 @@ def get_semantic_properties(semantic_type):
     elif semantic_type.startswith("cognt"):
         control = True
         dynamic = True
-        cognition = True
+        cognitive = True
     elif semantic_type.startswith("state"):
         # states do not have any positive properties
         pass
@@ -41,7 +41,7 @@ def get_semantic_properties(semantic_type):
     elif semantic_type.startswith("location"):
         spatial = True
     elif semantic_type.startswith("stcognt"):
-        cognition = True
+        cognitive = True
     elif semantic_type.startswith("process"):
         dynamic = True
     elif semantic_type.startswith("prmvmt"):
@@ -49,9 +49,9 @@ def get_semantic_properties(semantic_type):
         spatial = True
     elif semantic_type.startswith("procognt"):
         dynamic = True
-        cognition = True
+        cognitive = True
 
-    return control, attributive, spatial, cognition, dynamic
+    return control, attributive, spatial, cognitive, dynamic
 
 def get_cornetto_info(sense):
     sense_node = cornetto.xpath(f"//Sense[@senseId='{sense}']")
@@ -69,7 +69,7 @@ def get_cornetto_info(sense):
         if len(semantic_type_node) == 2:
             semantic_feature_set = semantic_type_node[1].get("semanticFeatureSet")
 
-    control, attributive, spatial, cognition, dynamic = get_semantic_properties(semantic_feature_set)
+    control, attributive, spatial, cognitive, dynamic = get_semantic_properties(semantic_feature_set)
 
     polarity = None
     polarity_node = sense_node.xpath("./Sentiment")
@@ -93,7 +93,7 @@ def get_cornetto_info(sense):
             "control": control, 
             "attributive": attributive, 
             "spatial": spatial, 
-            "cognition": cognition, 
+            "cognitive": cognitive, 
             "dynamic": dynamic}
 
 
