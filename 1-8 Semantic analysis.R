@@ -1,11 +1,12 @@
 semcor <- read.csv("output/RoodGroenAnthe_coefficients_semantics.csv")
 cornetto <- read.csv("output/cornetto_info.csv")
+speed <- read.csv("data/SpeedBrysbaertEmotionNorms.tsv", sep="\t")
+speed$ValenceCategory <- factor(speed$ValenceCategory, levels=c("neutral", "positive", "negative"))
 
 df <- merge(semcor, cornetto, by.x = "dominant_sense", by.y = "sense")
+df <- merge(df, speed, by.x="lemma", by.y="Word")
 
-cornetto$dominant_sense[duplicated(cornetto$dominant_sense)]
-semcor$dominant_sense[duplicated(semcor$dominant_sense)]
-semcor$lemma[duplicated(semcor$lemma)]
-df$lemma[duplicated(df$lemma)]
+df <- df %>% filter(semantic_feature_set != "")
+df$transitivity <- ifelse(df$valency == "mono", "intransitive", "transitive")
 
-lm(coefficient ~ morpho_type + conj_type + valency + transitivity + sclass + reflexive + subject + sem_type, data=df) %>% summary
+lm(coefficient ~ valency + control + attributive + spatial + cognitive + dynamic + ValenceCategory, data=df) %>% summary
