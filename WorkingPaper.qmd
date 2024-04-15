@@ -465,8 +465,6 @@ coefficients were removed and
 coefficients were retained (@fig-coefficient-plots-1).
 All except for one removed coefficients belong to the `Participle` predictor, which means all but one of our 'traditional' predictors were retained by the model.
 
-TODO: aanpassen voor logfreq
-
 ##### Lexical effects
 
 We will first, however, look at our `Participle` predictor. The coefficients which correspond to the different participles in the verb cluster attestations give us an idea of whether those participles tend to the red or green order. Since our model has the red word order as response variable $1$, positive coefficients show logit corrections towards the red word order, while negative coefficients show logit corrections towards the green word order. We can interpret these attractions as semantic pulls.
