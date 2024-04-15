@@ -546,6 +546,57 @@ Before we discuss the values of the additional predictors, we look at the interc
 
 Only one predictor was not retained: the predictor for auxiliary *worden*. From @bloem_processing_2021 [27], we would expect a slight shift towards the red order for clusters occurring with *worden*, but we see no such shift here. We checked the division between red and green for clusters with *worden*, and it is very comparable to the dataset-wide average (around a 35-65 split in favour of the red order). It seems, then, that in our mixed dataset, *worden* displays very 'average' behaviour, and has no particular red preference.
 
+#### Comparison to previous research
+
+```{r comparison-load}
+source("1-7 Comparison.R")
+```
+
+In this section, we will compare our elastic net coefficients to other quantitative measures expressing lexical preference for either the red or green word order. Keep in mind that any comparison is at best coarse, since previous methods did not support multifactorial control. As such, some of the variation ascribed to lexical effects in these older methods will have come from other sources.
+
+```{r comparison-ds-counter}
+ds_total_count <- dim(df_ds)[[1]]
+ds_zero_count <- dim(ds_zero)[[1]]
+ds_zero_perc <- (ds_zero_count / ds_total_count) %>% formatp
+ds_na_count <- dim(ds_na)[[1]]
+ds_na_perc <- (ds_na_count / ds_total_count) %>% formatp
+```
+
+First, we will compare our results to the significant Log Likelihood Ratios (LLRs) found in @de_sutter_rood_2005 [246]. For our comparison, we transformed all LLRs in favour of the green word order to be negative, while LLRs in favour of the red order remained positive. This transformation was made to be able to compare the LLR values, which are all positives, to our elastic net coefficients, the signs of which reflect a pull towards either order. Of the `r ds_total_count %>% formatn` participles with a significant LLR value in the semantic analysis of @de_sutter_rood_2005, `r ds_zero_count %>% formatn` (`r ds_zero_perc`) were eliminated in our elastic net model. This means that the elastic net technique disagrees that a semantic pull exists for these verbs. This difference likely stems from the aforementioned methodological differences in multifactorial control. An overview of the eliminated coefficients is given in @tbl-comparison-ds-zero.
+
+```{r #tbl-comparison-ds-zero}
+#| label: tbl-comparison-ds-zero
+#| tbl-cap: "Overview of all participles which have significant LLR values, but were eliminated in our elastic net regression model" 
+ds_zero <- ds_zero[c("feature","coefficient","llr")]
+# Re-order
+ds_zero <- ds_zero[,c(1, 3, 2)]
+ds_zero <- ds_zero[order(ds_zero$llr, decreasing=FALSE),]
+colnames(ds_zero) <- c("participle", "LLR", "elastic net coefficient")
+row.names(ds_zero) <- NULL
+ds_zero
+```
+
+There are also `r ds_na_count %>% formatn` (`r ds_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these 'participles' are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in @tbl-comparison-ds-na.
+
+```{r #tbl-comparison-ds-na}
+#| label: tbl-comparison-ds-na
+#| tbl-cap: "Overview of all participles which have significant LLR values, but do not appear in our dataset and therefore do not have coefficients" 
+ds_na <- ds_na[c("feature","coefficient","llr")]
+ds_na$coefficient <- "none"
+# Re-order
+ds_na <- ds_na[,c(1, 3, 2)]
+ds_na <- ds_na[order(ds_na$llr, decreasing=FALSE),]
+colnames(ds_na) <- c("participle", "LLR", "elastic net coefficient")
+row.names(ds_na) <- NULL
+ds_na
+```
+
+We computed the Pearson correlation between the modified LLR values and our elastic net coefficients and found a correlation $r$ of `r ds_cor$estimate %>% formatd(3)`, which is also significant. The correlation shows that there is a fair degree of overlap between the LLR results and our results, though the results are not one to one. Again, it is reasonable to expect a difference in results as a consequence of the differences in methodology, but generally speaking, this correlation shows that our elastic net regression methodology yields comparable results. 
+```{r fig-comparison-ds}
+#| fig-cap: "A visual comparison of the significant LLR values and our elastic net coefficients" 
+quadrant_plot(df_ds$llr, df_ds$coefficient, "Log Likelihood Ratio", "Elastic net coefficient")
+```
+
 ### Attaching insights into meaning with distributional semantics
 
 While we now have a window to the semantic preferences of participles in the red and green word order, we only see the *surface* of our semantic effects. We do not see the general semantic motivations behind the choice for either word order. To reach closer to this general semantic understanding, we made use of semantic vectors. Semantic vectors are mathematical vector representations which try to capture the meaning of words [@montes_cloudspotting_2021]. The representations hinge on statistical co-occurrences -- similar words appearing in similar contexts. An important property of semantic vectors for this study is that semantically related or comparable words tend to have similar vectors. This means that, if we can somehow inspect the vector space, we might be able to find semantic 'pockets' -- areas of words with similar meanings -- which are conducive to either word order.
@@ -846,7 +897,7 @@ Future research could zoom in on the contribution of phonological similarity bet
 
 - Misschien ook een aansporing om zelf naar de coëfficiënten te kijken met Rekker — met automatische link
 
-### Corpus and querying
+### Corpus and querying {#sec-corpus-querying}
 
 To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ('treebank') in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
 
