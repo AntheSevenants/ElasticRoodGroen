@@ -591,8 +591,9 @@ row.names(ds_na) <- NULL
 ds_na
 ```
 
-We computed the Pearson correlation between the modified LLR values and our elastic net coefficients and found a correlation $r$ of `r ds_cor$estimate %>% formatd(3)`, which is also significant. The correlation shows that there is a fair degree of overlap between the LLR results and our results, though the results are not one to one. Again, it is reasonable to expect a difference in results as a consequence of the differences in methodology, but generally speaking, this correlation shows that our elastic net regression methodology yields comparable results. 
-```{r fig-comparison-ds}
+We computed the Pearson correlation between the modified LLR values and our elastic net coefficients and found a correlation $r$ of `r ds_cor$estimate %>% formatd(3)`, which is also significant. The correlation shows that there is a fair degree of overlap between the LLR results and our results, though the results are not one to one. Again, it is reasonable to expect a difference in results as a consequence of the differences in methodology, but generally speaking, this correlation shows that our elastic net regression methodology yields comparable results. If we look at the correlation visually (@fig-comparison-ds), we also see that the data points in the top left and bottom right quadrants, i.e. participles which are estimated to be red in one technique and green in the other and vice versa, are close to the origin and few. This also shows that our results are generally in line with those of @de_sutter_rood_2005.
+
+```{r #fig-comparison-ds}
 #| fig-cap: "A visual comparison of the significant LLR values and our elastic net coefficients" 
 quadrant_plot(df_ds$llr, df_ds$coefficient, "Log Likelihood Ratio", "Elastic net coefficient")
 ```
