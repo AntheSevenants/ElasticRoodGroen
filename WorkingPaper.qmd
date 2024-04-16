@@ -597,6 +597,51 @@ We computed the Pearson correlation between the modified LLR values and our elas
 quadrant_plot(df_ds$llr, df_ds$coefficient, "Log Likelihood Ratio", "Elastic net coefficient")
 ```
 
+```{r comparison-bloem-counter}
+bloem_total_count <- dim(df_bloem)[[1]]
+bloem_zero_count <- dim(bloem_zero)[[1]]
+bloem_zero_perc <- (bloem_zero_count / bloem_total_count) %>% formatp
+bloem_na_count <- dim(bloem_na)[[1]]
+bloem_na_perc <- (bloem_na_count / bloem_total_count) %>% formatp
+```
+
+Next, we will compare our elastic net coefficients to the odds ratios (ORs) found in @bloem_processing_2021 TODO. We applied the same transformation here, making all ORs in favour of the green word order negative, in order to be able to compare these OR values with the elastic net coefficients. Of the `r bloem_total_count %>% formatn` participles in Bloem's semantic analysis, `r bloem_zero_count %>% formatn` (`r bloem_zero_perc`) were eliminated in the elastic net model. Here again, this means that the elastic net technique finds no semantic pull, again likely due to differences in operationalisation. An overview of the eliminated coefficients is given in @tbl-comparison-bloem-zero.
+
+```{r #tbl-comparison-bloem-zero}
+#| tbl-cap: "Overview of all participles which have OR values, but were eliminated in our elastic net regression model" 
+bloem_zero <- bloem_zero[c("feature","coefficient","oddsr")]
+# Re-order
+bloem_zero <- bloem_zero[,c(1, 3, 2)]
+bloem_zero <- bloem_zero[order(bloem_zero$llr, decreasing=FALSE),]
+colnames(bloem_zero) <- c("participle", "odds ratio", "elastic net coefficient")
+row.names(bloem_zero) <- NULL
+bloem_zero
+```
+
+There are also `r bloem_na_count %>% formatn` (`r bloem_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. TODO want raar
+
+```{r #tbl-comparison-bloem-na}
+#| label: tbl-comparison-bloem-na
+#| tbl-cap: "Overview of all participles which have OR values, but do not appear in our dataset and therefore do not have coefficients" 
+bloem_na <- bloem_na[c("feature","coefficient","oddsr")]
+bloem_na$coefficient <- "none"
+# Re-order
+bloem_na <- bloem_na[,c(1, 3, 2)]
+bloem_na <- bloem_na[order(bloem_na$llr, decreasing=FALSE),]
+colnames(bloem_na) <- c("participle", "odds ratio", "elastic net coefficient")
+row.names(bloem_na) <- NULL
+bloem_na
+```
+
+We left out one participle ('gezegd') since it had an unusually high OR value, and then computed the Pearson correlation between the modified OR values and our elastic net coefficients. We found a correlation $r$ of `r bloem_cor$estimate %>% formatd(3)`, which again is significant. The correlation shows a strong overlap between the OR results and our results, despite differences in methodology. 
+
+```{r #fig-comparison-bloem}
+#| fig-cap: "A visual comparison of the OR values and our elastic net coefficients" 
+quadrant_plot(df_bloem$oddsr, df_bloem$coefficient, "Odds ratio", "Elastic net coefficient")
+```
+
+If we look at the correlation visually (@fig-comparison-bloem), we again see that there are virtually no data points in the top left and bottom right quadrants, which means there is high agreement with @bloem_processing_2021 on which participles are red and which participles are green.
+
 ### Attaching insights into meaning with distributional semantics
 
 While we now have a window to the semantic preferences of participles in the red and green word order, we only see the *surface* of our semantic effects. We do not see the general semantic motivations behind the choice for either word order. To reach closer to this general semantic understanding, we made use of semantic vectors. Semantic vectors are mathematical vector representations which try to capture the meaning of words [@montes_cloudspotting_2021]. The representations hinge on statistical co-occurrences -- similar words appearing in similar contexts. An important property of semantic vectors for this study is that semantically related or comparable words tend to have similar vectors. This means that, if we can somehow inspect the vector space, we might be able to find semantic 'pockets' -- areas of words with similar meanings -- which are conducive to either word order.
