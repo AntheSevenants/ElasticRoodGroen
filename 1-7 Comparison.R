@@ -21,14 +21,17 @@ quadrant_plot <- function(x, y, xlab=NA, ylab=NA, goffset=0, roffset=0) {
   lines(x=c(0,120), y=c(0,0), col="red")
 }
 
-quadrant_plot(df_ds$llr, df_ds$coefficient, "Log likelihood ratio", "Elastic net coefficient", -1, -1.7)
+#quadrant_plot(df_ds$llr, df_ds$coefficient, "Log likelihood ratio", "Elastic net coefficient", -1, -1.7)
 
 ds_cor <- cor.test(df_ds$coefficient, df_ds$llr) # of course, the correlation is true
 
 # Bloem
 df_bloem <- merge(x=df_net, y=df_oddsr, by.x="lemma", by.y="lemma", all.y=T)
+df_bloem <- df_bloem[df_bloem$lemma != "zeggen",]
 
-plot(df_bloem$oddsr, df_bloem$coefficient)
+bloem_zero <- df_bloem[!is.na(df_bloem$coefficient) & df_bloem$coefficient == 0,]
+bloem_na <- df_bloem[is.na(df_bloem$coefficient),]
 
-cor.test(df_bloem$coefficient, df_bloem$oddsr)
+bloem_cor <- cor.test(df_bloem$coefficient, df_bloem$oddsr)
 
+#quadrant_plot(df_bloem$oddsr, df_bloem$coefficient, "Odds ratio", "Elastic net coefficient", -1, -1.7)
