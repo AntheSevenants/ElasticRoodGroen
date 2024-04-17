@@ -2,15 +2,16 @@ library(dplyr)
 library(magrittr)
 library(forcats)
 library(tidyr)
+library(ggplot2)
 
 # Read coefficients output
-df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
+cl_df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
 
-df$order <- ifelse(df$coefficient < 0, "green",
-                   ifelse(df$coefficient > 0, "red", NA))
+cl_df$order <- ifelse(cl_df$coefficient < 0, "green",
+                      ifelse(cl_df$coefficient > 0, "red", NA))
 
 cluster_stats <- function(grouping_col) {
-  df %>%
+  cl_df %>%
     group_by_at(grouping_col) %>%
     summarise(avg = mean(coefficient),
               med = median(coefficient),
@@ -42,16 +43,16 @@ cluster_plot <- function(cluster_stats) {
     scale_fill_manual(values=c("green", "red"))
 }
 
-cluster_stats("non_zero.kmeans.full") 
+#cluster_stats("non_zero.kmeans.full") 
 
 ### FULL
 
-cluster_stats("all.kmeans.full") %>% cluster_plot()
-cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
-cluster_stats("outside_sd.kmeans.full")
+#cluster_stats("all.kmeans.full") %>% cluster_plot()
+#cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
+#cluster_stats("outside_sd.kmeans.full")
 
 # Frequency counts
-table(df$all.kmeans)
+#table(df$all.kmeans)
 
 
 
