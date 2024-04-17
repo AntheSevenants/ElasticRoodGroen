@@ -137,7 +137,7 @@ get_coords <- function(mode) {
   return(coords)
 }
 
-n_cluster_search <- FitKMeans(get_coords("all"), max.clusters=20,
+n_cluster_search <- FitKMeans(get_coords("non_zero"), max.clusters=20,
                               nstart=25, seed=2204355, iter.max=100)
 n_cluster_search
 
