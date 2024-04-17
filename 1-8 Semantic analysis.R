@@ -19,6 +19,9 @@ df <- merge(df, speed, by.x = "lemma", by.y = "Word")
 df$transitivity <-
   ifelse(df$valency == "mono", "intransitive", "transitive")
 
+write.csv(df, "output/RoodGroenAnthe_coefficients_semantics_full.csv",
+          row.names = FALSE)
+
 # Not all words in Cornetto have a semantic feature set assigned to them
 # So I have to filter them out
 df_semset <- df %>% filter(semantic_feature_set != "")
