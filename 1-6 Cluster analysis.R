@@ -26,8 +26,8 @@ cluster_stats <- function(grouping_col) {
 }
 
 cluster_plot <- function(cluster_stats) {
-  # Order by greenness
-  cluster_stats <- cluster_stats[order(cluster_stats$greenness),]
+  # Order by redness
+  cluster_stats <- cluster_stats[order(cluster_stats$redness),]
   # Remember what order the clusters are in
   cluster_order <- cluster_stats[[1]]
   # Now, create a row for each redness/greenness value
