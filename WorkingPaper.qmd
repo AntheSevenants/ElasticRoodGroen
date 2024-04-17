@@ -640,14 +640,13 @@ row.names(bloem_na) <- NULL
 bloem_na
 ```
 
-We computed the Pearson correlation between the converted logits and our elastic net coefficients and found a correlation $r$ of `r bloem_cor$estimate %>% formatd(3)`, which again is significant. The correlation again shows an overlap between previous results and our results, despite differences in methodology. 
+We computed the Pearson correlation between the converted logits and our elastic net coefficients and found a correlation $r$ of `r bloem_cor$estimate %>% formatd(3)`, which again is significant. The correlation again shows an overlap between previous results and our results, despite differences in methodology. If we look at the correlation visually (@fig-comparison-bloem), we see that both models are generally in agreement on whether a participle pulls towards red or green. Note that there are more data points in the top left and bottom right quadrants than in the previous comparison, but this is related to a much larger sample size.
 
 ```{r #fig-comparison-bloem}
 #| fig-cap: "A visual comparison of the OR values converted to logits and our elastic net coefficients" 
 quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Logit", "Elastic net coefficient")
 ```
 
-If we look at the correlation visually (@fig-comparison-bloem), we see that both models are generally in agreement on whether a participle pulls towards red or green. Note that there are more data points in the top left and bottom right quadrants than in the previous comparison, but this is related to a much larger sample size.
 
 ### Attaching insights into meaning with distributional semantics
 
