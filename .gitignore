@@ -239,3 +239,4 @@ cython_debug/
 /quarto
 
 WorkingPaperShim.qmd
+*.rmarkdown
