@@ -595,7 +595,7 @@ We computed the Pearson correlation between the modified LLR values and our elas
 
 ```{r #fig-comparison-ds}
 #| fig-cap: "A visual comparison of the significant LLR values and our elastic net coefficients" 
-quadrant_plot(df_ds$llr, df_ds$coefficient, "Log Likelihood Ratio", "Elastic net coefficient")
+quadrant_plot(df_ds$llr, df_ds$coefficient, "Log likelihood ratio", "Elastic net coefficient")
 ```
 
 ```{r comparison-bloem-counter}
