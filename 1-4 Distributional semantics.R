@@ -146,6 +146,8 @@ n_cluster_search
 # So, I filter for the first non-increasing cluster (AddCluster = FALSE)
 n_cluster <- n_cluster_search %>% filter(!AddCluster) %>% first %>% .$Cluster
 
+write.csv(n_cluster_search, "output/hartigan_cluster_search.csv", row.names=F)
+
 PlotHartigan(n_cluster_search)
 
 # Define the clustering function
