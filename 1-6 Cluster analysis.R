@@ -28,19 +28,43 @@ cluster_stats <- function(grouping_col) {
 cluster_plot <- function(cluster_stats) {
   # Order by redness
   cluster_stats <- cluster_stats[order(cluster_stats$redness),]
+  cluster_stats$new_id <- 1:nrow(cluster_stats)
   # Remember what order the clusters are in
   cluster_order <- cluster_stats[[1]]
   # Now, create a row for each redness/greenness value
   cluster_stats <- cluster_stats %>% pivot_longer(redness:greenness)
   # Re-instate the cluster order
   cluster_stats[[1]] <- factor(cluster_stats[[1]], levels=cluster_order)
+  # Make new IDs a factor, otherwise R will complain
+  cluster_stats$new_id <- as.factor(cluster_stats$new_id)
   # Extract cluster ids
   cluster_ids <- cluster_stats[[1]]
   
-  ggplot(cluster_stats, aes(fill=name, y=value, x=cluster_ids,
-                            linetype=!t.test)) +
-    geom_bar(position="fill", stat="identity", color="black") +
-    scale_fill_manual(values=c("green", "red"))
+  ggplot(cluster_stats,
+         aes(
+           fill = name,
+           y = value,
+           x = new_id,
+           linetype = !t.test
+         )) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "black") +
+    geom_text(aes(
+      label = percent(value, accuracy = 1),
+      x = cluster_ids,
+      y = ifelse(name == "redness", 0.05, 0.95),
+      color = name,
+      fontface = ifelse(name == "redness", "bold", "plain")
+    ), show.legend=F
+    ) +
+    scale_linetype_manual(labels=c("yes", "no"), values=c("solid", "dashed")) +
+    scale_fill_manual(labels=c("green verbs", "red verbs"), values = c("green", "red")) +
+    scale_color_manual(values = c("black", "white")) +
+    xlab("Cluster ID") +
+    ylab("Percentage") +
+    scale_y_continuous(labels = percent) +
+    guides(linetype = guide_legend(title="Dominant colour"))
 }
 
 #cluster_stats("non_zero.kmeans.full") 
