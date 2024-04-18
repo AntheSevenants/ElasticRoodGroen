@@ -45,6 +45,7 @@ execute:
 
 ```{r initialisation}
 #| output: false
+library(dplyr)
 library(scales)
 library(magrittr)
 library(glossr)
@@ -647,53 +648,52 @@ We computed the Pearson correlation between the converted logits and our elastic
 quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Logit", "Elastic net coefficient")
 ```
 
+### Attaching insights into meaning
 
-### Attaching insights into meaning with distributional semantics
+While we now have a window to the semantic preferences of participles in the red and green word order, we only see the *surface* of our semantic effects. We do not see the general semantic motivations behind the choice for either word order. We attempted to find semantic patterns in two ways: through distributional semantics on the one hand, and through the use of a lexical database on the other hand.
 
-While we now have a window to the semantic preferences of participles in the red and green word order, we only see the *surface* of our semantic effects. We do not see the general semantic motivations behind the choice for either word order. To reach closer to this general semantic understanding, we made use of semantic vectors. Semantic vectors are mathematical vector representations which try to capture the meaning of words [@montes_cloudspotting_2021]. The representations hinge on statistical co-occurrences -- similar words appearing in similar contexts. An important property of semantic vectors for this study is that semantically related or comparable words tend to have similar vectors. This means that, if we can somehow inspect the vector space, we might be able to find semantic 'pockets' -- areas of words with similar meanings -- which are conducive to either word order.
+#### Distributional semantics
 
-As a basis for our semantic analysis, we used the 'count' snaut vectors for Dutch [@mandera_explaining_2017] -- a ready-made package with semantic vectors for almost any Dutch word imaginable. These vectors are constructed per word form (they are not constructed per attestation), which means that homonyms receive a single vector. Still, we did not expect a high level of homonymy for participles and thus did not expect issues for our study.
+In an attempt to find semantic patterns, we made use of semantic vectors. Semantic vectors are mathematical vector representations which try to capture the meaning of words [@montes_cloudspotting_2021]. The representations hinge on statistical co-occurrences -- similar words appearing in similar contexts. An important property of semantic vectors for this study is that semantically related or comparable words tend to have similar vectors. This means that, if we can somehow inspect the vector space, we might be able to find semantic 'pockets' -- areas of words with similar meanings -- which are conducive to either word order.
 
-One of the other properties of semantic vectors is that they are high-dimensional. For example, a snaut vector has a length of 200, which means that a single word is represented by 200 numbers. If we want to inspect the vector space of our words visually, we have to reduce the vectors to two or three dimensions. Typically, this is done by first computing a distance matrix, i.e. a matrix which shows the pairwise distances between each word, and then applying dimension reduction to that matrix. The dimension reduction technique will attempt to capture the information found in the high-dimensional space as well as possible in the lower-dimensional space. While there are several dimension reduction techniques available, we chose MDS [@douglas_carroll_multidimensional_1998], TSNE [@hinton_stochastic_2002] and UMAP [@mcinnes_umap_2020], following @montes_cloudspotting_2021.
+As a basis for our semantic analysis, we used the big 'COW' vectors for Dutch by @tulkens2016evaluating. These vectors are based on the COW corpus [@schafer-bildhauer-2012-building], a corpus compiled from .be and .nl websites and were trained using the word2vec algorithm [@mikolov2013efficient]. We chose the COW vectors over vectors trained on other corpora discussed in @schafer-bildhauer-2012-building, as the COW vectors performed the best in downstream tasks, and can therefore be assumed to be the richest in semantic information. Note that we did not use the vectors of the participles, but rather those of the associated infinitives. The vectors of infinitives were available for more words, and can also be seen as semantically richer.
 
-The dimension reduction in this study is carried out using *DistributionalSemanticsR* [@sevenants_distributionalsemanticsr_2023], another library made for this study. The library is a wrapper around *vegan* [@oksanen_vegan_2022], *Rtsne* [@krijthe_rtsne_2015] and *umap* [@konopka_umap_2022] and facilitates the dimension reduction process. We reduced the dimensions to 2 in order to be able to inspect the distance between the vectors visually. For a visual representation of the semantic space processed by the MDS dimension reduction technique, see @fig-basic-coords-mds. The plots for the other dimension reduction techniques are available in the appendix.
+To find patterns among the semantic vectors, we attempted to cluster the data using the Partitioning Around Medoids (PAM) technique [@kaufman_partitioning_1990]. PAM selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the `cluster` package [@maechler_cluster_2022, `pam` function].
 
-```{r visualisation-load}
+PAM requires the number of clusters used to be chosen beforehand. Since we are modelling binary variation, it might seem intuitive to choose two clusters. However, there are two problems with this approach. The first problem is apparent when we attempt to plot the semantic vectors in a lower-dimensional space (PCA plot shown in TODO). We see that the semantic space is, simply put, very busy. It is unrealistic to expect clear-cut subdivisions to appear in the data when we impose a structure that is very 'global'. With this we mean that just two clusters can never capture the variation that is inherent in a semantic space. The second problem stems from a certain methodological naïveté. Indeed, it might be naive to think that there is a clear-cut semantic feature that divides all or even most red and green verbs, and that this feature can be easily captured distributionally. This is especially the case given the inherent messiness of semantics.
+
+Unfortunately, this insight does not solve our cluster count problem, but merely reformulates it: how many clusters should we use to be able to capture semantic variation at a more local level? We attempted to solve this question in a bottom-up way, using Hartigan's rule [@hartigan1975clustering]. Hartigan's rule is based on the sum of squared distances of points within clusters. We start with two clusters, compute the sum of squared distances in those clusters, add another cluster and compute the sum again. We repeat this iteratively. When the sum of squared distances does not decrease enough to warrant a new cluster, the 'ideal' number of clusters is found. As a general rule of thumb, it is advised to keep adding clusters as long as Hartigan's statistic is bigger than ten. We used the `FitKMeans` R function from the `useful` package [@lander_useful_2023] to compute Hartigan's statistic iteratively on all vectors of verbs with a non-zero coefficient. We opted to leave out vectors of verbs with zero coefficients, because we wanted to keep the internal structure of clusters easy to interpret. @tbl-hartigan shows the continual decrease of Hartigan's statistic, until the statistic drops below ten at eight clusters.
+
+```{r #tbl-hartigan}
+#| fig-cap: "Overview of the results of the incremental Hartigan algorithm. When the Hartigan statistic drops below ten, it is no longer beneficial to add another cluster. Clusters are computed on full semantic vectors for all verbs with a non-zero coefficient"
+
+# Load the dataset
+hartigan_df <- read.csv("output/hartigan_cluster_search.csv")
+hartigan_df <- hartigan_df[order(hartigan_df$Clusters, decreasing=FALSE),]
+
+# Check where to cut display
+n_cluster <- hartigan_df %>% filter(!AddCluster) %>% first %>% .$Cluster
+hartigan_df <- head(hartigan_df, n_cluster - 1)
+
+# Friendly names
+hartigan_df$AddCluster <- ifelse(hartigan_df$AddCluster, "yes", "no")
+colnames(hartigan_df) <- c("clusters","Hartigan's statistic","add another cluster?")
+
+hartigan_df
+```
+
+Because the semantic vectors are high-dimensional, we cannot plot them easily in two or even three dimensions. As an alternative, we show the internal composition of each of the clusters in @fig-clusters. Additionally, a full line bar, in contrast to a dashed line bar, demonstrates whether a t-test finds the internal distribution in a cluster to be skewed significantly. If there is a significant skew, one could say that cluster has a 'dominant' colour. We see that there are several clusters with a green dominant colour, while there is only one with a red dominant colour. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is limited to just one cluster. Two clusters do not show a skew towards a specific order and therefore do not have a dominant colour.
+
+```{r load-clusters-r}
 #| output: false
-source("2-1 Visualisation basic.R")
+source("1-6 Cluster analysis.R")
 ```
 
-```{r #fig-coords-save}
-#| echo: FALSE
-#| output: FALSE
-#| fig-width: 5
-#| fig-height: 5
-plot_basic_coords("mds", TRUE)
-basic_mds_plot <- recordPlot()
-plot_basic_coords("tsne", TRUE)
-basic_tsne_plot <- recordPlot()
-plot_basic_coords("umap", TRUE)
-basic_umap_plot <- recordPlot()
+```{r #fig-clusters}
+cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
 ```
 
-```{r #fig-basic-coords-mds}
-#| fig-cap: Visual representations of the semantic space in MDS
-#| layout-ncol: 1
-#| fig-width: 5
-#| fig-height: 5
-
-basic_mds_plot %>% print()
-```
-
-The three constellations of distributional vectors do not immediately show a clear-cut emergent structure which we can relate to our red and green word order. At the same time, any 'manual' grouping we would make would be undesirable anyway, since it would likely be biased by human perception. Therefore, we instead focused on clustering and spatial modelling of the semantic coordinates. In the next section, we will discuss two ways we attempted to group the data and how we tried to avoid choosing a specific clustering ourselves.
-
-#### Clustering
-
-First, we attempted to use regular clustering techniques in an attempt to bring structure to the data. We clustered the semantic data points using both PAM and Dbscan.
-
-##### PAM
-
-The PAM (Partitioning Around Medoids) technique [@kaufman_partitioning_1990] selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the `cluster` package [@maechler_cluster_2022, `pam` function]. Because a predefined number of clusters is required and we have no prior knowledge on the desirable number of clusters, we built clusterings with a number of clusters ranging from 2 to 40. The upper limit is a practical choice made to avoid compute issues at larger cluster numbers.
+Unfortunately, it is difficult to take the semantic vector analysis further from here. Since semantic vectors do not have explainable dimensions, we cannot interpret what semantic properties are characteristic of specific clusters, and therefore of a specific word order. In the next section, we will attempt to get a grip on these semantic properties using a lexical database for Dutch.
 
 Because semantics is inherently messy, we made the choice to remove all participles which did not fit their cluster very well from their respective clusters. For this, we used the silhouette width metric [@rousseeuw_silhouettes_1987] in its `semvar` R implementation for semantics [@speelman_semvar_2014, `clusterqualSIL` function]. All participles with a negative silhouette width -- generally speaking, participles closer to participles from other clusters than to those of their own -- were assigned a zero cluster.
 
