@@ -739,7 +739,7 @@ We further expanded the semantic properties from Cornetto with the emotion asses
 |cognition|the verb demands emotional, perceptual or mental activitity|
 |dynamic|the verb expresses a non-static, changing situation|
 |valency|the number of arguments of the verb|
-|valence category|whether the verb is rated as 'neutral', 'positive' or 'negative'|
+|valence category|whether the verb is rated as 'neutral' or 'valenced'|
 
 : An overview of the variables of our analyses. Semantic descriptions taken from @piek2013cornetto. {#tbl-variables}
 
@@ -799,6 +799,7 @@ format_posthoc_table <- function(df) {
 sem_df$valency <- factor(sem_df$valency, levels=c("mono", "di", "tri"))
 sem_df$ValenceCategory <- factor(sem_df$ValenceCategory,
                              levels=c("neutral", "positive", "negative"))
+sem_df$valence <- sem_df$ValenceVsNeutral %>% factor(levels=c("neutral", "valenced"))
 sem_df$semantic_type <- factor(sem_df$semantic_type, levels=c("state", "process", "action"))
 
 # Not all words in Cornetto have a semantic feature set assigned to them
@@ -806,7 +807,7 @@ sem_df$semantic_type <- factor(sem_df$semantic_type, levels=c("state", "process"
 df_semset <- sem_df %>% filter(semantic_feature_set != "")
 
 semset_fit <- lm(
-  coefficient ~ control + attributive + spatial + cognitive + dynamic + valency + ValenceCategory,
+  coefficient ~ control + attributive + spatial + cognitive + dynamic + valency + valence,
   data = df_semset
 )
 semset_fit_tidy <- semset_fit %>% tidy()
