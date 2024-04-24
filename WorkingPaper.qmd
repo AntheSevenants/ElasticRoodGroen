@@ -407,7 +407,7 @@ boxplot(df_filtered$logfreq, horizontal=T)
 boxplot(df_filtered$log_middle_field_length, horizontal=T)
 ```
 
-### Computing semantic pull using elastic net regression
+### Computing semantic pull using elastic net regression {#sec-computing-semantic-pull}
 
 #### Running elastic net regression
 
@@ -685,7 +685,7 @@ colnames(hartigan_df) <- c("clusters","Hartigan's statistic","add another cluste
 hartigan_df
 ```
 
-Because the semantic vectors are high-dimensional, we cannot plot them easily in two or even three dimensions. As an alternative, we show the internal composition of each of the clusters in @fig-clusters. Additionally, a full line bar, in contrast to a dashed line bar, demonstrates whether a t-test finds the internal distribution in a cluster to be skewed significantly. If there is a significant skew, one could say that cluster has a 'dominant' colour. We see that there are several clusters with a green dominant colour, while there is only one with a red dominant colour. This corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. The red order is limited to just one cluster. Two clusters do not show a skew towards a specific order and therefore do not have a dominant colour.
+Because the semantic vectors are high-dimensional, we cannot plot them easily in two or even three dimensions. As an alternative, we show the internal composition of each of the clusters in @fig-clusters. Additionally, a full line bar, in contrast to a dashed line bar, demonstrates whether a t-test finds the internal distribution in a cluster to be skewed significantly. If there is a significant skew, one could say that cluster has a 'dominant' colour. We see that there are several clusters with a green dominant colour, while there is only one with a red dominant colour. The red order is limited to just one cluster. Two clusters do not show a skew towards a specific order and therefore do not have a dominant colour.
 
 ```{r load-clusters-r}
 #| output: false
@@ -874,6 +874,18 @@ Starting from a neutral reference point, verbs with an emotional load (either po
 3. Semantic type
 
 Our reference situation expresses a 'state' semantic type. We see that there is a significant difference between this state reference type and the 'no state' type consisting of both 'action' and 'process'. We see that when the semantic type changes to not a state, the elastic net coefficients shift slightly towards the green order (`r semtype_fit_tidy %>% filter(term == "semantic_typeno_state") %>% .$estimate %>% formatd(3)`).
+
+#### Discussion
+
+In the previous sections, we attempted to find patterns in the coefficients computed by the elastic net technique (see @sec-computing-semantic-pull). The main objective was to find whether there are certain correlations between the semantic pull towards either the red or green word order in Dutch and a specific semantic property. Previous theories of semantic influence on red and green have posited that the green word order is more lexically specific (@de_sutter_rood_2005), that the green order is more likely to lead to a stative interpretation (@pardoen1991interpretatie) and that the green word order is more associated with cognitive and negative verbs (@bloem_processing_2021). In this section, we will examine these theories in light of our own results.
+
+First of all, our clusters of verbs, based on a bottom-up clustering of semantic vectors, shows that there are more semantic areas in our semantic space which are predominantly green. While it is true that our results contain more green coefficients in the first place, the distribution between red and green is much more skewed than the distribution of our coefficients. On the basis of this outcome, one could say that this result corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. We also saw this in the range of coefficients in general in @fig-coefficient-plots-3.
+
+Based on the results of the analyses of the Cornetto lexical semantic database, we can also say that the choice between the red and green word order is at least partially syntactically and semantically motivated. The analysis of the narrow semantic labelling hints that, like @bloem_processing_2021 concluded on the basis of his small sample, verbs with a cognitive dimension tend, albeit very slightly, towards the green word order. The broader analysis showed another skew towards green with verbs with an emotional load, comparable to the pattern found by @bloem_processing_2021 with predominantly negative verbs.
+
+In the same broad semantic analysis, we also saw that there is a slight yet significant difference between 'state' semantic types and 'non-state' semantic types: non-states are found to edge slightly towards the green order. This finding is peculiar in light of the long-standing idea launched by @pardoen1991interpretatie that the green order would facilitate the stative interpretation of a verb cluster. However, we already know from @de_sutter_rood_2005 that this idea should be detached from the actual semantics of a verb, and we see here that this is indeed seems to be the case.
+
+Syntactically, the broad semantic analysis shows there to be a difference, though another slight one, between intransitive verbs on the one hand and transitive and ditransitive verbs on the other hand. Both transitive and ditransitive verbs shift towards the green word order slightly compared to intransitive verbs. TODO INTERPRETATIE
 
 Because semantics is inherently messy, we made the choice to remove all participles which did not fit their cluster very well from their respective clusters. For this, we used the silhouette width metric [@rousseeuw_silhouettes_1987] in its `semvar` R implementation for semantics [@speelman_semvar_2014, `clusterqualSIL` function]. All participles with a negative silhouette width -- generally speaking, participles closer to participles from other clusters than to those of their own -- were assigned a zero cluster.
 
