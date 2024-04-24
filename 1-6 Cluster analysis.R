@@ -19,6 +19,9 @@ cluster_stats <- function(grouping_col) {
               adjectiveness = mean(adjectiveness),
               arousal_num = which(!is.na(arousal)) %>% length,
               arousal = mean(arousal, na.rm = T),
+              cognitive_num = which(!is.na(cognitive)) %>% length,
+              cognitive = mean(cognitive_numeric, na.rm = T),
+              valence = mean(valenced_numeric, na.rm = T),
               redness = (table(order) / length(coefficient))[["red"]],
               greenness = (table(order) / length(coefficient))[["green"]],
               t.test = t.test(coefficient)$p.value <= 0.05) %>%
@@ -37,6 +40,7 @@ cluster_plot <- function(cluster_stats) {
   cluster_stats[[1]] <- factor(cluster_stats[[1]], levels=cluster_order)
   # Make new IDs a factor, otherwise R will complain
   cluster_stats$new_id <- as.factor(cluster_stats$new_id)
+  cluster_stats$percent_value <- percent(cluster_stats$value, accuracy = 1)
   # Extract cluster ids
   cluster_ids <- cluster_stats[[1]]
   
@@ -45,18 +49,22 @@ cluster_plot <- function(cluster_stats) {
            fill = name,
            y = value,
            x = new_id,
-           linetype = !t.test
+           linetype = !t.test,
+           label = percent_value
          )) +
     geom_bar(position = "fill",
              stat = "identity",
              color = "black") +
-    geom_text(aes(
-      label = percent(value, accuracy = 1),
-      x = cluster_ids,
-      y = ifelse(name == "redness", 0.05, 0.95),
-      color = name,
-      fontface = ifelse(name == "redness", "bold", "plain")
-    ), show.legend=F
+    geom_text(
+      aes(
+        label = percent_value,
+        # x = cluster_ids,
+        y = ifelse(name == "redness", .05, .9),
+        fontface = ifelse(name == "redness", "bold", "plain")
+      ),
+      show.legend = F,
+      position = position_stack(reverse=T),
+      #y=ifelse(cluster_stats$name == "redness", 0.05, 0.95) 
     ) +
     scale_linetype_manual(labels=c("yes", "no"), values=c("solid", "dashed")) +
     scale_fill_manual(labels=c("green verbs", "red verbs"), values = c("green", "red")) +
