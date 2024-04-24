@@ -48,6 +48,9 @@ execute:
 library(dplyr)
 library(scales)
 library(magrittr)
+library(broom)
+library(emmeans)
+library(forcats)
 library(glossr)
 use_glossr()
 
@@ -291,7 +294,7 @@ Another prosody-related effect is the length of the 'middle field' in Dutch. In 
 
 Another influence on the choice between red and green is priming. @de_sutter_rood_2005 [278] found that a word order is much more likely to be used if it is preceded by another cluster in the same order. A language user who has just uttered a red order is thus more included to continue using that order. Priming is considered to be the second most important language-internal influence in the choice between the two word orders [@de_sutter_rood_2005, 305].
 
-#### Influence of semantics
+#### Influence of semantics {#sec-semantics-influence}
 
 Despite the fact that semantics is deemed to be so important in all linguistic frameworks (see up), semantics is the least researched area for this alternance [@bloem_processing_2021]. Here as well, the most extensive semantic research concerns macroscopic research of some semantic feature, in this case *adjectiveness*. It has been found that the more a participle is used as an adjective, the more likely this participle is to be used in the green order [@de_sutter_rood_2005, 233-242]. This is logical, since adjectives can only appear in the green order in subordinate clauses. The choice between red and green is thus 'contaminated' by the syntactic rules of the adjective [@pijpops_constructional_2018, 286-290]. Adjectiveness is thought to be the most important language-internal factor in deciding between the red and green word order [@de_sutter_rood_2005, 305], which shows that semantics is indeed an important factor to include in a morphosyntactic analysis.
 
@@ -693,7 +696,184 @@ source("1-6 Cluster analysis.R")
 cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
 ```
 
-Unfortunately, it is difficult to take the semantic vector analysis further from here. Since semantic vectors do not have explainable dimensions, we cannot interpret what semantic properties are characteristic of specific clusters, and therefore of a specific word order. In the next section, we will attempt to get a grip on these semantic properties using a lexical database for Dutch.
+Unfortunately, it is difficult to take the semantic vector analysis further from here. Since semantic vectors do not have explainable dimensions, we cannot interpret what semantic properties are characteristic of specific clusters, and therefore of a specific word order. In the next section, we will attempt to get a grip on these semantic properties using a lexical semantic database for Dutch.
+
+#### Lexical semantic database
+
+In an attempt to find semantic patterns with explainable dimensions, we turned to Cornetto, a lexical semantic database for Dutch [@piek2013cornetto]. While Cornetto contains only a limited number of verbs found in our sample, it is richly annotated for semantic properties. If we then model our elastic net coefficients by means of these semantic properties, we can gain insights into what aspects of meaning have an influence on the choice between the red and green word order. For this section, we follow the example of @bloem_processing_2021 [132-133], discussed in @sec-semantics-influence.
+
+One feature of Cornetto is that, like in a dictionary, every lemma is annotated for different senses. Unfortunately, our dataset is not tagged for senses, which makes it challenging to look up the semantic attributes of a specific lemma. In an attempt to solve this issue, we turned to the DutchSemCor project [@vossen-etal-2012-dutchsemcor], a corpus of Dutch in which lemmas are tagged for the senses found in Cornetto. We built a frequency table for each verb found in Cornetto, and in this way determined for each verb what its most frequent or 'dominant' sense is. We used the semantic properties of those dominant senses in our analysis.
+
+```{r cornetto-stats}
+#| output: false
+
+cornetto_df <- read.csv("output/cornetto_info.csv")
+
+cornetto_size <- cornetto_df %>% dim %>% .[1]
+cornetto_size_perc <- (cornetto_size / types_count) %>% formatp
+cornetto_broad_size <- cornetto_df %>% filter(semantic_type != "") %>% dim %>% .[1]
+cornetto_broad_size_perc <- (cornetto_broad_size / types_count) %>% formatp
+cornetto_narrow_size <- cornetto_df %>% filter(semantic_feature_set != "") %>% dim %>% .[1]
+cornetto_narrow_size_perc <- (cornetto_narrow_size / types_count) %>% formatp
+```
+
+Verbs in Cornetto can have two types of semantic tags: broad and narrow semantic tags. A broad semantic tag can be a 'process', 'state' or 'action'. A narrow semantic tag is more elaborate and consists of five possible attribute values, which can either be present or not. Ideally, all verbs would be tagged with the most elaborate attributes, but unfortunately this is not the case. Of the `r types_count %>% formatn` types in our dataset, only `r cornetto_size %>% formatn` (`r cornetto_size_perc`) are part of the Cornetto database; `r cornetto_broad_size` (`r cornetto_broad_size_perc`) have a broad semantic tag and `r cornetto_narrow_size` (`r cornetto_narrow_size_perc`) have a narrow semantic tag. We will analyses with both properties.
+
+```{r speed-stats}
+sem_df <- read.csv("output/RoodGroenAnthe_coefficients_semantics_full.csv")
+sem_size <- sem_df %>% dim %>% .[1]
+sem_size_perc <- (sem_size / types_count) %>% formatp
+sem_broad_size <- sem_df %>% filter(semantic_type != "") %>% dim %>% .[1]
+sem_broad_size_perc <- (sem_broad_size / types_count) %>% formatp
+sem_narrow_size <- sem_df %>% filter(semantic_feature_set != "") %>% dim %>% .[1]
+sem_narrow_size_perc <- (sem_narrow_size / types_count) %>% formatp
+```
+
+We further expanded the semantic properties from Cornetto with the emotion assessment ratings from @speed_ratings_2023. We chose to use this dataset instead of an automated system as the dataset is large, based on actual human judgements and of a very high quality. After intersecting the verbs available in Cornetto and in the @speed_ratings_2023 dataset, we were left with `r sem_size` verbs (`r sem_size_perc`) of which `r sem_broad_size` (`r sem_broad_size_perc`) have a broad semantic tag and `r sem_narrow_size` (`r sem_narrow_size_perc`) have a narrow semantic tag. Following the example of @bloem_processing_2021, we also added valency information to the analyses. We did not choose to also include transitivity, as valency and transitivity are related, and we wanted to avoid interference in the analyses. An overview of all variables is given in @tbl-variables.
+
+|variable|description|
+|---|---|
+|control|the subject of the verb is capable of acting with volition|
+|attributive|the verb expresses a relation of ownership|
+|spatial|the verb expresses a location or movement of (one of) the participants(s)|
+|cognition|the verb demands emotional, perceptual or mental activitity|
+|dynamic|the verb expresses a non-static, changing situation|
+|valency|the number of arguments of the verb|
+|valence category|whether the verb is rated as 'neutral', 'positive' or 'negative'|
+
+: An overview of the variables of our analyses. Semantic descriptions taken from @piek2013cornetto. {#tbl-variables}
+
+As mentioned before, only a subset of verbs is tagged for the most specific semantic properties. Therefore, we made two analyses. In the first analysis, we used the smallest dataset with the richest annotations, while in the second analysis, we traded the five semantic properties for the three-way variable 'semantic type' so we could use the larger dataset. We included the second, larger analysis to be able to better assess the influence of variables with weaker effects, which would not attain significance at a smaller dataset size.
+
+```{r regression-fit-format}
+format_num_col <- function(p_value) {
+  if (p_value < 0.01) {
+    return("<0.01")
+  } else {
+    return(formatd(p_value, 4))
+  }
+}
+format_num_col <- Vectorize(format_num_col)
+
+format_table <- function(df) {
+  df <- df %>% tidy
+
+  df$sig <- ifelse(df$p.value <= 0.05, "*", "")
+  
+  df$estimate <- df$estimate %>% formatd(2)
+  df$std.error <- df$std.error %>% formatd(2)
+  df$statistic <- df$statistic %>% formatd(2)
+  df$p.value <- df$p.value %>% format_num_col()
+
+  colnames(df) <- c("predictor", "coefficient", "std. error", "t value", "p value", " ")
+
+  return(df)
+}
+
+format_posthoc_table <- function(df) {
+  df <- df$contrasts %>% tidy()
+  df$term <- NULL
+  df$df <- NULL
+  df$null <- NULL
+  df$null.value <- NULL
+  df$contrast <- gsub("[()]", "", df$contrast)
+  df$contrast <- gsub("-", "↔", df$contrast)
+
+  df$sig <- ifelse(df$adj.p.value <= 0.05, "*", "")
+
+  df$estimate <- df$estimate %>% formatd()
+  df$std.error <- df$std.error %>% formatd()
+  df$statistic <- df$statistic %>% formatd()
+  df$adj.p.value <- df$adj.p.value %>% format_num_col()
+
+  colnames(df) <- c("contrast", "coefficient", "std. error", "t value", "p value", "")
+
+  return(df)
+}
+```
+
+```{r semset-regression}
+#| output: false
+
+# Logical order
+sem_df$valency <- factor(sem_df$valency, levels=c("mono", "di", "tri"))
+sem_df$ValenceCategory <- factor(sem_df$ValenceCategory,
+                             levels=c("neutral", "positive", "negative"))
+sem_df$semantic_type <- factor(sem_df$semantic_type, levels=c("state", "process", "action"))
+
+# Not all words in Cornetto have a semantic feature set assigned to them
+# So I have to filter them out
+df_semset <- sem_df %>% filter(semantic_feature_set != "")
+
+semset_fit <- lm(
+  coefficient ~ control + attributive + spatial + cognitive + dynamic + valency + ValenceCategory,
+  data = df_semset
+)
+semset_fit_tidy <- semset_fit %>% tidy()
+```
+
+In our first analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the 'Intercept'. In our case, this reference situation is:
+
+- a verb that is not tagged for 'control', 'attributive', 'spatial', 'cognitive' or 'dynamic';
+- that is intransitive ('monovalent');
+- that has a neutral valence.
+
+Our reference situation expresses a slight bias towards the red order.
+
+The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that there are no significant differences, except for when a verb demands emotional, perceptual or mental activitity (tagged as 'cognitive'). For these verbs, a logit adjustment needs to be made towards the green order, though it is rather small (`r semset_fit_tidy %>% filter(term == "cognitiveTrue") %>% .$estimate %>% formatd(3)`). Do note that this predictor is only borderline significant.
+
+```{r tbl-semset-regresion}
+#| label: tbl-semset-regression
+#| tbl-cap: "Results of the first regression analysis. * indicates statistical significance"
+semset_fit %>% format_table()
+```
+
+For our second analysis, based on the larger database, we again modelled the elastic net coefficients for the different verbs, but this time using the simpler, more coarse semantic labelling. In fact, we simplified the semantic labelling to be binary, collapsing the 'process' and 'action' labels into a new label, 'no state'. We made this change in order to improve data balance and to make the predictor align more with the stative-dynamic dichotomy by @pardoen1991interpretatie (see @sec-semantics-influence).  @tbl-semtype-regression shows the results of this model. The intercept situation here represents a reference situation for:
+
+- a verb that expresses a state;
+- that is intransitive ('monovalent');
+- that has a neutral valence.
+
+```{r tbl-semtype-regresion}
+#| label: tbl-semtype-regression
+#| tbl-cap: "Results of the second regression analysis. * indicates statistical significance"
+df_semtype <- sem_df %>% filter(semantic_type != "")
+
+# Some relevelling
+df_semtype$semantic_type <- df_semtype$semantic_type %>% 
+  fct_collapse(state = c("state"), no_state = c("process", "action"))
+df_semtype$valence <- df_semtype$ValenceCategory %>% 
+  fct_collapse(neutral = c("neutral"), emotional = c("positive", "negative"))
+
+semtype_fit <- lm(
+  coefficient ~ valency + valence + semantic_type, data=df_semtype
+)
+semtype_fit_tidy <- semtype_fit %>% tidy()
+semtype_fit %>% format_table()
+```
+
+With this larger dataset size, we see that many of the predictors used in the analysis based on the smaller dataset now reach significance. We will treat these differences one by one.
+
+1. Valency
+
+Starting from an intransitive reference point, changes to transitive or ditransitive verbs require a correction towards the green order (`r semtype_fit_tidy %>% filter(term == "valencydi") %>% .$estimate %>% formatd(3)` and `r semtype_fit_tidy %>% filter(term == "valencytri") %>% .$estimate %>% formatd(3)` respectively). The post-hoc analysis in @tbl-valency-posthoc shows that there is only a difference between intransitive and both transitive and ditransitive verbs. There are no mutual differences between transitive and ditransitive verbs.
+
+```{r #tbl-valency-posthoc}
+#| tbl-cap: Results of the posthoc analysis for valency. * indicates statistical significance
+posthoc_valency <- emmeans(semtype_fit,
+                   revpairwise ~ valency,
+                   type="response",
+                   weights="proportional")
+format_posthoc_table(posthoc_valency)
+```
+
+2. Valence category
+
+Starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valenceemotional") %>% .$estimate %>% formatd(3)`).
+
+3. Semantic type
+
+Our reference situation expresses a 'state' semantic type. We see that there is a significant difference between this state reference type and the 'no state' type consisting of both 'action' and 'process'. We see that when the semantic type changes to not a state, the elastic net coefficients shift slightly towards the green order (`r semtype_fit_tidy %>% filter(term == "semantic_typeno_state") %>% .$estimate %>% formatd(3)`).
 
 Because semantics is inherently messy, we made the choice to remove all participles which did not fit their cluster very well from their respective clusters. For this, we used the silhouette width metric [@rousseeuw_silhouettes_1987] in its `semvar` R implementation for semantics [@speelman_semvar_2014, `clusterqualSIL` function]. All participles with a negative silhouette width -- generally speaking, participles closer to participles from other clusters than to those of their own -- were assigned a zero cluster.
 
