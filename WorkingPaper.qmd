@@ -693,6 +693,7 @@ source("1-6 Cluster analysis.R")
 ```
 
 ```{r #fig-clusters}
+#| fig-cap: An overview of the clusters found in the data. Full line bars indicate a significant skew between red and green verbs in that cluster, in contrast to dashed line bars.
 cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
 ```
 
