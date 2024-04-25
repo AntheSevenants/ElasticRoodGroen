@@ -580,7 +580,7 @@ row.names(ds_zero) <- NULL
 ds_zero
 ```
 
-There are also `r ds_na_count %>% formatn` (`r ds_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these 'participles' are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in @tbl-comparison-ds-na.
+There are also `r ds_na_count %>% formatn` participles (`r ds_na_perc`) which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these 'participles' are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in @tbl-comparison-ds-na.
 
 ```{r #tbl-comparison-ds-na}
 #| label: tbl-comparison-ds-na
