@@ -822,7 +822,7 @@ In our first analysis, based on the smaller dataset, we modelled the elastic net
 
 Our reference situation expresses a slight bias towards the red order.
 
-The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that there are no significant differences, except for when a verb demands emotional, perceptual or mental activitity (tagged as 'cognitive'). For these verbs, a logit adjustment needs to be made towards the green order, though it is rather small (`r semset_fit_tidy %>% filter(term == "cognitiveTrue") %>% .$estimate %>% formatd(3)`). Do note that this predictor is only borderline significant.
+The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that for verbs which are valenced (either positive or negative), there needs to be a small adjustment towards the green word order (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`). Of all semantic properties, we see that the 'cognitive' tag reachest closest to significance, though it does not attain it.
 
 ```{r tbl-semset-regresion}
 #| label: tbl-semset-regression
@@ -871,7 +871,7 @@ format_posthoc_table(posthoc_valency)
 
 2. Valence category
 
-Starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valenceemotional") %>% .$estimate %>% formatd(3)`).
+Like in the smaller analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valenceemotional") %>% .$estimate %>% formatd(3)`).
 
 3. Semantic type
 
@@ -883,7 +883,7 @@ In the previous sections, we attempted to find patterns in the coefficients comp
 
 First of all, our clusters of verbs, based on a bottom-up clustering of semantic vectors, shows that there are more semantic areas in our semantic space which are predominantly green. While it is true that our results contain more green coefficients in the first place, the distribution between red and green is much more skewed than the distribution of our coefficients. On the basis of this outcome, one could say that this result corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. We also saw this in the range of coefficients in general in @fig-coefficient-plots-3.
 
-Based on the results of the analyses of the Cornetto lexical semantic database, we can also say that the choice between the red and green word order is at least partially syntactically and semantically motivated. The analysis of the narrow semantic labelling hints that, like @bloem_processing_2021 concluded on the basis of his small sample, verbs with a cognitive dimension tend, albeit very slightly, towards the green word order. The broader analysis showed another skew towards green with verbs with an emotional load, comparable to the pattern found by @bloem_processing_2021 with predominantly negative verbs.
+Based on the results of the analyses of the Cornetto lexical semantic database, we can also say that the choice between the red and green word order is at least partially syntactically and semantically motivated. We were not able to confirm the finding by @bloem_processing_2021 that verbs with a cognitive dimension tend towards the green word order, though this is likely a consequence of the dataset size. Both the smaller and broader analysis did show a skew towards green with verbs with an emotional load, however, which is comparable to the pattern found by @bloem_processing_2021 with predominantly negative verbs.
 
 In the same broad semantic analysis, we also saw that there is a slight yet significant difference between 'state' semantic types and 'non-state' semantic types: non-states are found to edge slightly towards the green order. This finding is peculiar in light of the long-standing idea launched by @pardoen1991interpretatie that the green order would facilitate the stative interpretation of a verb cluster. However, we already know from @de_sutter_rood_2005 that this idea should be detached from the actual semantics of a verb, and we see here that this is indeed seems to be the case.
 
