@@ -12,7 +12,7 @@ def get_semantic_properties(semantic_type):
     control = False
     attributive = False
     spatial = False
-    cognitive = False # TODO change to 'cognitive'
+    cognitive = False
     dynamic = False
 
     # Can be none, check for None type first
