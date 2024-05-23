@@ -181,10 +181,6 @@ Both @de_sutter_rood_2005 and @bloem_processing_2021 also explored the lexical i
 
 Finally, the auxiliary verb used in tandem with the verb cluster also has an influence on the choice between the red and green order. @de_sutter_rood_2005 [257] found that the green word order is more likely when a cluster occurs with auxiliary verb *zijn* 'to be', than when it occurs with *hebben* 'to have' or *worden* 'to become'. Because *zijn* is a copular verb in Dutch, it is strongly associated with adjectival contexts which, as already stated, can only appear in the green word order in subordinate clauses (e.g. *omdat een marsman groen is*, 'because a martian is green'). An analogy process thus carries over this preference to verb cluster order. The other auxiliaries (*hebben* and *worden*), comparatively, are more associated with the red word order. We see the same tendencies in @bloem_processing_2021 [25].
 
-### Other influences
-
-In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several other factors which also contribute to the choice between red and green: syntactic depth, information value, definiteness, extraposition and inherence (collocations and multi-word units). We will not treat these influences for two reasons. Firstly, the measured effects for these influences are small compared to the influences we discussed above. This brings us to our second, more pragmatic reason: scope. The focus of this study is to find out whether the *lexical* dimension has an influence on the choice between the red and green order. The other predictors are merely included to provide multifactorial control. A further operationalisation of a plethora of smaller effects would detract from the main goal of the study, and would foray into the area of diminishing returns as well. In fact, we have treated all language-internal factors deemed by @de_sutter_rood_2005 [305] to be the most important in deciding between red or green, which should provide ample multifactorial control. [DIT STUK MOET ERGENS ANDERS KOMEN, TODO]
-
 ### Theoretical repercussions of methodological choices
 
 If we take a broad look at the studies mentioned in the previous section, we can distinguish between two broad methodological lines. The first methodological line is characterised by a focus on high-level, general predictors. In such analyses, we find predictors with a limited number of levels, sometimes pooled from more narrow categories. Typically, these analyses are carried out using (mixed-effects) regression analyses. The second methodological line is characterised by a focus on frequency, and frequency only. In such analyses, the pull of lexical items towards a specific morphosyntactic variant is computed. Typically, these analyses are carried out as collostructional analyses, or derivatives of this technique.
@@ -316,18 +312,13 @@ $$
 
 Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. 
 
-## Case study: red and green word order
+## Data
 
-### Background
+To demonstrate the elastic net technique, we built an elastic net model of red and green verb clusters in Dutch. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting.
 
-One area where lexical-semantic effects have long been thought to be important is the red and green word order in Dutch. KNIP The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting. The choice between either word order is influenced by many different factors, which we will discuss below.
+For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process and the annotation of linguistic variables, see the Appendix.
 
-
-### Data
-
-To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process and the annotation of linguistic variables, see the Appendix.
-
-#### Overview
+### Overview
 
 ```{r filtered-attestations-df-load}
 df_filtered <- read.csv("output/RoodGroenAnthe_sampled.csv")
@@ -420,9 +411,9 @@ boxplot(df_filtered$logfreq, horizontal=T)
 boxplot(df_filtered$log_middle_field_length, horizontal=T)
 ```
 
-### Computing semantic pull using elastic net regression {#sec-computing-semantic-pull}
+## Computing semantic pull using elastic net regression {#sec-computing-semantic-pull}
 
-#### Running elastic net regression
+### Running elastic net regression
 
 ```{r meta-info-load}
 source("ElasticToolsR/MetaFile.R")
@@ -433,7 +424,9 @@ alpha <- subset(model_meta$as.data.frame(), predicate == "alpha")[["object"]]
 lambda <- subset(model_meta$as.data.frame(), predicate == "lambda")[["object"]]
 ```
 
-The elastic net regression itself was also carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary_type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are 'traditional' in the sense that they have one coefficient each.
+The elastic net regression itself was also carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). Our high-level predictors are based on the influences found in @sec-semantics-influence. `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary_type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are 'traditional' in the sense that they have one coefficient each.
+
+In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several additional factors which were not previously mentioned, but which also contribute to the choice between red and green: syntactic depth, information value, definiteness, extraposition and inherence (collocations and multi-word units). These influences were not included for two reasons. Firstly, the measured effects for these influences are small compared to the influences we discussed above. This brings us to our second, more pragmatic reason: scope. The focus of this study is to build a rich, fair model with special attention for lexical influences as full predictors. Our high-level predictors of course also remain important, but they mainly serve as multifactorial control. A further operationalisation of a plethora of smaller effects would detract from the main goal of the study, and would foray into the area of diminishing returns as well. In fact, we have treated all language-internal factors deemed by @de_sutter_rood_2005 [305] to be the most important in deciding between red or green, which should provide ample multifactorial control.
 
 ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss.[^loss] Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` and lambda = `r lambda %>% formatd(3)`.
 
@@ -454,7 +447,7 @@ ElasticToolsR automatically finds the appropriate alpha and lambda values which 
 
 : An overview of the predictors for the elastic net regression {#tbl-predictors}
 
-#### Results
+### Results
 
 ```{r coefficients-data-frame}
 coefficients <- read.csv("output/RoodGroenAnthe_coefficients.csv")
@@ -482,7 +475,7 @@ coefficients were removed and
 coefficients were retained (@fig-coefficient-plots-1).
 All except for one removed coefficients belong to the `Participle` predictor, which means all but one of our 'traditional' predictors were retained by the model.
 
-##### Lexical effects
+#### Lexical effects
 
 We will first, however, look at our `Participle` predictor. The coefficients which correspond to the different participles in the verb cluster attestations give us an idea of whether those participles tend to the red or green order. Since our model has the red word order as response variable $1$, positive coefficients show logit corrections towards the red word order, while negative coefficients show logit corrections towards the green word order. We can interpret these attractions as semantic pulls.
 Of the retained coefficients, 
@@ -523,7 +516,7 @@ boxplot(coefficient ~ order, col=c("green","red"), pch=19,
         horizontal=T, data=coefficients_non_zero)
 ```
 
-##### Other effects and intercept
+#### Other effects and intercept
 
 Recall that we added eight additional predictors under multifactorial control in order to make sure that we did not lump together variation from other sources into our lexical effects. As was mentioned before, all but one of these additional predictors were retained by the elastic net regression, which means that they are useful to model the choice between the red and green word order. This is, of course, unsurprising, since we based ourselves on previous research for the selection of these predictors. @tbl-other-coefficients shows an overview of the additional predictors and their coefficient values. Note that though elastic net regression does not provide significance levels, whether a predictor is retained also reflects the importance of that predictor in the model.
 
@@ -563,7 +556,7 @@ Before we discuss the values of the additional predictors, we look at the interc
 
 Only one predictor was not retained: the predictor for auxiliary *worden*. From @bloem_processing_2021 [27], we would expect a slight shift towards the red order for clusters occurring with *worden*, but we see no such shift here. We checked the division between red and green for clusters with *worden*, and it is very comparable to the dataset-wide average (around a 35-65 split in favour of the red order). It seems, then, that in our mixed dataset, *worden* displays very 'average' behaviour, and has no particular red preference.
 
-#### Comparison to previous research
+### Comparison to previous research
 
 ```{r comparison-load}
 source("1-7 Comparison.R")
