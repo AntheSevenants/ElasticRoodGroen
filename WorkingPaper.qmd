@@ -428,8 +428,6 @@ The elastic net regression itself was also carried using ElasticToolsR [@sevenan
 
 In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several additional factors which were not previously mentioned, but which also contribute to the choice between red and green: syntactic depth, information value, definiteness, extraposition and inherence (collocations and multi-word units). These influences were not included for two reasons. Firstly, the measured effects for these influences are small compared to the influences we discussed above. This brings us to our second, more pragmatic reason: scope. The focus of this study is to build a rich, fair model with special attention for lexical influences as full predictors. Our high-level predictors of course also remain important, but they mainly serve as multifactorial control. A further operationalisation of a plethora of smaller effects would detract from the main goal of the study, and would foray into the area of diminishing returns as well. In fact, we have treated all language-internal factors deemed by @de_sutter_rood_2005 [305] to be the most important in deciding between red or green, which should provide ample multifactorial control.
 
-ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss.[^loss] Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` and lambda = `r lambda %>% formatd(3)`.
-
 [^loss]: Loss is a measure of the difference between a model's prodictions and the actual data.
 
 | predictor | type | possible values |
@@ -446,6 +444,8 @@ ElasticToolsR automatically finds the appropriate alpha and lambda values which 
 
 
 : An overview of the predictors for the elastic net regression {#tbl-predictors}
+
+ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss.[^loss] Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` and lambda = `r lambda %>% formatd(3)`.
 
 ### Results
 
