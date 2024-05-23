@@ -724,7 +724,7 @@ cornetto_narrow_size <- cornetto_df %>% filter(semantic_feature_set != "") %>% d
 cornetto_narrow_size_perc <- (cornetto_narrow_size / types_count) %>% formatp
 ```
 
-Verbs in Cornetto can have two types of semantic tags: broad and narrow semantic tags. A broad semantic tag can be a 'process', 'state' or 'action'. A narrow semantic tag is more elaborate and consists of five possible attribute values, which can either be present or not. Ideally, all verbs would be tagged with the most elaborate attributes, but unfortunately this is not the case. Of the `r types_count %>% formatn` types in our dataset, only `r cornetto_size %>% formatn` (`r cornetto_size_perc`) are part of the Cornetto database; `r cornetto_broad_size` (`r cornetto_broad_size_perc`) have a broad semantic tag and `r cornetto_narrow_size` (`r cornetto_narrow_size_perc`) have a narrow semantic tag. We will analyses with both properties.
+Verbs in Cornetto can have two types of semantic tags: broad and narrow semantic tags. A broad semantic tag can be a 'process', 'state' or 'action'. A narrow semantic tag is more elaborate and consists of five possible attribute values, which can either be present or not. Ideally, all verbs would be tagged with the most elaborate attributes, but unfortunately this is not the case. Of the `r types_count %>% formatn` types in our dataset, only `r cornetto_size %>% formatn` (`r cornetto_size_perc`) are part of the Cornetto database; `r cornetto_broad_size` (`r cornetto_broad_size_perc`) have a broad semantic tag and `r cornetto_narrow_size` (`r cornetto_narrow_size_perc`) have a narrow semantic tag. We will build analyses with both properties.
 
 ```{r speed-stats}
 sem_df <- read.csv("output/RoodGroenAnthe_coefficients_semantics_full.csv")
