@@ -828,7 +828,7 @@ In our first analysis, based on the smaller dataset, we modelled the elastic net
 
 Our reference situation expresses a slight bias towards the red order.
 
-The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that for verbs which are valenced (either positive or negative), there needs to be a small adjustment towards the green word order (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`). Of all semantic properties, we see that the 'cognitive' tag reachest closest to significance, though it does not attain it.
+The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that for verbs which are valenced (either positive or negative), there needs to be a small adjustment towards the green word order (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`). Of all semantic properties, we see that the 'cognitive' tag reaches closest to significance, though it does not attain it.
 
 ```{r tbl-semset-regresion}
 #| label: tbl-semset-regression
