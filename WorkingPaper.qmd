@@ -657,11 +657,11 @@ We computed the Pearson correlation between the converted logits and our elastic
 quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Logit", "Elastic net coefficient")
 ```
 
-### Attaching insights into meaning
+## Attaching insights into meaning
 
 While we now have a window to the semantic preferences of participles in the red and green word order, we only see the *surface* of our semantic effects. We do not see the general semantic motivations behind the choice for either word order. We attempted to find semantic patterns in two ways: through distributional semantics on the one hand, and through the use of a lexical database on the other hand.
 
-#### Distributional semantics
+### Distributional semantics
 
 In an attempt to find semantic patterns, we made use of semantic vectors. Semantic vectors are mathematical vector representations which try to capture the meaning of words [@montes_cloudspotting_2021]. The representations hinge on statistical co-occurrences -- similar words appearing in similar contexts. An important property of semantic vectors for this study is that semantically related or comparable words tend to have similar vectors. This means that, if we can somehow inspect the vector space, we might be able to find semantic 'pockets' -- areas of words with similar meanings -- which are conducive to either word order.
 
@@ -705,7 +705,7 @@ cluster_stats("non_zero.kmeans.full") %>% cluster_plot()
 
 Unfortunately, it is difficult to take the semantic vector analysis further from here. Since semantic vectors do not have explainable dimensions, we cannot interpret what semantic properties are characteristic of specific clusters, and therefore of a specific word order. In the next section, we will attempt to get a grip on these semantic properties using a lexical semantic database for Dutch.
 
-#### Lexical semantic database
+### Lexical semantic database
 
 In an attempt to find semantic patterns with explainable dimensions, we turned to Cornetto, a lexical semantic database for Dutch [@piek2013cornetto]. While Cornetto contains only a limited number of verbs found in our sample, it is richly annotated for semantic properties. If we then model our elastic net coefficients by means of these semantic properties, we can gain insights into what aspects of meaning have an influence on the choice between the red and green word order. For this section, we follow the example of @bloem_processing_2021 [132-133], discussed in @sec-semantics-influence.
 
@@ -883,7 +883,7 @@ Like in the smaller analysis, starting from a neutral reference point, verbs wit
 
 Our reference situation expresses a 'state' semantic type. We see that there is a significant difference between this state reference type and the 'no state' type consisting of both 'action' and 'process'. We see that when the semantic type changes to not a state, the elastic net coefficients shift slightly towards the green order (`r semtype_fit_tidy %>% filter(term == "semantic_typeno_state") %>% .$estimate %>% formatd(3)`).
 
-#### Discussion
+## Discussion
 
 In the previous sections, we attempted to find patterns in the coefficients computed by the elastic net technique (see @sec-computing-semantic-pull). The main objective was to find whether there are certain correlations between the semantic pull towards either the red or green word order in Dutch and a specific semantic property. Previous theories of semantic influence on red and green have posited that the green word order is more lexically specific [@de_sutter_rood_2005], that the green order is more likely to lead to a stative interpretation [@pardoen1991interpretatie] and that the green word order is more associated with cognitive and negative verbs [@bloem_processing_2021]. In this section, we will examine these theories in light of our own results.
 
