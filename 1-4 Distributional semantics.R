@@ -1,6 +1,7 @@
 # In this script, we add distributional vectors
 library(magrittr)
 library(useful)
+library(umap)
 
 options(scipen=999)
 
@@ -85,8 +86,6 @@ attach_semantics <- function(df, mat) {
   colnames(mat) <- c("x", "y")
   mat$feature <- rownames(mat)
   
-  sem_df <- read.csv("output/RoodGroenAnthe_coefficients_semantics_full.csv")
-  
   mat <- merge(mat, df, by = "feature", all.x = T)
   mat <-
     merge(mat, sem_df[c(
@@ -116,7 +115,7 @@ do_plot <- function(mat, colors=NA) {
 
 do_sem_plot <- function(mat) {
   ggplot(data=mat) +
-    geom_point(aes(x=x, y=y, color=order, shape=cognitive, size=1.)) +
+    geom_jitter(aes(x=x, y=y, color=order, shape=valency, size=0.1)) +
     scale_color_manual(values=c("green", "red"))
 }
 
@@ -185,9 +184,6 @@ do_clustering <- function(df,
   return(coefficients_go)  
 }
 
-merged_df$order <- ifelse(merged_df$coefficient < 0, "green",
-                          ifelse(merged_df$coefficient > 0, "red", "grey"))
-
 df <- do_clustering(df, get_coords("all"), "kmeans", "all", "full")
 df <- do_clustering(df, get_coords("non_zero"), "kmeans", "non_zero", "full")
 df <- do_clustering(df, get_coords("outside_sd"), "kmeans", "outside_sd", "full")
@@ -215,15 +211,15 @@ do_umap <- function(coords, dims=2) {
   umap(coords, n_components=dims)$layout
 }
 
-attach_semantics(sem_df, get_coords("non_zero") %>% do_umap()) %>% do_sem_plot()
-attach_semantics(sem_df, get_coords("non_zero") %>% dist_mat() %>% do_tsne()) %>% do_sem_plot()
+pca_coords <- get_coords("non_zero") %>% do_pca() %>% as.data.frame()
+pca_coords$participle <- row.names(pca_coords)
+colnames(pca_coords) <- c("pca.x", "pca.y", "participle")
+row.names(pca_coords) <- NULL
 
-attach_semantics(sem_df, get_coords("non_zero") %>% dist_mat() %>% do_tsne()) %>%
-  filter(!is.na(cognitive)) %>%
-  mutate(cognitive = ifelse(cognitive == "True", T, F)) %>%
-  glm(cognitive ~ x + y, family="binomial", data=.) %>% summary
+df <- merge(df, pca_coords, by.x="feature", by.y="participle", all.x=TRUE)
 
-do_sem_plot(df, sem_df, get_coords("non_zero") %>% do_umap)
+df$order <- ifelse(df$coefficient < 0, "green",
+                   ifelse(df$coefficient > 0, "red", "grey"))
 
 write.csv(df, "output/RoodGroenAnthe_coefficients_infused_vectors.csv", 
           row.names=FALSE)

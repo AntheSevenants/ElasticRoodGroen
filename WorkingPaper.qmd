@@ -667,7 +667,50 @@ As a basis for our semantic analysis, we used the big 'COW' vectors for Dutch by
 
 To find patterns among the semantic vectors, we attempted to cluster the data using the Partitioning Around Medoids (PAM) technique [@kaufman_partitioning_1990]. PAM selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the `cluster` package [@maechler_cluster_2022, `pam` function].
 
-PAM requires the number of clusters used to be chosen beforehand. Since we are modelling binary variation, it might seem intuitive to choose two clusters. However, there are two problems with this approach. The first problem is apparent when we attempt to plot the semantic vectors in a lower-dimensional space (PCA plot shown in TODO). We see that the semantic space is, simply put, very busy. It is unrealistic to expect clear-cut subdivisions to appear in the data when we impose a structure that is very 'global'. With this we mean that just two clusters can never capture the variation that is inherent in a semantic space. The second problem stems from a certain methodological naïveté. Indeed, it might be naive to think that there is a clear-cut semantic feature that divides all or even most red and green verbs, and that this feature can be easily captured distributionally. This is especially the case given the inherent messiness of semantics.
+PAM requires the number of clusters used to be chosen beforehand. Since we are modelling binary variation, it might seem intuitive to choose two clusters. However, there are two problems with this approach. The first problem is apparent when we attempt to plot the semantic vectors in a lower-dimensional space (see @fig-pam-viz). We see that the semantic space is, simply put, very busy. It is unrealistic to expect clear-cut subdivisions to appear in the data when we impose a structure that is very 'global'. With this we mean that just two clusters can never capture the variation that is inherent in a semantic space. The second problem stems from a certain methodological naïveté. Indeed, it might be naive to think that there is a clear-cut semantic feature that divides all or even most red and green verbs, and that this feature can be easily captured distributionally. This is especially the case given the inherent messiness of semantics.
+
+```{r #fig-pam-viz}
+#| fig-cap: A visual representations of the semantic meaning space, dimensionally reduced through PCA
+#| fig-width: 5
+#| fig-height: 5
+
+pam_df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
+
+plot_basic_coords <- function(df, technique, do.legend=FALSE) {
+  colours <- c("red", "green")
+
+  x_column <- paste0(technique, ".x")
+  y_column <- paste0(technique, ".y")
+
+  df <- df[!is.na(df[[x_column]]),] 
+  
+  par(mar=c(4, 4, 1, 1))
+  
+  plot(
+    df[, x_column],
+    df[, y_column],
+    pch = 19,
+    cex = 0.5,
+    col = colours[factor(df$order)],
+    xlab = "x",
+    ylab = "y",
+    asp = 1
+  )
+  
+  if (do.legend) {
+    df$order <- factor(df$order, levels=c("red", "green"))
+
+    legend("bottomright",
+           legend = levels(df$order),
+           pch = 19,
+           col = colours,
+           bty = "n",
+           horiz = FALSE)
+  }
+}
+
+plot_basic_coords(pam_df, "pca", TRUE)
+```
 
 Unfortunately, this insight does not solve our cluster count problem, but merely reformulates it: how many clusters should we use to be able to capture semantic variation at a more local level? We attempted to solve this question in a bottom-up way, using Hartigan's rule [@hartigan1975clustering]. Hartigan's rule is based on the sum of squared distances of points within clusters. We start with two clusters, compute the sum of squared distances in those clusters, add another cluster and compute the sum again. We repeat this iteratively. When the sum of squared distances does not decrease enough to warrant a new cluster, the 'ideal' number of clusters is found. As a general rule of thumb, it is advised to keep adding clusters as long as Hartigan's statistic is bigger than ten. We used the `FitKMeans` R function from the `useful` package [@lander_useful_2023] to compute Hartigan's statistic iteratively on all vectors of verbs with a non-zero coefficient. We opted to leave out vectors of verbs with zero coefficients, because we wanted to keep the internal structure of clusters easy to interpret. @tbl-hartigan shows the continual decrease of Hartigan's statistic, until the statistic drops below ten at eight clusters.
 
