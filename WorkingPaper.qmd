@@ -1072,27 +1072,27 @@ To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elasti
 Red order:
 
 ```{.r .code-overflow-wrap}
-//node[@cat="cp" and node[@rel="cmp" and @pt="vg" and number(@begin) < ../node[@rel="body" and @cat="ssub"]/node[@rel="su" and @pt="vnw"]/number(@begin)] and node[@rel="body" and @cat="ssub" and node[@rel="su" and @pt="vnw" and number(@begin) < ../node[@rel="hd" and @pt="ww"]/number(@begin)] and node[@rel="hd" and @pt="ww" and number(@begin) < ../node[@rel="vc" and @cat="ppart"]/node[@rel="hd" and @pt="ww"]/number(@begin)] and node[@rel="vc" and @cat="ppart" and node[@rel="hd" and @pt="ww"]]]]
+//node[(@cat="cp" or @cat="rel" or @cat="inf") and //node[(@wvorm="pv" or @wvorm="inf") and @begin < ./preceding-sibling::node/node[@wvorm="vd"]/@begin | ./following-sibling::node/node[@wvorm="vd"]/@begin]]
 ```
 
 Green order:
 
 ```{.r .code-overflow-wrap}
-//node[@cat="cp" and node[@rel="cmp" and @pt="vg" and number(@begin) < ../node[@rel="body" and @cat="ssub"]/node[@rel="su" and @pt="vnw"]/number(@begin)] and node[@rel="body" and @cat="ssub" and node[@rel="su" and @pt="vnw" and number(@begin) < ../node[@rel="vc" and @cat="ppart"]/node[@rel="hd" and @pt="ww"]/number(@begin)] and node[@rel="vc" and @cat="ppart" and node[@rel="hd" and @pt="ww" and number(@begin) < ../../node[@rel="hd" and @pt="ww"]/number(@begin)]] and node[@rel="hd" and @pt="ww"]]]
+//node[(@cat="cp" or @cat="rel" or @cat="inf") and //node[(@wvorm="pv" or @wvorm="inf") and @begin > ./preceding-sibling::node/node[@wvorm="vd"]/@begin | ./following-sibling::node/node[@wvorm="vd"]/@begin]]
 ```
 
 **Xpath queries for retrieving verb cluster participle**
 
 ```{.r .code-overflow-wrap}
-//node[@wvorm="vd" and @begin $SIGN$ ../following-sibling::node[@wvorm="pv"]/@begin | ../preceding-sibling::node[@wvorm="pv"]/@begin]
+.//node[@rel="hd" and @wvorm="vd" and @begin $SIGN$ ../../node[@rel="hd" and @pt="ww"]/@begin and not(../../@cat="smain") and ../../../../node[@id="$ID$"]]
 ```
 
-with `$SIGN` = `>` for the red order, `<` for the green order
+with `$SIGN` = `>` for the red order, `<` for the green order, and `$ID` = the ID of the parent sentence
 
 **Xpath queries for retrieving verb cluster auxiliary**
 
 ```{.r .code-overflow-wrap}
-//node[@wvorm="pv" and @begin $SIGN$ ./preceding-sibling::node/node[@wvorm="vd"]/@begin | ./following-sibling::node/node[@wvorm="vd"]/@begin]
+.//node[@rel="hd" and @pt="ww" and @begin $SIGN$ ../node/node[@rel="hd" and @wvorm="vd"]/@begin and not(../@cat="smain") and ../../../node[@id="$ID$"]]
 ```
 
-with `$SIGN` = `<` for the red order, `>` for the green order
+with `$SIGN` = `<` for the red order, `>` for the green order, and `$ID` = the ID of the parent sentence
