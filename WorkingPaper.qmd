@@ -212,11 +212,11 @@ As mentioned before, we will showcase the elastic net regression technique throu
 #| tbl-cap: Red word order example
 if (!suppress_gloss) {
 red_example <- as_gloss(
-  "Vandaar dat hij ons opnieuw is~AUX~ aangeboden~PART~.",
+  "Vandaar dat hij ons opnieuw is~AUX~ aangeboden~PTCP~.",
   "hence that he us again was offered",
   translation = "Hence why he was offered to us again.",
   label = "red-example",
-  source = "[AUX + PART]: red order (WR-P-P-G-0000250935.p.3.s.1[^gloss-source])"
+  source = "[AUX + PTCP]: red order (WR-P-P-G-0000250935.p.3.s.1[^gloss-source])"
 )
 red_example
 }
@@ -226,11 +226,11 @@ red_example
 if (!suppress_gloss) {
 #| tbl-cap: Green word order example
 green_example <- as_gloss(
-  "Zolang ge god maar aanbeden~PART~ hebt~AUX~.",
+  "Zolang ge god maar aanbeden~PTCP~ hebt~AUX~.",
   "as-long-as you God but worshipped have",
   translation = "As long as you've worshipped God",
   label = "green-example",
-  source = "[PART + AUX]: green order (WR-P-E-A-0000223098.p.4.s.2)"
+  source = "[PTCP + AUX]: green order (WR-P-E-A-0000223098.p.4.s.2)"
 )
 green_example
 }
@@ -270,7 +270,7 @@ prosody_green_example <- as_gloss(
   "that I here my selection definitively enforced have .",
   translation = "that I have definitively enforced my selection here.",
   label = "prosody_green-example",
-  source = "[PART + AUX] adapted green order (WR-P-P-G-0000198602.p.7.s.4)"
+  source = "[PTCP + AUX] adapted green order (WR-P-P-G-0000198602.p.7.s.4)"
 )
 prosody_green_example
 }
@@ -286,7 +286,7 @@ prosody_red_example <- as_gloss(
   "that I here my selection definitively have enforced .",
   translation = "that I have definitively enforced my selection here.",
   label = "prosody_red-example",
-  source = "[AUX + PART] actual red order (WR-P-P-G-0000198602.p.7.s.4)"
+  source = "[AUX + PTCP] actual red order (WR-P-P-G-0000198602.p.7.s.4)"
 )
 prosody_red_example
 }
