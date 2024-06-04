@@ -71,129 +71,21 @@ suppress_gloss <- FALSE
 
 ## Introduction
 
-Whenever there are "alternate ways of saying the same thing" [@labov_sociolinguistic_1972, 188] in a language, linguists take great interest. Traditionally in linguistics, there are long-standing theories that "different forms must have [also] different meanings" [@haiman_iconicity_1980, 515-516], be it denotationally, pragmatically or socially [@croft_construction_2010, 472]. In this regard, the verbal clusters found in many Germanic languages, constructions which feature multiple verbal items [@wurmbrand_verb_2017, 4611], are especially interesting: they often feature variation which is esentially free, without any true meaning differences. More specifically in Dutch, we find the alternance between the red and green word order, a very well-researched morphosyntactic alternance in Dutch. The gist is that in verbal clusters, two verb orders are possible:
+### Studying alternate ways of saying the same thing
 
-```{r, red-gloss}
-#| tbl-cap: Red word order example
-if (!suppress_gloss) {
-red_example <- as_gloss(
-  "Vandaar dat hij ons opnieuw is~AUX~ aangeboden~PART~.",
-  "hence that he us again was offered",
-  translation = "Hence why he was offered to us again.",
-  label = "red-example",
-  source = "[AUX + PART]: red order (WR-P-P-G-0000250935.p.3.s.1[^gloss-source])"
-)
-red_example
-}
-```
+Whenever there are "alternate ways of saying the same thing" [@labov_sociolinguistic_1972, 188] in a language, linguists take great interest. As such, several techniques have been developed to try and explain the choice between these "alternate ways" accurately as possible. If we take a broad look at the available techniques to model morphosyntactic variation, we can distinguish between two broad methodological lines. The first methodological line is characterised by a focus on high-level, general predictors. In such analyses, we find predictors with a limited number of levels, sometimes pooled from more narrow categories. Typically, these analyses are carried out using (mixed-effects) regression analyses [e.g. @gries_most_2015]. The second methodological line is characterised by a focus on frequency, and frequency only. In such analyses, the pull of lexical items towards a specific morphosyntactic variant is computed. Typically, these analyses are carried out as collostructional analyses, or derivatives of this technique [todo gries reference].
 
-```{r, green-gloss}
-if (!suppress_gloss) {
-#| tbl-cap: Green word order example
-green_example <- as_gloss(
-  "Zolang ge god maar aanbeden~PART~ hebt~AUX~.",
-  "as-long-as you God but worshipped have",
-  translation = "As long as you've worshipped God",
-  label = "green-example",
-  source = "[PART + AUX]: green order (WR-P-E-A-0000223098.p.4.s.2)"
-)
-green_example
-}
-```
+The issue with these two lines of research is that they inadvertently have a bias for one specific type of predictor. Regression analysis promotes the use of high-level, clear-cut predictors, while collostructional analysis is solely focussed on lexical items. This puts these probabilistic models into a pickle, as they are forced into highlighting only part of the phenomena under scrutiny. Of course, this also has repercussions theoretically, as predictors of different natures are never present as equals in the same models, which means linguistic conclusions are usually only centred around one or the other -- never both at once. Of course, these results are still valid in the strict sense, but they never paint a full picture. In this article, we will showcase elastic net regression, a regression technique which can handle both high-level and lexical predictors at once in a single model. We will demonstrate this technique through a case study of a morphosyntactic alternance in Dutch. First, however, we will discuss previous attempts to bring the lexical dimension into models of variation.
 
-[^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
+### Previous lexical effects research
 
-This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. Crucially, a difference in word order does not entail a difference in meaning [@bloem_processing_2021, 2].
-
-### Formal accounts
-
-Verb cluster variation such as the red and green word order are of high interest to formal syntactic theorists, since they pose fundamental challenges to the formal syntactic apparatus. More specifically, in formal linguistic theory, a choice can be made to opt either for a head-initial or a head-final syntactic design [@augustinus_complement_2015, 46]. In a head-initial design, the head of a phrase is always generated first in that phrase, with its complements coming second. In contrast, in a head-final design, the complements of a phrase come first, and the head of those complements comes after. The choice between head-initial or head-final has repercussions for the so-called 'base order' in verb clusters. A head-initial design generates the red word order in Dutch by default: the auxiliary, which serves as the head in the verbal phrase, is generated first, and selects the participle as its complement. A head-final design generates the green word order in Dutch by default: the auxiliary is generated last, and the participle it selects as its complement comes before it. West-Germanic languages are commonly thought of as head-final [@wurmbrand_verb_2017, 4614], but head-initial accounts also exist [@zwart1993dutch].
-
-Of course, a formal grammar should be able to cover both word orders which naturally occur in Dutch, regardless of head location. @wurmbrand_verb_2017 shows two strategies to achieve this coverage. The first strategy is to ignore verb cluster word order variation as being part of the syntax. In this strategy, the actual verb cluster order is determined only *after* the sentence deep structure is generated [@wurmbrand2004syntactic]. This is done through a mechanism called 'Flip'. This mechanism swaps sister nodes, such as an auxiliary and a participle under the same node. Through this technique, any of our two word orders can be derived, regardless of the base order. This post-syntactic strategy is motivated on semantic terms: a change in order has no fundamental semantic consequences, and therefore the distinction is not considered important to have represented in the actual, deep syntax tree.
-
-The second strategy is to use movement, a common device in formal syntactic theory where elements in the deep structure move to other locations, sometimes iteratively, as the result of some language-internal trigger. There is no shortage of possible movements, regardless of head location. For example, in a head-final architecture (corresponding to the green word order), the red word order can be derived through *verb raising* [@evers_transformational_1975], a process in which the participle moves upwards to the auxiliary and attaches to the right.
-
-Theoretical-formal accounts, however, have not yet been able to find an explanation for the occurrence of either the red or green word order. While there are ample theoretical devices to derive any word order from any base order, even for highly complex clusters, there are no theoretical grounds for explaining the possible variation between red and green. Crucially, if the choice between two variants is free, there cannot be a trigger for movement, yet movement is compulsory in order to be able to derive the non-base word order.
-
-### Probabilistic accounts {#sec-probabilistic-accounts}
-
-Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and instead attempt to explain verb cluster variation using probabilistic models. We will first give an overview of the different probabilistic influences that have been found so far for the red and green word order. After this overview, we will discuss the theoretical implications imposed by the current state-of-the-art methodology for probabilistic research of language variation.
-
-#### Influence of lectal factors
-
-Context is an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Inversely, this means that formal, unidirectional and edited language favours the red word order.
-
-#### Influence of prosody
-
-Another source of influence is that of prosody. The most important prosodical influence [@de_sutter_rood_2005, 305] stems from the so-called 'separable verbs' in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two consecutive stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider the following example:
-
-```{r, prosody-green-gloss}
-#| tbl-cap: Green word order prosody example
-if (!suppress_gloss) {
-prosody_green_example <- as_gloss(
-  "dat ik hier mijn selectie °definitief °afgedwongen heb .",
-  "that I here my selection definitively enforced have .",
-  translation = "that I have definitively enforced my selection here.",
-  label = "prosody_green-example",
-  source = "[PART + AUX] adapted green order (WR-P-P-G-0000198602.p.7.s.4)"
-)
-prosody_green_example
-}
-```
-
-If both *definitief* 'definitively' and *afgedwongen* 'enforced' are stressed, as they would typically be in Dutch, there would be two consecutive stresses. If one uses the red word order, this chain of stresses can be avoided:
-
-```{r, prosody-red-gloss}
-#| tbl-cap: Red word order prosody example
-if (!suppress_gloss) {
-prosody_red_example <- as_gloss(
-  "dat ik hier mijn selectie °definitief heb °afgedwongen .",
-  "that I here my selection definitively have enforced .",
-  translation = "that I have definitively enforced my selection here.",
-  label = "prosody_red-example",
-  source = "[AUX + PART] actual red order (WR-P-P-G-0000198602.p.7.s.4)"
-)
-prosody_red_example
-}
-```
-
-[^separable-example]: e.g. *ik zoek~root~ het adres op~preposition~*, literally 'I search up the address'
-
-Another prosody-related effect is the length of the 'middle field' in Dutch. In our case, in subordinate sentences, the middle field is the area between the conjunction and the verbal cluster ("ik hier mijn selectie definitief" in the example above). Both in @de_sutter_rood_2005 [153-154] and @bloem_processing_2021 [25] it is found that the longer this middle field is, the higher the probability is of choosing the red word order. @de_sutter_rood_2005 [153] hypothesise that a longer middle field gives rise to a higher probability of consecutive stresses, which, as stated above, can be remedied by using the red word order.
-
-#### Influence of frequency
-
-@de_sutter_rood_2005 [289-295] found that the frequency of a participle's lemma positively correlates with the probability of that participle appearing in the red order. @bloem_processing_2021 [24] repeated the experiment and also found an effect in the same direction. @de_sutter_rood_2005 [323-324] argue that frequently appearing participles are easier to recover from memory, leaving more time for the language user to spend on (more difficult) stylistic encoding, which @de_sutter_rood_2005 then assume is the red order. 
-
-#### Influence of priming
-
-Another influence on the choice between red and green is priming. @de_sutter_rood_2005 [278] found that a word order is much more likely to be used if it is preceded by another cluster in the same order. A language user who has just uttered a red order is thus more included to continue using that order. Priming is considered to be the second most important language-internal influence in the choice between the two word orders [@de_sutter_rood_2005, 305].
-
-#### Influence of semantics {#sec-semantics-influence}
-
-Despite extensive research on red and green, semantics is an underdeveloped researched area for this alternance [@bloem_processing_2021]. The most extensive semantic research concerns macroscopic research of some semantic feature, in this case *adjectiveness*. It has been found that the more a participle is used as an adjective, the more likely this participle is to be used in the green order [@de_sutter_rood_2005, 233-242]. This is logical, since adjectives can only appear in the green order in subordinate clauses. The choice between red and green is thus 'contaminated' by the syntactic rules of the adjective [@pijpops_constructional_2018, 286-290]. Adjectiveness is thought to be the most important language-internal factor in deciding between the red and green word order [@de_sutter_rood_2005, 305], which shows that semantics is indeed an important factor to include in a morphosyntactic analysis.
-
-Another semantic factor is the difference between 'dynamic' and 'stative' verbs. In the *Algemene Nederlandse Spraakkunst* [@haeseryn_30321_1997, 'General Dutch Grammar'], a descriptive reference grammar of Dutch, dynamic verbs are characterised as encoding an activity or process, while stative verbs are characterised as encoding states. @pardoen1991interpretatie launched the idea that the green order yields a stative interpretation of a verb cluster, while the red order would yield a dynamic interpretation. @de_sutter_rood_2005 state the precarious nature of Pardoen's hypothesis, citing the limited use of the hypothesis as its analysis is largely based on introspection [-@de_sutter_rood_2005, 203]. In addition, through a disctinctive collexeme analysis, they find that certain words like *geweest* ('been') or *gehad* ('had') associate strongly with the red word order, yet they find it difficult see how one would frame a dynamic interpretation of these intrinsically stative verbs. As such, they argue that the aforementioned association posited by Pardoen may not be very strict, or that it should at least be interpreted separately from the semantics of the main verb. @de_sutter_rood_2005 thus do not reject the hypothesis by @pardoen1991interpretatie entirely, and instead opt to call for modifications to the original, strict idea.
-
-Both @de_sutter_rood_2005 and @bloem_processing_2021 also explored the lexical influence on the choice between red and green. In these studies, associations between certain verbs and a preference for either word order were found. In a further semantic analysis, @bloem_processing_2021 [131] looked at the semantic properties from Cornetto semantic database for Dutch [@piek2013cornetto] and found no striking difference in the frequency distribution between red and green of verbs tagged as 'dynamic'. Instead, he finds that verbs tagged as 'cognitive' seem to appear in the green word order more often, as well as verbs rated as 'negative' by an automatic sentiment analysis tool. However, these results must be interpreted with caution, as they are only based on 40 verbs and are not statistically underpinned either.
-
-#### Influence of auxiliary verb
-
-Finally, the auxiliary verb used in tandem with the verb cluster also has an influence on the choice between the red and green order. @de_sutter_rood_2005 [257] found that the green word order is more likely when a cluster occurs with auxiliary verb *zijn* 'to be', than when it occurs with *hebben* 'to have' or *worden* 'to become'. Because *zijn* is a copular verb in Dutch, it is strongly associated with adjectival contexts which, as already stated, can only appear in the green word order in subordinate clauses (e.g. *omdat een marsman groen is*, 'because a martian is green'). An analogy process thus carries over this preference to verb cluster order. The other auxiliaries (*hebben* and *worden*), comparatively, are more associated with the red word order. We see the same tendencies in @bloem_processing_2021 [25].
-
-### Theoretical repercussions of methodological choices
-
-If we take a broad look at the studies mentioned in the previous section, we can distinguish between two broad methodological lines. The first methodological line is characterised by a focus on high-level, general predictors. In such analyses, we find predictors with a limited number of levels, sometimes pooled from more narrow categories. Typically, these analyses are carried out using (mixed-effects) regression analyses. The second methodological line is characterised by a focus on frequency, and frequency only. In such analyses, the pull of lexical items towards a specific morphosyntactic variant is computed. Typically, these analyses are carried out as collostructional analyses, or derivatives of this technique.
-
-The issue with these two lines of research is that they inadvertently have a bias for one specific type of predictor. Regression analysis promotes the use of high-level, clear-cut predictors, while collostructional analysis is solely focussed on lexical items. This puts these probabilistic models into a pickle, as they are forced into highlighting only part of the phenomena under scrutiny. Of course, this also has repercussions theoretically, as predictors of different natures are never present as equals in the same models, which means linguistic conclusions are usually only centred around one or the other -- never both at once. Of course, these results are still valid in the strict sense, but they never paint a full picture.
-
-While there have been attempts to mitigate this issue, they have not been without major drawbacks. One option explored by @bloem_processing_2021 is to investigate the unexplained variation or so-called *residuals* of each data point in a logistic regression analysis. The idea is that the mean residuals for a specific type (e.g. the residuals for all data points with the same word) hint at the lexical association of that type towards an option of a specific alternance [@bloem_processing_2021 118, 135]. While this approach to measuring lexical-semantic effects has been shown to work, it lumps together unexplained variation and lexical-semantic effects into one category, which is statistically infelicitous. Philosophically, it also still regards lexical items as 'lesser' predictors, since they are not included in the main analysis and are only considered in a post-hoc manner.
+There are several techniques available which attempt to model lexical influence in some way, but these techniques have not been without major drawbacks. One option explored by @bloem_processing_2021 is to investigate the unexplained variation or so-called *residuals* of each data point in a logistic regression analysis. The idea is that the mean residuals for a specific type (e.g. the residuals for all data points with the same word) hint at the lexical association of that type towards an option of a specific alternance [@bloem_processing_2021 118, 135]. While this approach to measuring lexical-semantic effects has been shown to work, it lumps together unexplained variation and lexical-semantic effects into one category, which is statistically infelicitous. Philosophically, it also still regards lexical items as 'lesser' predictors, since they are not included in the main analysis and are only considered in a post-hoc manner.
 
 A current state-of-the-art analysis would attempt to use random effects in a mixed-effects logistic regression [cf. @gries_most_2015]. In such an approach, specific lexical verbs partaking in an alternance are seen as levels of a factor for which one extra parameter is fitted, as a random factor. This would result in a correction term for each type separately, which would indicate how specific words contribute towards the choice between two constructions. However, as @van_de_velde_investigating_2019 [168-169] describe, there are generally two issues with this approach. The first issue is that using random effects in this way is, strictly speaking, conceptually unsound. Random effects are meant to account for structural associations in the data, to avoid Type I errors. If one were to use the by-word corrections from the random factor as a variable of interest, to boost the statistical power of the analysis (avoiding Type II errors), this would amount to making one's model less conservative, letting Type I errors sneak in via the backdoor. If the lexical verbs are a variable of interest, one should make them part of the *fixed effects structure* and have them function on the same level as the high-level predictors.
 
 This brings us to the second issue raised by @van_de_velde_investigating_2019; there are *many* possible lexical types, and word distribution is notoriously skewed [@zipf_psycho-biology_1965]. As @bloem_processing_2021 [117] says, this results in "an impossible task when there are many unique \[words\] -- you can't create a line from a single data point" -- and models will fail to converge given too many lexical types. A possible solution to this problem of high dimensionality would be to use some sort of 'semantic binning', i.e. by grouping individual words into larger semantic categories. However, this means we lose the ability to look at lexical effects at the level of individual words, and this also introduces bias into the analysis at the level of the grouping itself, unless you use clusters, like in @levshina_radically_2014 or @van_de_velde_investigating_2019.
 
-Currently, then, there is no technique which handles both high-level predictors and lexical items as full-fledged predictors of equal value. In this article, we demonstrate elastic net regression, a new methodology which is able to process predictors of various nature on an equal footing. To demonstrate this technique, we will build an all-encompassing, holistic model of the red and green word order in Dutch, with both the high-level predictors found in previous research as well as lexical items. In an attempt to find patterns in the semantic preferences of the verbs occurring in the clusters, we will make use of semantic vectors as well as a lexical-semantic database. First, however, we will explain what the elastic net technique does and why it is so useful for fairer research on morphosyntactic variation.
+Currently, then, there is no technique which handles both high-level predictors and lexical items as full-fledged predictors of equal value. In this article, we demonstrate elastic net regression, a new methodology which is able to process predictors of various nature on an equal footing. To demonstrate this technique, we will build an all-encompassing, holistic model of the 'red' and 'green' word order in Dutch, with both the high-level predictors found in previous research as well as lexical items. In an attempt to find patterns in the semantic preferences of the verbs occurring in the clusters, we will make use of semantic vectors as well as a lexical-semantic database. First, however, we will explain what the elastic net technique does and why it is so useful for fairer research on morphosyntactic variation.
 
 ## Elastic net regression {#sec-elastic-net-regression}
 
@@ -310,11 +202,121 @@ $$
 
 ::::
 
-Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. 
+Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand.
+
+## 'Red' and 'green' word order in Dutch subordinate sentences
+
+As mentioned before, we will showcase the elastic net regression technique through a case study on morphosyntactic variation in Dutch. Traditionally in linguistics, there are long-standing theories that "different forms must have [also] different meanings" [@haiman_iconicity_1980, 515-516], be it denotationally, pragmatically or socially [@croft_construction_2010, 472]. In this regard, the verbal clusters found in many Germanic languages, constructions which feature multiple verbal items [@wurmbrand_verb_2017, 4611], are especially interesting: they often feature variation which is esentially free, without any true meaning differences. More specifically in Dutch, we find the alternance between the 'red' and 'green' word order, a very well-researched morphosyntactic alternance in Dutch. The gist is that in verbal clusters, two verb orders are possible:
+
+```{r, red-gloss}
+#| tbl-cap: Red word order example
+if (!suppress_gloss) {
+red_example <- as_gloss(
+  "Vandaar dat hij ons opnieuw is~AUX~ aangeboden~PART~.",
+  "hence that he us again was offered",
+  translation = "Hence why he was offered to us again.",
+  label = "red-example",
+  source = "[AUX + PART]: red order (WR-P-P-G-0000250935.p.3.s.1[^gloss-source])"
+)
+red_example
+}
+```
+
+```{r, green-gloss}
+if (!suppress_gloss) {
+#| tbl-cap: Green word order example
+green_example <- as_gloss(
+  "Zolang ge god maar aanbeden~PART~ hebt~AUX~.",
+  "as-long-as you God but worshipped have",
+  translation = "As long as you've worshipped God",
+  label = "green-example",
+  source = "[PART + AUX]: green order (WR-P-E-A-0000223098.p.4.s.2)"
+)
+green_example
+}
+```
+
+[^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
+
+This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. Crucially, a difference in word order does not entail a difference in meaning [@bloem_processing_2021, 2].
+
+### Formal accounts
+
+Verb cluster variation such as the red and green word order are of high interest to formal syntactic theorists, since they pose fundamental challenges to the formal syntactic apparatus. More specifically, in formal linguistic theory, a choice can be made to opt either for a head-initial or a head-final syntactic design [@augustinus_complement_2015, 46]. In a head-initial design, the head of a phrase is always generated first in that phrase, with its complements coming second. In contrast, in a head-final design, the complements of a phrase come first, and the head of those complements comes after. The choice between head-initial or head-final has repercussions for the so-called 'base order' in verb clusters. A head-initial design generates the red word order in Dutch by default: the auxiliary, which serves as the head in the verbal phrase, is generated first, and selects the participle as its complement. A head-final design generates the green word order in Dutch by default: the auxiliary is generated last, and the participle it selects as its complement comes before it. West-Germanic languages are commonly thought of as head-final [@wurmbrand_verb_2017, 4614], but head-initial accounts also exist [@zwart1993dutch].
+
+Of course, a formal grammar should be able to cover both word orders which naturally occur in Dutch, regardless of head location. @wurmbrand_verb_2017 shows two strategies to achieve this coverage. The first strategy is to ignore verb cluster word order variation as being part of the syntax. In this strategy, the actual verb cluster order is determined only *after* the sentence deep structure is generated [@wurmbrand2004syntactic]. This is done through a mechanism called 'Flip'. This mechanism swaps sister nodes, such as an auxiliary and a participle under the same node. Through this technique, any of our two word orders can be derived, regardless of the base order. This post-syntactic strategy is motivated on semantic terms: a change in order has no fundamental semantic consequences, and therefore the distinction is not considered important to have represented in the actual, deep syntax tree.
+
+The second strategy is to use movement, a common device in formal syntactic theory where elements in the deep structure move to other locations, sometimes iteratively, as the result of some language-internal trigger. There is no shortage of possible movements, regardless of head location. For example, in a head-final architecture (corresponding to the green word order), the red word order can be derived through *verb raising* [@evers_transformational_1975], a process in which the participle moves upwards to the auxiliary and attaches to the right.
+
+Theoretical-formal accounts, however, have not yet been able to find an explanation for the occurrence of either the red or green word order. While there are ample theoretical devices to derive any word order from any base order, even for highly complex clusters, there are no theoretical grounds for explaining the possible variation between red and green. Crucially, if the choice between two variants is free, there cannot be a trigger for movement, yet movement is compulsory in order to be able to derive the non-base word order.
+
+### Probabilistic accounts {#sec-probabilistic-accounts}
+
+Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and instead attempt to explain verb cluster variation using probabilistic models. In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
+
+#### Influence of lectal factors
+
+Context is an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Inversely, this means that formal, unidirectional and edited language favours the red word order.
+
+#### Influence of prosody
+
+Another source of influence is that of prosody. The most important prosodical influence [@de_sutter_rood_2005, 305] stems from the so-called 'separable verbs' in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two consecutive stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider the following example:
+
+```{r, prosody-green-gloss}
+#| tbl-cap: Green word order prosody example
+if (!suppress_gloss) {
+prosody_green_example <- as_gloss(
+  "dat ik hier mijn selectie °definitief °afgedwongen heb .",
+  "that I here my selection definitively enforced have .",
+  translation = "that I have definitively enforced my selection here.",
+  label = "prosody_green-example",
+  source = "[PART + AUX] adapted green order (WR-P-P-G-0000198602.p.7.s.4)"
+)
+prosody_green_example
+}
+```
+
+If both *definitief* 'definitively' and *afgedwongen* 'enforced' are stressed, as they would typically be in Dutch, there would be two consecutive stresses. If one uses the red word order, this chain of stresses can be avoided:
+
+```{r, prosody-red-gloss}
+#| tbl-cap: Red word order prosody example
+if (!suppress_gloss) {
+prosody_red_example <- as_gloss(
+  "dat ik hier mijn selectie °definitief heb °afgedwongen .",
+  "that I here my selection definitively have enforced .",
+  translation = "that I have definitively enforced my selection here.",
+  label = "prosody_red-example",
+  source = "[AUX + PART] actual red order (WR-P-P-G-0000198602.p.7.s.4)"
+)
+prosody_red_example
+}
+```
+
+[^separable-example]: e.g. *ik zoek~root~ het adres op~preposition~*, literally 'I search up the address'
+
+Another prosody-related effect is the length of the 'middle field' in Dutch. In our case, in subordinate sentences, the middle field is the area between the conjunction and the verbal cluster ("ik hier mijn selectie definitief" in the example above). Both in @de_sutter_rood_2005 [153-154] and @bloem_processing_2021 [25] it is found that the longer this middle field is, the higher the probability is of choosing the red word order. @de_sutter_rood_2005 [153] hypothesise that a longer middle field gives rise to a higher probability of consecutive stresses, which, as stated above, can be remedied by using the red word order.
+
+#### Influence of frequency
+
+@de_sutter_rood_2005 [289-295] found that the frequency of a participle's lemma positively correlates with the probability of that participle appearing in the red order. @bloem_processing_2021 [24] repeated the experiment and also found an effect in the same direction. @de_sutter_rood_2005 [323-324] argue that frequently appearing participles are easier to recover from memory, leaving more time for the language user to spend on (more difficult) stylistic encoding, which @de_sutter_rood_2005 then assume is the red order. 
+
+#### Influence of priming
+
+Another influence on the choice between red and green is priming. @de_sutter_rood_2005 [278] found that a word order is much more likely to be used if it is preceded by another cluster in the same order. A language user who has just uttered a red order is thus more included to continue using that order. Priming is considered to be the second most important language-internal influence in the choice between the two word orders [@de_sutter_rood_2005, 305].
+
+#### Influence of semantics {#sec-semantics-influence}
+
+Despite extensive research on red and green, semantics is an underdeveloped researched area for this alternance [@bloem_processing_2021]. The most extensive semantic research concerns macroscopic research of some semantic feature, in this case *adjectiveness*. It has been found that the more a participle is used as an adjective, the more likely this participle is to be used in the green order [@de_sutter_rood_2005, 233-242]. This is logical, since adjectives can only appear in the green order in subordinate clauses. The choice between red and green is thus 'contaminated' by the syntactic rules of the adjective [@pijpops_constructional_2018, 286-290]. Adjectiveness is thought to be the most important language-internal factor in deciding between the red and green word order [@de_sutter_rood_2005, 305], which shows that semantics is indeed an important factor to include in a morphosyntactic analysis.
+
+Another semantic factor is the difference between 'dynamic' and 'stative' verbs. In the *Algemene Nederlandse Spraakkunst* [@haeseryn_30321_1997, 'General Dutch Grammar'], a descriptive reference grammar of Dutch, dynamic verbs are characterised as encoding an activity or process, while stative verbs are characterised as encoding states. @pardoen1991interpretatie launched the idea that the green order yields a stative interpretation of a verb cluster, while the red order would yield a dynamic interpretation. @de_sutter_rood_2005 state the precarious nature of Pardoen's hypothesis, citing the limited use of the hypothesis as its analysis is largely based on introspection [-@de_sutter_rood_2005, 203]. In addition, through a disctinctive collexeme analysis, they find that certain words like *geweest* ('been') or *gehad* ('had') associate strongly with the red word order, yet they find it difficult see how one would frame a dynamic interpretation of these intrinsically stative verbs. As such, they argue that the aforementioned association posited by Pardoen may not be very strict, or that it should at least be interpreted separately from the semantics of the main verb. @de_sutter_rood_2005 thus do not reject the hypothesis by @pardoen1991interpretatie entirely, and instead opt to call for modifications to the original, strict idea.
+
+Both @de_sutter_rood_2005 and @bloem_processing_2021 also explored the lexical influence on the choice between red and green. In these studies, associations between certain verbs and a preference for either word order were found. In a further semantic analysis, @bloem_processing_2021 [131] looked at the semantic properties from Cornetto semantic database for Dutch [@piek2013cornetto] and found no striking difference in the frequency distribution between red and green of verbs tagged as 'dynamic'. Instead, he finds that verbs tagged as 'cognitive' seem to appear in the green word order more often, as well as verbs rated as 'negative' by an automatic sentiment analysis tool. However, these results must be interpreted with caution, as they are only based on 40 verbs and are not statistically underpinned either.
+
+#### Influence of auxiliary verb
+
+Finally, the auxiliary verb used in tandem with the verb cluster also has an influence on the choice between the red and green order. @de_sutter_rood_2005 [257] found that the green word order is more likely when a cluster occurs with auxiliary verb *zijn* 'to be', than when it occurs with *hebben* 'to have' or *worden* 'to become'. Because *zijn* is a copular verb in Dutch, it is strongly associated with adjectival contexts which, as already stated, can only appear in the green word order in subordinate clauses (e.g. *omdat een marsman groen is*, 'because a martian is green'). An analogy process thus carries over this preference to verb cluster order. The other auxiliaries (*hebben* and *worden*), comparatively, are more associated with the red word order. We see the same tendencies in @bloem_processing_2021 [25].
 
 ## Data
-
-To demonstrate the elastic net technique, we built an elastic net model of red and green verb clusters in Dutch. The focus in this study lies on two-word verbal clusters in subordinate clauses with the auxiliaries *hebben*, *zijn* and *worden* (perfective aspect + passive auxiliary). Some variation is also possible with modal auxiliaries, but these mostly appear in the red order, which makes them much less interesting.
 
 For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process and the annotation of linguistic variables, see the Appendix.
 
