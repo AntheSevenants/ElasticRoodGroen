@@ -572,34 +572,9 @@ ds_na_count <- dim(ds_na)[[1]]
 ds_na_perc <- (ds_na_count / ds_total_count) %>% formatp
 ```
 
-First, we will compare our results to the significant Log Likelihood Ratios (LLRs) found in @de_sutter_rood_2005 [246]. For our comparison, we transformed all LLRs in favour of the green word order to be negative, while LLRs in favour of the red order remained positive. This transformation was made to be able to compare the LLR values, which are all positives, to our elastic net coefficients, the signs of which reflect a pull towards either order. Of the `r ds_total_count %>% formatn` participles with a significant LLR value in the semantic analysis of @de_sutter_rood_2005, `r ds_zero_count %>% formatn` (`r ds_zero_perc`) were eliminated in our elastic net model. This means that the elastic net technique disagrees that a semantic pull exists for these verbs. This difference likely stems from the aforementioned methodological differences in multifactorial control. An overview of the eliminated coefficients is given in @tbl-comparison-ds-zero.
+First, we will compare our results to the significant Log Likelihood Ratios (LLRs) found in @de_sutter_rood_2005 [246]. For our comparison, we transformed all LLRs in favour of the green word order to be negative, while LLRs in favour of the red order remained positive. This transformation was made to be able to compare the LLR values, which are all positives, to our elastic net coefficients, the signs of which reflect a pull towards either order. Of the `r ds_total_count %>% formatn` participles with a significant LLR value in the semantic analysis of @de_sutter_rood_2005, `r ds_zero_count %>% formatn` (`r ds_zero_perc`) were eliminated in our elastic net model. This means that the elastic net technique disagrees that a semantic pull exists for these verbs. This difference likely stems from the aforementioned methodological differences in multifactorial control. An overview of the eliminated coefficients is given in the Appendix.
 
-```{r #tbl-comparison-ds-zero}
-#| label: tbl-comparison-ds-zero
-#| tbl-cap: "Overview of all participles which have significant LLR values, but were eliminated in our elastic net regression model" 
-ds_zero <- ds_zero[c("feature","coefficient","llr")]
-# Re-order
-ds_zero <- ds_zero[,c(1, 3, 2)]
-ds_zero <- ds_zero[order(ds_zero$llr, decreasing=FALSE),]
-colnames(ds_zero) <- c("participle", "LLR", "elastic net coefficient")
-row.names(ds_zero) <- NULL
-ds_zero
-```
-
-There are also `r ds_na_count %>% formatn` participles (`r ds_na_perc`) which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these 'participles' are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in @tbl-comparison-ds-na.
-
-```{r #tbl-comparison-ds-na}
-#| label: tbl-comparison-ds-na
-#| tbl-cap: "Overview of all participles which have significant LLR values, but do not appear in our dataset and therefore do not have coefficients" 
-ds_na <- ds_na[c("feature","coefficient","llr")]
-ds_na$coefficient <- "none"
-# Re-order
-ds_na <- ds_na[,c(1, 3, 2)]
-ds_na <- ds_na[order(ds_na$llr, decreasing=FALSE),]
-colnames(ds_na) <- c("participle", "LLR", "elastic net coefficient")
-row.names(ds_na) <- NULL
-ds_na
-```
+There are also `r ds_na_count %>% formatn` participles (`r ds_na_perc`) which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these 'participles' are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in the Appendix.
 
 We computed the Pearson correlation between the modified LLR values and our elastic net coefficients and found a correlation $r$ of `r ds_cor$estimate %>% formatd(3)`, which is also significant. The correlation shows that there is a fair degree of overlap between the LLR results and our results, though the results are not one to one. Again, it is reasonable to expect a difference in results as a consequence of the differences in methodology, but generally speaking, this correlation shows that our elastic net regression methodology yields comparable results. If we look at the correlation visually (@fig-comparison-ds), we also see that the data points in the top left and bottom right quadrants, i.e. participles which are estimated to be red in one technique and green in the other and vice versa, are close to the origin and few. This also shows that our results are generally in line with those of @de_sutter_rood_2005.
 
@@ -616,39 +591,9 @@ bloem_na_count <- dim(bloem_na)[[1]]
 bloem_na_perc <- (bloem_na_count / bloem_total_count) %>% formatp
 ```
 
-Next, we will compare our elastic net coefficients to the odds ratios (ORs) found in @bloem_processing_2021. We converted the ORs back into (continuous) logits, so we could compare them to our elastic net coefficients. Of the `r bloem_total_count %>% formatn` participles in Bloem's semantic analysis, `r bloem_zero_count %>% formatn` (`r bloem_zero_perc`) were eliminated in our elastic net model. Here again, this means that the elastic net technique finds no semantic pull, again likely due to differences in operationalisation. An sample of the eliminated coefficients is given in @tbl-comparison-bloem-zero.
+Next, we will compare our elastic net coefficients to the odds ratios (ORs) found in @bloem_processing_2021. We converted the ORs back into (continuous) logits, so we could compare them to our elastic net coefficients. Of the `r bloem_total_count %>% formatn` participles in Bloem's semantic analysis, `r bloem_zero_count %>% formatn` (`r bloem_zero_perc`) were eliminated in our elastic net model. Here again, this means that the elastic net technique finds no semantic pull, again likely due to differences in operationalisation. An sample of the eliminated coefficients is given in the Appendix.
 
-```{r #tbl-comparison-bloem-zero}
-#| tbl-cap: "Sample of all participles which have OR values, but were eliminated in our elastic net regression model. ORs converted to logits" 
-bloem_zero$abs_coeff <- abs(bloem_zero$coefficient)
-bloem_zero <- bloem_zero[order(bloem_zero$abs_coeff, decreasing=TRUE),]
-bloem_zero <- head(bloem_zero, 8)
-bloem_zero <- bloem_zero[c("feature","coefficient","logit")]
-# Re-order
-bloem_zero <- bloem_zero[,c(1, 3, 2)]
-bloem_zero <- bloem_zero[order(bloem_zero$logit, decreasing=FALSE),]
-colnames(bloem_zero) <- c("participle", "logit", "elastic net coefficient")
-row.names(bloem_zero) <- NULL
-bloem_zero
-```
-
-There are also `r bloem_na_count %>% formatn` (`r bloem_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Some of these participles seem to be mis-taggings or noise. We provide a sample in @tbl-comparison-bloem-na.
-
-```{r #tbl-comparison-bloem-na}
-#| label: tbl-comparison-bloem-na
-#| tbl-cap: "Sample of all participles which have logit values, but do not appear in our dataset and therefore do not have coefficients. ORs converted to logits"
-bloem_na$abs_coeff <- abs(bloem_na$coefficient)
-bloem_na <- bloem_na[order(bloem_na$abs_coeff, decreasing=TRUE),]
-bloem_na <- head(bloem_na, 8)
-bloem_na <- bloem_na[c("lemma","coefficient","logit")]
-bloem_na$coefficient <- "none"
-# Re-order
-bloem_na <- bloem_na[,c(1, 3, 2)]
-bloem_na <- bloem_na[order(bloem_na$logit, decreasing=FALSE),]
-colnames(bloem_na) <- c("lemma", "logit", "elastic net coefficient")
-row.names(bloem_na) <- NULL
-bloem_na
-```
+There are also `r bloem_na_count %>% formatn` (`r bloem_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Some of these participles seem to be mis-taggings or noise. We provide a sample in the Appendix.
 
 We computed the Pearson correlation between the converted logits and our elastic net coefficients and found a correlation $r$ of `r bloem_cor$estimate %>% formatd(3)`, which again is significant. The correlation again shows an overlap between previous results and our results, despite differences in methodology. If we look at the correlation visually (@fig-comparison-bloem), we see that both models are generally in agreement on whether a participle pulls towards red or green. Note that there are more data points in the top left and bottom right quadrants than in the previous comparison, but this is related to a much larger sample size.
 
@@ -1066,6 +1011,63 @@ In the matrix form, each multidimensional column is converted so that each uniqu
 The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
 
 To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert 'traditional' datasets to the matrix format detailed above in seconds.
+
+### Comparison tables
+
+```{r #tbl-comparison-ds-zero}
+#| label: tbl-comparison-ds-zero
+#| tbl-cap: "Overview of all participles which have significant LLR values, but were eliminated in our elastic net regression model" 
+ds_zero <- ds_zero[c("feature","coefficient","llr")]
+# Re-order
+ds_zero <- ds_zero[,c(1, 3, 2)]
+ds_zero <- ds_zero[order(ds_zero$llr, decreasing=FALSE),]
+colnames(ds_zero) <- c("participle", "LLR", "elastic net coefficient")
+row.names(ds_zero) <- NULL
+ds_zero
+```
+
+```{r #tbl-comparison-ds-na}
+#| label: tbl-comparison-ds-na
+#| tbl-cap: "Overview of all participles which have significant LLR values, but do not appear in our dataset and therefore do not have coefficients" 
+ds_na <- ds_na[c("feature","coefficient","llr")]
+ds_na$coefficient <- "none"
+# Re-order
+ds_na <- ds_na[,c(1, 3, 2)]
+ds_na <- ds_na[order(ds_na$llr, decreasing=FALSE),]
+colnames(ds_na) <- c("participle", "LLR", "elastic net coefficient")
+row.names(ds_na) <- NULL
+ds_na
+```
+
+```{r #tbl-comparison-bloem-zero}
+#| tbl-cap: "Sample of all participles which have OR values, but were eliminated in our elastic net regression model. ORs converted to logits" 
+bloem_zero$abs_coeff <- abs(bloem_zero$coefficient)
+bloem_zero <- bloem_zero[order(bloem_zero$abs_coeff, decreasing=TRUE),]
+bloem_zero <- head(bloem_zero, 8)
+bloem_zero <- bloem_zero[c("feature","coefficient","logit")]
+# Re-order
+bloem_zero <- bloem_zero[,c(1, 3, 2)]
+bloem_zero <- bloem_zero[order(bloem_zero$logit, decreasing=FALSE),]
+colnames(bloem_zero) <- c("participle", "logit", "elastic net coefficient")
+row.names(bloem_zero) <- NULL
+bloem_zero
+```
+
+```{r #tbl-comparison-bloem-na}
+#| label: tbl-comparison-bloem-na
+#| tbl-cap: "Sample of all participles which have logit values, but do not appear in our dataset and therefore do not have coefficients. ORs converted to logits"
+bloem_na$abs_coeff <- abs(bloem_na$coefficient)
+bloem_na <- bloem_na[order(bloem_na$abs_coeff, decreasing=TRUE),]
+bloem_na <- head(bloem_na, 8)
+bloem_na <- bloem_na[c("lemma","coefficient","logit")]
+bloem_na$coefficient <- "none"
+# Re-order
+bloem_na <- bloem_na[,c(1, 3, 2)]
+bloem_na <- bloem_na[order(bloem_na$logit, decreasing=FALSE),]
+colnames(bloem_na) <- c("lemma", "logit", "elastic net coefficient")
+row.names(bloem_na) <- NULL
+bloem_na
+```
 
 ### Xpath queries
 
