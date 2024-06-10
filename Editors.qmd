@@ -1,0 +1,54 @@
+---
+bibliography: references.bib
+csl: chicago-author-date.csl
+---
+
+
+# Letter to the editor and reviewers
+
+Dear editor and reviewers,
+
+First, we would like to thank you for your elaborate feedback on our manuscript. We agree that there were several areas our work could be improved in, and in this light, we have taken your comments seriously and worked on improving all aspects of the manuscript and analysis alike.
+
+We would like to address the concerns by reviewer 1 and reviewer 2 jointly. We will treat the comments they have in common as well as their individual concerns further in this text.
+
+## Concerns about the theoretical positioning of the paper
+
+We would like to stress our commitment to accenting the theoretical relevance of our article. To further strengthen the theoretical contribution of our article, we have highlighted the theoretical linguistic conundrum our article aims to solve. As such, we now explicitly highlight the shortcomings of the two major existing theoretical lines in linguistics research, and point out how our contribution aims to bring these two traditions together, without compromises. As a result, we have also downsized the admittedly disproportional methodological focus in order to streamline the article even further.
+
+## Problems with distributional semantics, its focus on dimension reduction and the 'twice removed' GAMs
+
+Both reviewers indicated that they had issues with the use of dimension reduction for the analysis based on semantic vectors. The main concern by reviewer 1 was that too much information would be lost because of the dimension reduction procedure. In addition, reviewer 2 found that a justification for using the technique was missing. Furthermore, both reviewers had doubts about using Generalised Additive Models (GAMs) to find patterns in the dimensionally-reduced space.
+
+We understand the concerns, and have therefore shifted our focus towards finding patterns in distributional semantics using *full* semantic vectors. In this way, we guarantee a maximum amount of information is preserved, even though this means some noise will now also be part of the vectors. To find patterns in the semantic data, we let go of the GAM technique and instead focussed on the much simpler Partitioning Around Medoids (PAM) technique, which will be familiar to many of our readers, and is conceptually simpler than using GAMs. In this way, we also no longer have a need to build models for each dimension reduction technique, which further improves the structure of the article. Our results are comparable to the results found using the GAM technique, but the new, simpler methodology is much more elegant. This should make the article more accessible to less technically inclined readers.
+
+## Quality of the vectors
+
+Reviewer 1 had concerns about the quality of the vectors used for the distributional analysis. In the previous version of the analysis, we used snaut vectors from the CRR research group from UGent. These vectors have been used in many published articles, and while we still think there is nothing inherently wrong with these vectors, we agree that their current unavailability is not a good look. In addition, we think that all materials used in the study should be publicly accessible for reproducibility, so we decided to trade these snaut vectors for other ones. We settled on 'COW' vectors by @tulkens2016evaluating. Since our results are comparable to our previous results, we are convinced that these new vectors can be used in the same ways as the previous ones.
+
+## Missing variables
+
+Reviewer 1 indicated that they missed several variables which were part of previous studies of the red and green word order. We originally did not include as many variables since we saw the case study more as a proof-of-concept, but we decided to compromise on this and add in several of the missing variables. We have added 'auxiliary type' and 'middle field length' as variables in the analysis. With these two extra variables, we have covered all language-internal factors deemed most important by @de_sutter_rood_2005. We explain in the article that we think any further implementation of more variables would lead to diminishing returns, especially for a proof-of-concept. We are convinced our eight non-lexical predictors represent the factors found by previous research adequately.
+
+## Non-robust queries
+
+We adapted our querying program and its queries to be less strict. This resulted in over one million valid attestations of red and green verbal clusters. We are not too worried about not covering certain edge cases, since a few extra attestations from peripheral constructions will not sway the lexical coefficients found in the elastic net regression, especially given the dataset size.
+
+## Concerns about the structure of the article
+
+Reviewer 2 had concerns about the structure of the article, and suggested placing the considered factors in the introduction. While we understand this suggestion, we have decided to keep the introduction dedicated to highlighting the theoretical importance of our contribution, rather than diluting the focus of the paper with a discussion of previous research on our case study, which mostly serves as a proof-of-concept. Because we do agree that this case study could be integrated better in the main text, however, we made the decision to involve the case study early on in the introduction, and to make the case study part of the upper-level structure of the article. In addition, we now also give an overview of the generativist view on verbal cluster variation to give a more balanced foundation for our study.
+
+## Concerns about the robustness of the Chi-square test
+
+Reviewer 2 has concerns about the robustness of the Chi-square test used to test the statistical significance of the split between red and green verbs in the output of the elastic net regression, and suggests using more robust statistical alternatives. The Chi-square analysis is, however, not the main bulk of our analysis, and is merely used to provide a general idea of the significance of our results using a method most readers will understand.
+
+## Previous literature
+
+Reviewer 1 raised the point that several theories of the red and green word order in Dutch have not been treated. In addition, he points to the semantic results from @bloem_processing_2021, which we did not discuss nor compare to. As a response to this, we now discuss the missing theories, most notably the hypothesis from @pardoen1991interpretatie. In addition, we have extracted the lexical associations from @de_sutter_rood_2005 and @bloem_processing_2021, and we use these associations to compare our own results with. Additionally, we have extended our semantic analysis by reproducing the lexical-semantic analysis using the Cornetto semantic database [@piek2013cornetto] as accurately as possible.
+
+To make it more clear which parts of the manuscript have been changed, we have highlighted all new or adapted parts of the text in blue.
+
+We hope to have addressed the issues raised by the reviewers in a sufficient manner.
+
+All the best,  
+The authors
