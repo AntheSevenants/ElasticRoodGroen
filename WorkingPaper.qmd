@@ -445,7 +445,11 @@ In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several addition
 
 : An overview of the predictors for the elastic net regression {#tbl-predictors}
 
-ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss.[^loss] Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` (so-called 'lasso regresion') and lambda = `r lambda %>% formatd(3)`.
+ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss.[^loss] Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` (so-called 'lasso regresion') and lambda < 0.001.
+
+<!--
+`r lambda %>% formatd(3)`
+-->
 
 ### Results
 
