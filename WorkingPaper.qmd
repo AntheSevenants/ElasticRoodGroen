@@ -349,7 +349,7 @@ editing_distribution_prop <- editing_distribution %>% prop.table()
 ```
 
 The mean adjectiveness among all attestations is `r df_filtered$adjectiveness %>% mean() %>% formatd()` (median `r df_filtered$adjectiveness %>% median() %>% formatd()`). 
-Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clusters (`r auxiliary_distribution_prop[["hebben"]] %>% formatp`) feature the auxiliary *hebben* 'to have', 
+Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clusters (`r auxiliary_distribution_prop[["hebben"]] %>% formatp`) feature the auxiliary *hebben* 'to have' in the verb cluster, 
 `r auxiliary_distribution[["zijn"]] %>% formatn` (`r auxiliary_distribution_prop[["zijn"]] %>% formatp`) the auxiliary *zijn* 'to be' and 
 `r auxiliary_distribution[["worden"]] %>% formatn` (`r auxiliary_distribution_prop[["worden"]] %>% formatp`) the auxiliary *worden* 'to become'. 
 `r separability_distribution[["TRUE"]] %>% formatn` verb clusters (`r separability_distribution_prop[["TRUE"]] %>% formatp`) contain a separable verb. 
