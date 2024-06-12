@@ -354,7 +354,7 @@ Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clu
 `r auxiliary_distribution[["worden"]] %>% formatn` (`r auxiliary_distribution_prop[["worden"]] %>% formatp`) the auxiliary *worden* 'to become'. 
 `r separability_distribution[["TRUE"]] %>% formatn` verb clusters (`r separability_distribution_prop[["TRUE"]] %>% formatp`) contain a separable verb. 
 The mean priming rate among our attestations is `r df_filtered$priming_rate %>% mean() %>% formatd()` (median `r df_filtered$priming_rate %>% median() %>% formatd()`). 
-`r editing_distribution[["TRUE"]] %>% formatn` verb clusters (`r editing_distribution_prop[["TRUE"]] %>% formatp`) belong to a subcorpus with assumed edited language. 
+`r editing_distribution[["TRUE"]] %>% formatn` attestations (`r editing_distribution_prop[["TRUE"]] %>% formatp`) belong to a subcorpus with assumed edited language. 
 Of course, because the SoNaR corpus is a corpus of written language, there is a skew towards edited language. 
 The mean type frequency of the participles in the verb clusters is `r df_filtered$FREQcount %>% mean() %>% round() %>% formatn()` (median `r df_filtered$FREQcount %>% median() %>% round() %>% formatn()`). The mean length of the middle field is `r df_filtered$middle_field_length %>% mean() %>% round() %>% formatn()` (median `r df_filtered$log_middle_field_length %>% median() %>% round() %>% formatn()`). For an overview of the proportions and distributions of the additional predictor values, see @fig-descriptive-plots.
 
