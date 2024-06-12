@@ -303,7 +303,7 @@ Another prosody-related effect is the length of the 'middle field' in Dutch. In 
 
 #### Influence of priming
 
-Another influence on the choice between red and green is priming. @de_sutter_rood_2005 [278] found that a word order is much more likely to be used if it is preceded by another verb cluster in the same order. A language user who has just uttered a red order is thus more included to continue using that order. Priming is considered to be the second most important language-internal influence in the choice between the two word orders [@de_sutter_rood_2005, 305].
+Another influence on the choice between red and green is priming. @de_sutter_rood_2005 [278] found that a word order is much more likely to be used if it is preceded by another verb cluster in the same order. A language user who has just uttered a red order is thus more inclined to continue using that order. Priming is considered to be the second most important language-internal influence in the choice between the two word orders [@de_sutter_rood_2005, 305].
 
 #### Influence of semantics {#sec-semantics-influence}
 
