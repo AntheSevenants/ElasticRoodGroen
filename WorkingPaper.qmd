@@ -49,6 +49,7 @@ library(dplyr)
 library(scales)
 library(magrittr)
 library(broom)
+library(tidycat)
 library(emmeans)
 library(forcats)
 library(glossr)
@@ -755,7 +756,20 @@ format_num_col <- function(p_value) {
 format_num_col <- Vectorize(format_num_col)
 
 format_table <- function(df) {
-  df <- df %>% tidy
+  df <- df %>% tidy %>% 
+    tidy_categorical(m = df) %>% 
+    filter(!is.na(term)) %>% 
+    select(-c(reference, term, effect)) %>%
+    mutate(variable = as.character(variable),
+           level = as.character(level)) %>%
+    mutate(level = ifelse(variable == level, "", level),
+           variable = as.character(variable)) %>% 
+    #group_by(variable) %>%
+    #mutate(variable = ifelse(row_number() == 1, variable, "")) %>%
+    #ungroup() %>%
+    mutate(term = ifelse(level != "", paste0(variable, ": ", level), variable)) %>%
+    select(-c(variable, level))
+  df <- df[, c("term", "estimate", "std.error", "statistic", "p.value")]
 
   df$sig <- ifelse(df$p.value <= 0.05, "*", "")
   
@@ -764,7 +778,7 @@ format_table <- function(df) {
   df$statistic <- df$statistic %>% formatd(2)
   df$p.value <- df$p.value %>% format_num_col()
 
-  colnames(df) <- c("predictor", "coefficient", "std. error", "t value", "p value", " ")
+  colnames(df) <- c("term", "coefficient", "std. error", "t value", "p value", " ")
 
   return(df)
 }
