@@ -161,7 +161,7 @@ $$
 
 ::::
 
-While both lasso and ridge regression shrink coefficients, only lasso regression can actually bring a coefficient to zero [@van_de_velde_investigating_2019, 172]. In ridge regression, coefficients can, mathematically, only be brought *asymptotically close* to zero. Which technique is the best depends on the exact use case.
+While both lasso and ridge regression shrink coefficients, only lasso regression can actually bring a coefficient to zero. In ridge regression, coefficients can, mathematically, only be brought *asymptotically close* to zero. Which technique is the best depends on the exact use case.
 
 ### Deciding on lambda and the split between lasso and ridge regression
 
