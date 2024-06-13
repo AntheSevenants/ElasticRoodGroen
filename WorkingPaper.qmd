@@ -319,7 +319,7 @@ Finally, the auxiliary verb used in tandem with the verb cluster also has an inf
 
 ## Data
 
-For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process and the annotation of linguistic variables, see the Appendix.
+For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process see the Appendix.
 
 ```{r filtered-attestations-df-load}
 df_filtered <- read.csv("output/RoodGroenAnthe_sampled.csv")
@@ -348,7 +348,7 @@ editing_distribution <- xtabs(~ edited, data=df_filtered)
 editing_distribution_prop <- editing_distribution %>% prop.table()
 ```
 
-The mean adjectiveness among all attestations is `r df_filtered$adjectiveness %>% mean() %>% formatd()` (median `r df_filtered$adjectiveness %>% median() %>% formatd()`). 
+For an overview of the proportions and distributions of the additional predictor values, see @fig-descriptive-plots. The operationalisation of our high-level predictors is available in the Appendix. The mean adjectiveness among all attestations is `r df_filtered$adjectiveness %>% mean() %>% formatd()` (median `r df_filtered$adjectiveness %>% median() %>% formatd()`). 
 Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clusters (`r auxiliary_distribution_prop[["hebben"]] %>% formatp`) feature the auxiliary *hebben* 'to have' in the verb cluster, 
 `r auxiliary_distribution[["zijn"]] %>% formatn` (`r auxiliary_distribution_prop[["zijn"]] %>% formatp`) the auxiliary *zijn* 'to be' and 
 `r auxiliary_distribution[["worden"]] %>% formatn` (`r auxiliary_distribution_prop[["worden"]] %>% formatp`) the auxiliary *worden* 'to become'. 
@@ -356,7 +356,7 @@ Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clu
 The mean priming rate among our attestations is `r df_filtered$priming_rate %>% mean() %>% formatd()` (median `r df_filtered$priming_rate %>% median() %>% formatd()`). 
 `r editing_distribution[["TRUE"]] %>% formatn` attestations (`r editing_distribution_prop[["TRUE"]] %>% formatp`) belong to a subcorpus with assumed edited language. 
 Of course, because the SoNaR corpus is a corpus of written language, there is a skew towards edited language. 
-The mean type frequency of the participles in the verb clusters is `r df_filtered$FREQcount %>% mean() %>% round() %>% formatn()` (median `r df_filtered$FREQcount %>% median() %>% round() %>% formatn()`). The mean length of the middle field is `r df_filtered$middle_field_length %>% mean() %>% round() %>% formatn()` (median `r df_filtered$log_middle_field_length %>% median() %>% round() %>% formatn()`). For an overview of the proportions and distributions of the additional predictor values, see @fig-descriptive-plots.
+The mean type frequency of the participles in the verb clusters is `r df_filtered$FREQcount %>% mean() %>% round() %>% formatn()` (median `r df_filtered$FREQcount %>% median() %>% round() %>% formatn()`). The mean length of the middle field is `r df_filtered$middle_field_length %>% mean() %>% round() %>% formatn()` (median `r df_filtered$log_middle_field_length %>% median() %>% round() %>% formatn()`).
 
 ```{r}
 #| label: fig-descriptive-plots
