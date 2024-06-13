@@ -444,10 +444,24 @@ In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several addition
 
 : An overview of the predictors for the elastic net regression {#tbl-predictors}
 
-ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss. Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = `r alpha %>% formatd(2)` (so-called 'lasso regresion') and lambda < 0.001.
+```{r scientific-notation}
+fancy_scientific <- function(l) {
+    # turn in to character string in scientific notation
+    l <- scientific(l, digits=4)
+    # quote the part before the exponent to keep all the digits
+    exponent <- gsub(".*e(.*)$", "\\1", l) %>% as.numeric()
+    prefix <- gsub("(.*)e.*$", "\\1", l)
+    # turn the 'e+' into plotmath format
+    l <- paste0(prefix, "\\times 10^{", exponent, "}")
+    
+    return(l)
+}
+```
+
+ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss. Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = $`r alpha %>% formatd(0)`$ (so-called 'lasso regresion') and lambda = $`r lambda %>% fancy_scientific()`$.
 
 <!--
-`r lambda %>% formatd(3)`
+
 -->
 
 ### Results
