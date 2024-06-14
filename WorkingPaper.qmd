@@ -755,7 +755,7 @@ We further expanded the semantic properties from Cornetto with the emotion asses
 
 : An overview of the variables of our analyses. Semantic descriptions taken from @piek2013cornetto. {#tbl-variables}
 
-As mentioned before, only a subset of verbs is tagged for the most specific semantic properties. Therefore, we made two analyses. In the first analysis, we used the smallest dataset with the richest annotations, while in the second analysis, we traded the five semantic properties for the three-way variable 'semantic type' so we could use the larger dataset. We included the second, larger analysis to be able to better assess the influence of variables with weaker effects, which would not attain significance at a smaller dataset size.
+As mentioned before, only a subset of verbs is tagged for the most specific semantic properties. Therefore, we made two analyses. In the fine-grained analysis, we used the smallest dataset with the richest annotations, while in the coarse-grained analysis, we traded the five semantic properties for the three-way variable 'semantic type' so we could use the larger dataset. We included the second, coarser analysis to be able to better assess the influence of variables with weaker effects, which would not attain significance at a smaller dataset size.
 
 ```{r regression-fit-format}
 format_num_col <- function(p_value) {
@@ -838,7 +838,7 @@ semset_fit <- lm(
 semset_fit_tidy <- semset_fit %>% tidy()
 ```
 
-In our first analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the 'Intercept'. In our case, this reference situation is:
+In our fine-grained, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the 'Intercept'. In our case, this reference situation is:
 
 - a verb that is not tagged for 'control', 'attributive', 'spatial', 'cognitive' or 'dynamic';
 - that is intransitive ('monovalent');
@@ -850,11 +850,11 @@ The regression results show the differences to the elastic net coefficient of a 
 
 ```{r tbl-semset-regresion}
 #| label: tbl-semset-regression
-#| tbl-cap: "Results of the first regression analysis. * indicates statistical significance"
+#| tbl-cap: "Results of the fine-grained regression analysis. * indicates statistical significance"
 semset_fit %>% format_table()
 ```
 
-For our second analysis, based on the larger database, we again modelled the elastic net coefficients for the different verbs, but this time using the simpler, more coarse semantic labelling. In fact, we simplified the semantic labelling to be binary, collapsing the 'process' and 'action' labels into a new label, 'no state'. We made this change in order to improve data balance and to make the predictor align more with the stative-dynamic dichotomy by @pardoen1991interpretatie (see @sec-semantics-influence).  @tbl-semtype-regression shows the results of this model. The intercept situation here represents a reference situation for:
+For our coarse-grained analysis, based on the larger database, we again modelled the elastic net coefficients for the different verbs, but this time using the simpler, more coarse semantic labelling. In fact, we simplified the semantic labelling to be binary, collapsing the 'process' and 'action' labels into a new label, 'no state'. We made this change in order to improve data balance and to make the predictor align more with the stative-dynamic dichotomy by @pardoen1991interpretatie (see @sec-semantics-influence).  @tbl-semtype-regression shows the results of this model. The intercept situation here represents a reference situation for:
 
 - a verb that expresses a state;
 - that is intransitive ('monovalent');
@@ -862,7 +862,7 @@ For our second analysis, based on the larger database, we again modelled the ela
 
 ```{r tbl-semtype-regresion}
 #| label: tbl-semtype-regression
-#| tbl-cap: "Results of the second regression analysis. * indicates statistical significance"
+#| tbl-cap: "Results of the coarse-grained regression analysis. * indicates statistical significance"
 df_semtype <- sem_df %>% filter(semantic_type != "")
 
 # Some relevelling
@@ -896,7 +896,7 @@ format_posthoc_table(posthoc_valency)
 
 2. Valence category
 
-Like in the smaller analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`).
+Like in the fine-grained analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`).
 
 3. Semantic type
 
@@ -908,11 +908,11 @@ In the previous sections, we attempted to find patterns in the coefficients comp
 
 First of all, our clusters of verbs, based on a bottom-up clustering of semantic vectors, shows that there are more semantic areas in our semantic space which are predominantly green. While it is true that our results contain more green coefficients in the first place, the distribution between red and green is much more skewed than the distribution of our coefficients. On the basis of this outcome, one could say that this result corroborates the idea by @de_sutter_rood_2005 that the green word order is more lexically specific, since it clearly captures a larger proportion of the semantic space. We also saw this in the range of coefficients in general in @fig-coefficient-plots-3.
 
-Based on the results of the analyses of the Cornetto lexical semantic database, we can also say that the choice between the red and green word order is at least partially syntactically and semantically motivated. We were not able to confirm the finding by @bloem_processing_2021 that verbs with a cognitive dimension tend towards the green word order, though this is likely a consequence of the dataset size. Both the smaller and broader analysis did show a skew towards green with verbs with an emotional load, however, which is comparable to the pattern found by @bloem_processing_2021 with predominantly negative verbs.
+Based on the results of the analyses of the Cornetto lexical semantic database, we can also say that the choice between the red and green word order is at least partially syntactically and semantically motivated. We were not able to confirm the finding by @bloem_processing_2021 that verbs with a cognitive dimension tend towards the green word order, though this is likely a consequence of the dataset size. Both the fine-grained and coarse-grained analysis did show a skew towards green with verbs with an emotional load, however, which is comparable to the pattern found by @bloem_processing_2021 with predominantly negative verbs.
 
-In the same broad semantic analysis, we also saw that there is a slight yet significant difference between 'state' semantic types and 'non-state' semantic types: non-states are found to edge slightly towards the green order. This finding is peculiar in light of the long-standing idea launched by @pardoen1991interpretatie that the green order would facilitate the stative interpretation of a verb cluster. However, we already know from @de_sutter_rood_2005 that this idea should be detached from the actual semantics of a verb, and we see here that this is indeed seems to be the case.
+In the same coarse-grained semantic analysis, we also saw that there is a slight yet significant difference between 'state' semantic types and 'non-state' semantic types: non-states are found to edge slightly towards the green order. This finding is peculiar in light of the long-standing idea launched by @pardoen1991interpretatie that the green order would facilitate the stative interpretation of a verb cluster. However, we already know from @de_sutter_rood_2005 that this idea should be detached from the actual semantics of a verb, and we see here that this is indeed seems to be the case.
 
-Syntactically, the broad semantic analysis shows there to be a difference, though another slight one, between intransitive verbs on the one hand and transitive and ditransitive verbs on the other hand. Both transitive and ditransitive verbs shift towards the green word order slightly compared to intransitive verbs. This is surprising, since we would expect the middle field to be shorter (and therefore more conducive to green word orders) with intransitive verbs as they do not select any objects, in contrast to (di-)transitive verbs. Perhaps it is cognitively more accomodating to express the subject and the main verb contiguously, which is only possible with intransitive verbs.
+Syntactically, the coarse-grained semantic analysis shows there to be a difference, though another slight one, between intransitive verbs on the one hand and transitive and ditransitive verbs on the other hand. Both transitive and ditransitive verbs shift towards the green word order slightly compared to intransitive verbs. This is surprising, since we would expect the middle field to be shorter (and therefore more conducive to green word orders) with intransitive verbs as they do not select any objects, in contrast to (di-)transitive verbs. Perhaps it is cognitively more accomodating to express the subject and the main verb contiguously, which is only possible with intransitive verbs.
 
 ## Discussion
 
