@@ -203,7 +203,7 @@ $$
 
 ::::
 
-Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. The best value for alpha is decided by testing ranges of different alphas, for example by making models from $\alpha = 0$ to $\alpha = 1$ in increments of $0.2$ (resulting in eight models total). For each of those models, a loss is computed, a measure of the difference between a model's predictions and the actual data. The model with the alpha which produces the lowest loss, so the smallest difference between the real data and the predictions, is chosen.
+Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. There is no optimality algorithm for selecting the best alpha, so the best alpha value is decided by testing ranges of different alphas, for example by making models from $\alpha = 0$ to $\alpha = 1$ in increments of $0.2$ (resulting in eight models total). For each of those models, a loss is computed, a measure of the difference between a model's predictions and the actual data. The model with the alpha which produces the lowest loss, so the smallest difference between the real data and the predictions, is chosen.
 
 ## 'Red' and 'green' word order in Dutch subordinate sentences
 
