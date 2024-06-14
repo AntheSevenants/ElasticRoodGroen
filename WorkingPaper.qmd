@@ -868,8 +868,9 @@ df_semtype <- sem_df %>% filter(semantic_type != "")
 # Some relevelling
 df_semtype$semantic_type <- df_semtype$semantic_type %>% 
   fct_collapse(state = c("state"), no_state = c("process", "action"))
-df_semtype$valence <- df_semtype$ValenceCategory %>% 
-  fct_collapse(neutral = c("neutral"), emotional = c("positive", "negative"))
+df_semtype$valence <- df_semtype$ValenceVsNeutral %>% factor(levels=c("neutral", "valenced"))
+#df_semtype$valence <- df_semtype$ValenceCategory %>% 
+#  fct_collapse(neutral = c("neutral"), emotional = c("positive", "negative"))
 
 semtype_fit <- lm(
   coefficient ~ valency + valence + semantic_type, data=df_semtype
@@ -895,7 +896,7 @@ format_posthoc_table(posthoc_valency)
 
 2. Valence category
 
-Like in the smaller analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valenceemotional") %>% .$estimate %>% formatd(3)`).
+Like in the smaller analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`).
 
 3. Semantic type
 
