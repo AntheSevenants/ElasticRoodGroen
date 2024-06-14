@@ -883,10 +883,10 @@ With this larger dataset size, we see that semantics- and valency-related predic
 
 1. Valency
 
-Starting from an intransitive reference point, changes to transitive or ditransitive verbs require a correction towards the green order (`r semtype_fit_tidy %>% filter(term == "valencydi") %>% .$estimate %>% formatd(3)` and `r semtype_fit_tidy %>% filter(term == "valencytri") %>% .$estimate %>% formatd(3)` respectively). The post-hoc analysis in @tbl-valency-posthoc shows that there is only a difference between intransitive and both transitive and ditransitive verbs. There are no mutual differences between transitive and ditransitive verbs.
+Starting from an intransitive reference point, changes to transitive or ditransitive verbs require a correction towards the green order (`r semtype_fit_tidy %>% filter(term == "valencydi") %>% .$estimate %>% formatd(3)` and `r semtype_fit_tidy %>% filter(term == "valencytri") %>% .$estimate %>% formatd(3)` respectively). The post-hoc analysis [through `emmeans`, @emmeans] in @tbl-valency-posthoc shows that there is only a difference between intransitive and both transitive and ditransitive verbs. There are no mutual differences between transitive and ditransitive verbs.
 
 ```{r #tbl-valency-posthoc}
-#| tbl-cap: Results of the posthoc analysis for valency. * indicates statistical significance
+#| tbl-cap: Results of the `emmeans` posthoc analysis for valency. * indicates statistical significance
 posthoc_valency <- emmeans(semtype_fit,
                    revpairwise ~ valency,
                    type="response",
