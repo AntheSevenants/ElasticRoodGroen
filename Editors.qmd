@@ -12,6 +12,8 @@ First, we would like to thank you for your elaborate feedback on our manuscript.
 
 We would like to address the concerns by reviewer 1 and reviewer 2 jointly. We will treat the comments they have in common as well as their individual concerns further in this text.
 
+To make it more clear which parts of the manuscript have been changed, we have highlighted all new or adapted parts of the text in blue.
+
 ## Concerns about the theoretical positioning of the paper
 
 We would like to stress our commitment to accenting the theoretical relevance of our article. To further strengthen the theoretical contribution of our article, we have highlighted the theoretical linguistic conundrum our article aims to solve. As such, we now explicitly highlight the shortcomings of the two major existing theoretical lines in linguistics research, and point out how our contribution aims to bring these two traditions together, without compromises. As a result, we have also downsized the admittedly disproportional methodological focus in order to streamline the article even further.
@@ -45,8 +47,6 @@ Reviewer 2 has concerns about the robustness of the Chi-square test used to test
 ## Previous literature
 
 Reviewer 1 raised the point that several theories of the red and green word order in Dutch have not been treated. In addition, he points to the semantic results from @bloem_processing_2021, which we did not discuss nor compare to. As a response to this, we now discuss the missing theories, most notably the hypothesis from @pardoen1991interpretatie. In addition, we have extracted the lexical associations from @de_sutter_rood_2005 and @bloem_processing_2021, and we use these associations to compare our own results with. Additionally, we have extended our semantic analysis by reproducing the lexical-semantic analysis using the Cornetto semantic database [@piek2013cornetto] as accurately as possible.
-
-To make it more clear which parts of the manuscript have been changed, we have highlighted all new or adapted parts of the text in blue.
 
 We hope to have addressed the issues raised by the reviewers in a sufficient manner.
 
