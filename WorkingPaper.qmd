@@ -879,7 +879,7 @@ semtype_fit_tidy <- semtype_fit %>% tidy()
 semtype_fit %>% format_table()
 ```
 
-With this larger dataset size, we see that many of the predictors used in the analysis based on the smaller dataset now reach significance. We will treat these differences one by one.
+With this larger dataset size, we see that semantics- and valency-related predictors now reach significance. We will treat these differences one by one.
 
 1. Valency
 
