@@ -46,7 +46,7 @@ Reviewer 2 has concerns about the robustness of the Chi-square test used to test
 
 ## Previous literature
 
-Reviewer 1 raised the point that several theories of the red and green word order in Dutch have not been treated. In addition, he points to the semantic results from @bloem_processing_2021, which we did not discuss nor compare to. As a response to this, we now discuss the missing theories, most notably the hypothesis from @pardoen1991interpretatie. In addition, we have extracted the lexical associations from @de_sutter_rood_2005 and @bloem_processing_2021, and we use these associations to compare our own results with. Additionally, we have extended our semantic analysis by reproducing the lexical-semantic analysis using the Cornetto semantic database [@piek2013cornetto] as accurately as possible.
+Reviewer 1 raised the point that several theories of the red and green word order in Dutch have not been treated. In addition, they point to the semantic results from @bloem_processing_2021, which we did not discuss nor compare to. As a response to this, we now discuss the missing theories, most notably the hypothesis from @pardoen1991interpretatie. In addition, we have extracted the lexical associations from @de_sutter_rood_2005 and @bloem_processing_2021, and we use these associations to compare our own results with. Additionally, we have extended our semantic analysis by reproducing the lexical-semantic analysis using the Cornetto semantic database [@piek2013cornetto] as accurately as possible.
 
 We hope to have addressed the issues raised by the reviewers in a sufficient manner.
 
