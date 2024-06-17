@@ -67,7 +67,7 @@ formatp <- function(number) {
     label_percent()(number)
 }
 
-suppress_gloss <- FALSE
+suppress_gloss <- TRUE
 ```
 
 ## Introduction
