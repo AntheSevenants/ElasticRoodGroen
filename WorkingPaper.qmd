@@ -924,7 +924,7 @@ We extracted `r nrow(df_filtered) %>% formatn` verb clusters from the SoNaR corp
 
 While our model shows that lexical influence exists, we do not have an all-encompassing explanation for all lexical patterns we see in our specific case study. Our verb clusters show that the green word order might be more lexically specific, and through our analysis of a lexical semantic database, we found differences between 'state' and 'non-state' semantic types. However, this effect, like the other effects, is small, and does not account for the broad range of semantic pull values we see. Perhaps many of the lexical patterns we find are too local to appear in our analysis, or we need to find other possible explanations of the variation we see, i.e. phonological similarity.
 
-For future research, it would be interesting to apply the elastic net technique to other morphosyntactic alternations, especially in other languages. Steps in this regard have already been taken [artikel Alexandra, Yi]. In this way, we will learn more about how language users choose between equivalent variants, and how different influences relate to each other.
+For future research, it would be interesting to apply the elastic net technique to other morphosyntactic alternations, especially in other languages. Steps in this regard have already been taken [@engel_constraints]. In this way, we will learn more about how language users choose between equivalent variants, and how different influences relate to each other.
 
 ## Appendix {#appendix .appendix}
 
