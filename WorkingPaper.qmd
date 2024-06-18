@@ -432,7 +432,7 @@ In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several addition
 | predictor | type | possible values |
 | --- | --- | --- |
 | participle | distributed binary values for each type | in verb cluster/not in verb cluster |
-| auxiliary_type | distributed binary values for each auxiliary | zijn, hebben, worden |
+| auxiliary_type | distributed binary values for each auxiliary | *zijn*, *hebben*, *worden* |
 | country | binary | BE/NL | 
 | separable | binary | yes/no |
 | edited | binary | yes/no |
