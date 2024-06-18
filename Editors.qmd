@@ -16,7 +16,7 @@ To make it more clear which parts of the manuscript have been changed, we have h
 
 ## Concerns about the theoretical positioning of the paper
 
-We would like to stress our commitment to accenting the theoretical relevance of our article. To further strengthen the theoretical contribution of our article, we have highlighted the theoretical linguistic conundrum our article aims to solve. As such, we now explicitly highlight the shortcomings of the two major existing theoretical lines in linguistics research, and point out how our contribution aims to bring these two traditions together, without compromises. As a result, we have also downsized the admittedly disproportional methodological focus in order to streamline the article even further.
+We would like to stress our commitment to accenting the theoretical relevance of our article. To further strengthen the theoretical contribution of our article, we have highlighted the theoretical linguistic conundrum our article aims to solve. As such, we now explicitly highlight the shortcomings of the two major existing theoretical lines in linguistics research in the introduction, and point out how our contribution aims to bring these two traditions together, without compromises. As a result, we have also downsized the admittedly disproportional methodological focus in order to streamline the article even further.
 
 ## Problems with distributional semantics, its focus on dimension reduction and the 'twice removed' GAMs
 
