@@ -840,7 +840,7 @@ semset_fit <- lm(
 semset_fit_tidy <- semset_fit %>% tidy()
 ```
 
-In our fine-grained, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
+In our fine-grained analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
 
 - a verb that is not tagged for "control", "attributive", "spatial", "cognitive" or "dynamic";
 - that is intransitive ("monovalent");
