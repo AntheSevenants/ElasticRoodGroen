@@ -750,7 +750,7 @@ We further expanded the semantic properties from Cornetto with the emotion asses
 |control|the subject of the verb is capable of acting with volition|
 |attributive|the verb expresses a relation of ownership|
 |spatial|the verb expresses a location or movement of (one of) the participants(s)|
-|cognition|the verb demands emotional, perceptual or mental activitity|
+|cognition|the verb demands emotional, perceptual or mental activity|
 |dynamic|the verb expresses a non-static, changing situation|
 |valency|the number of arguments of the verb|
 |valence category|whether the verb is rated as "neutral" or "valenced"|
