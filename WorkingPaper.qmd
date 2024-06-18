@@ -33,6 +33,8 @@ number-sections: true
 reference-location: margin
 csl: chicago-author-date.csl
 df-print: kable
+abstract: |
+  This article showcases elastic net regression as a means to build fairer models of morphosyntactic variation. Elastic net allows lexical items to appear on the same level as traditional, high-level predictors, enabling fuller models of variation. We apply elastic net regression to 1,296,574 Dutch verbal cluster tokens from the SoNaR corpus, analysing a morphosyntactic alternance in Dutch subordinate clauses. Our results show morphosyntactic preferences among verbs, indicating that semantic effects are indeed at play. Further analysis shows that semantic patterns for either word order exist, though it remains difficult to glean any semantic generalisations. Still, the elastic net technique shows that the inclusion of lexical items as full predictors in a model is useful, as much of the variation left unexplained by high-level predictors can be explained in lexical terms.
 execute:
   echo: false
 ---
