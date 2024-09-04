@@ -580,6 +580,7 @@ Only one predictor was not retained: the predictor for auxiliary *worden*. From 
 #### Comparison to previous research
 
 ```{r comparison-load}
+#| output: false 
 source("1-7 Comparison.R")
 ```
 
@@ -622,6 +623,8 @@ We computed the Pearson correlation between the converted logits and our elastic
 #| fig-cap: "A visual comparison of the OR values converted to logits and our elastic net coefficients" 
 quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Logit", "Elastic net coefficient")
 ```
+
+For completeness' sake, we also provide Bayesian estimates for the correlations between our coefficients and the other values. These are provided in @sec-bayesian-correlations.
 
 ## Attaching insights into meaning
 
@@ -1046,6 +1049,22 @@ In the matrix form, each multidimensional column is converted so that each uniqu
 The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
 
 To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert "traditional" datasets to the matrix format detailed above in seconds.
+
+### Bayesian correlations {#sec-bayesian-correlations}
+
+To provide more robust evidence for the correlation between our elastic net coefficients and the results of previous studies, we have also computed the Bayesian correlations between the two, complete with their credible intervals (CI).
+
+| Measure | Estimate | CI |
+| --- | --- | --- |
+| Pearson | `r ds_cor_bayes$Median %>% formatd(3)` | `r ds_cor_bayes$CI_low %>% formatd(3)`-`r ds_cor_bayes$CI_high %>% formatd(3)` |
+| Kendall | `r ds_cor_ken_bayes$r %>% formatd(3)` | `r ds_cor_ken_bayes_ci$lowerCI %>% formatd(3)`-`r ds_cor_ken_bayes_ci$upperCI %>% formatd(3)` |
+: The Bayesian correlation results for the comparison between De Sutter's LLR values and our elastic net coefficients {#tbl-comparison-ds-bayes}
+
+| Measure | Estimate | CI |
+| --- | --- | --- |
+| Pearson | `r bloem_cor_bayes$Median %>% formatd(3)` | `r bloem_cor_bayes$CI_low %>% formatd(3)`-`r bloem_cor_bayes$CI_high %>% formatd(3)` |
+| Kendall | `r bloem_cor_ken_bayes$r %>% formatd(3)` |`r bloem_cor_ken_bayes_ci$lowerCI %>% formatd(3)`-`r bloem_cor_ken_bayes_ci$upperCI %>% formatd(3)` |
+: The Bayesian correlation results for the comparison between Bloem's OR values and our elastic net coefficients {#tbl-comparison-bloem-bayes}
 
 ### Comparison tables
 

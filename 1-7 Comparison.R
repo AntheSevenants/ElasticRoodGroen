@@ -1,3 +1,8 @@
+library(BayesFactor)
+library(bayestestR)
+
+source("KendallBayes.R")
+
 df_net <- read.csv("output/RoodGroenAnthe_coefficients_infused.csv")
 df_llr <- read.csv("data/DeSutterLLR.csv")
 
@@ -28,6 +33,15 @@ quadrant_plot <- function(x, y, xlab=NA, ylab=NA, goffset=0, roffset=0) {
 #quadrant_plot(df_ds$llr, df_ds$coefficient, "Log likelihood ratio", "Elastic net coefficient", -1, -1.7)
 
 ds_cor <- cor.test(df_ds$coefficient, df_ds$llr) # of course, the correlation is true
+ds_cor_bayes <- describe_posterior(correlationBF(df_ds$coefficient, df_ds$llr))
+ds_cor_ken <- cor.test(df_ds$coefficient, df_ds$llr, method="kendall")
+ds_cor_ken_bayes <- bfCorrieKernelKendallTau(ds_cor_ken$estimate, dim(df_ds)[1])
+ds_cor_ken_bayes_ci <- credibleIntervalKendallTau(ds_cor_ken$estimate, dim(df_ds)[1])
+
+# ds_cor_bayes$Median
+# ds_cor_bayes$CI_low
+# ds_cor_bayes$CI_high
+# ds_cor_bayes$BF
 
 # Bloem
 df_bloem <- merge(x=df_net, y=df_oddsr, by.x="lemma", by.y="Verb", all.y=T)
@@ -38,6 +52,9 @@ bloem_na <- df_bloem[is.na(df_bloem$coefficient),]
 
 df_bloem_nna <- df_bloem[!is.na(df_bloem$coefficient) & df_bloem$logit != Inf,]
 bloem_cor <- cor.test(df_bloem_nna$coefficient, df_bloem_nna$logit)
+bloem_cor_bayes <- describe_posterior(correlationBF(df_bloem_nna$coefficient, df_bloem_nna$logit))
+bloem_cor_ken <- cor.test(df_bloem_nna$coefficient, df_bloem_nna$logit, method="kendall")
+bloem_cor_ken_bayes <- bfCorrieKernelKendallTau(bloem_cor_ken$estimate, dim(df_bloem_nna)[1])
+bloem_cor_ken_bayes_ci <- credibleIntervalKendallTau(bloem_cor_ken$estimate, dim(df_bloem_nna)[1])
 
 #quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Odds ratio", "Elastic net coefficient", -1, -1.7)
-
