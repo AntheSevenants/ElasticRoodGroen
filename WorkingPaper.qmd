@@ -762,7 +762,7 @@ We further expanded the semantic properties from Cornetto with the emotion asses
 
 : An overview of the variables of our analyses. Semantic descriptions taken from @piek2013cornetto. {#tbl-variables}
 
-As mentioned before, only a subset of verbs is tagged for the most specific semantic properties. Therefore, we made two analyses. In the fine-grained analysis, we used the smallest dataset with the richest annotations, while in the coarse-grained analysis, we traded the five semantic properties for the three-way variable "semantic type" so we could use the larger dataset. We included the second, coarser analysis to be able to better assess the influence of variables with weaker effects, which would not attain significance at a smaller dataset size.
+As mentioned before, only a subset of verbs is tagged for specific semantic properties, with the more elaborate semantic tags being even fewer. This unfortunately limits the number of types that can be used for a lexical-semantic analysis. However, we still believe there is value in carrying out an analysis with this smaller subset of the data, as it not only provides a more interpretable window into possible semantic patterns, but also allows us to replicate the research by @bloem_processing_2021, as mentioned previously. To not have to choose between statistical power and annotation resolution (the broader tags are more numerous, the more detailed tags are fewer), we decided to make two analyses. In the fine-grained analysis, we used the smallest subset of the data with the richest annotations, while in the coarse-grained analysis, we used the broader "semantic type" predictor available for more types.
 
 ```{r regression-fit-format}
 format_num_col <- function(p_value) {
