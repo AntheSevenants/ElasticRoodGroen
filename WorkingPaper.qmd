@@ -845,7 +845,7 @@ semset_fit <- lm(
 semset_fit_tidy <- semset_fit %>% tidy()
 ```
 
-In our fine-grained analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
+In our fine-grained analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. In short, we wanted to model whether the presence of specific semantic properties (i.e. the subject of the verb being capable of acting with volition, the verb expressing a changing situation...) influences the red or green preference of verbs. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
 
 - a verb that is not tagged for "control", "attributive", "spatial", "cognitive" or "dynamic";
 - that is intransitive ("monovalent");
@@ -853,7 +853,7 @@ In our fine-grained analysis, based on the smaller dataset, we modelled the elas
 
 Our reference situation expresses a slight bias towards the red order.
 
-The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. We see that for verbs which are valenced (either positive or negative), there needs to be a small adjustment towards the green word order (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`). Of all semantic properties, we see that the "cognitive" tag reaches closest to significance, though it does not attain it.
+The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. Only adjustments with a p value below 0.05 have sufficient statistical evidence. We see that for verbs which are valenced (having either positive or negative associated emotions), there needs to be a small adjustment. The value for "valence: valenced" under the "coefficient" column (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`) shows this correction quantitavely. Like before, the negative signs indicates a correction towards the green word order, which in turn means that verbs with a certain emotional loading tend slightly more towards the green word order. Of all semantic properties (i.e. control, attributive, spatial ...), we see that the "cognitive" property reaches closest to significance, though it does not attain it. This is different from the analysis by @bloem_processing_2021, where verbs tagged cognitive *did* attain significance.
 
 ```{r tbl-semset-regresion}
 #| label: tbl-semset-regression
@@ -861,7 +861,7 @@ The regression results show the differences to the elastic net coefficient of a 
 semset_fit %>% format_table()
 ```
 
-For our coarse-grained analysis, based on the larger database, we again modelled the elastic net coefficients for the different verbs, but this time using the simpler, more coarse semantic labelling. In fact, we simplified the semantic labelling to be binary, collapsing the "process" and "action" labels into a new label, "no state". We made this change in order to improve data balance and to make the predictor align more with the stative-dynamic dichotomy by @pardoen1991interpretatie (see @sec-semantics-influence).  @tbl-semtype-regression shows the results of this model. The intercept situation here represents a reference situation for:
+For our coarse-grained analysis, based on the larger database, we again modelled the elastic net coefficients for the different verbs, but this time using the simpler, more coarse semantic labelling. In fact, we simplified the semantic labelling to be binary, collapsing the "process" and "action" labels into a new label, "no state". We made this change in order to improve data balance and to make the predictor align more with the stative-dynamic dichotomy by @pardoen1991interpretatie (see @sec-semantics-influence). In this model, we wanted to know whether a verb's semantic type (expressing a state vs. not expressing a state) influences its preference for the red or the green word order. @tbl-semtype-regression shows the results of this model. The intercept situation here represents a reference situation for:
 
 - a verb that expresses a state;
 - that is intransitive ("monovalent");
@@ -886,11 +886,11 @@ semtype_fit_tidy <- semtype_fit %>% tidy()
 semtype_fit %>% format_table()
 ```
 
-With this larger dataset size, we see that semantics- and valency-related predictors now reach significance. We will treat these differences one by one.
+With this larger dataset size, we see that semantics- and valency-related predictors now reach significance. In fact, all predictors have p values below 0.05. We will treat the different corrections one by one.
 
 1. Valency
 
-Starting from an intransitive reference point, changes to transitive or ditransitive verbs require a correction towards the green order (`r semtype_fit_tidy %>% filter(term == "valencydi") %>% .$estimate %>% formatd(3)` and `r semtype_fit_tidy %>% filter(term == "valencytri") %>% .$estimate %>% formatd(3)` respectively). The post-hoc analysis [through `emmeans`, @emmeans] in @tbl-valency-posthoc shows that there is only a difference between intransitive and both transitive and ditransitive verbs. There are no mutual differences between transitive and ditransitive verbs.
+Starting from an intransitive reference point, changes to transitive or ditransitive verbs require a correction towards the green order (`r semtype_fit_tidy %>% filter(term == "valencydi") %>% .$estimate %>% formatd(3)` and `r semtype_fit_tidy %>% filter(term == "valencytri") %>% .$estimate %>% formatd(3)` respectively). This means we see a slight preference for the green word order for these types of verbs. We ran an additional post-hoc analysis [through `emmeans`, @emmeans] to determine whether there are mutual differences between the verb types. @tbl-valency-posthoc shows that significant differences exist only between intransitive and ditransitive verbs, and intransitive and ditransitive verbs. There are no mutual differences between transitive and ditransitive verbs.
 
 ```{r #tbl-valency-posthoc}
 #| tbl-cap: Results of the `emmeans` posthoc analysis for valency. * indicates statistical significance
@@ -903,11 +903,11 @@ format_posthoc_table(posthoc_valency)
 
 2. Valence category
 
-Like in the fine-grained analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`).
+Like in the fine-grained analysis, starting from a neutral reference point, verbs with an emotional load (either positive or negative) lead to a slight shift towards the green word order (`r semtype_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)` in @tbl-valency-posthoc). We thus see the same slight green preference for emotionally loaded verbs.
 
 3. Semantic type
 
-Our reference situation expresses a "state" semantic type. We see that there is a significant difference between this state reference type and the "no state" type consisting of both "action" and "process". We see that when the semantic type changes to not a state, the elastic net coefficients shift slightly towards the green order (`r semtype_fit_tidy %>% filter(term == "semantic_typeno_state") %>% .$estimate %>% formatd(3)`).
+Our reference situation expresses a "state" semantic type. We see that there is a significant difference between this state reference type and the "no state" type consisting of both "action" and "process". We see that when the semantic type changes to not a state, the elastic net coefficients shift slightly towards the green order (`r semtype_fit_tidy %>% filter(term == "semantic_typeno_state") %>% .$estimate %>% formatd(3)`). Interestingly, then, verbs which do *not* express a state, seem to bias slightly towards the green word order.
 
 ### Semantic conclusions 
 
