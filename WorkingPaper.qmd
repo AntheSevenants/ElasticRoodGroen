@@ -72,7 +72,7 @@ formatp <- function(number) {
 suppress_gloss <- TRUE
 ```
 
-## Introduction
+## Introduction {#sec-introduction}
 
 ### Studying alternate ways of saying the same thing
 
@@ -263,7 +263,7 @@ Theoretical-formal accounts based on movement, however, have difficulty finding 
 
 ### Probabilistic accounts {#sec-probabilistic-accounts}
 
-Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and do not root the origin of word order variation strictly in geography. Instead, they attempt to explain verb cluster variation using probabilistic models. In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
+Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and do not root the origin of word order variation strictly in geography. Instead, they attempt to explain verb cluster variation using probabilistic models [see @sec-introduction]. In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
 
 #### Influence of lectal factors
 
