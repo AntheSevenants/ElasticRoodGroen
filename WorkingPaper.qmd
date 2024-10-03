@@ -249,7 +249,7 @@ green_example
 
 [^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
 
-This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. Crucially, a difference in word order does not appear to entail a difference in meaning [@bloem_processing_2021, 2].
+This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. Crucially, a difference in word order does not appear to entail a difference in meaning [@bloem_processing_2021, 2]. In the following sections, we give an overview of how the three lines of research detailed in the introduction treat this variation.
 
 ### Formal accounts
 
@@ -263,7 +263,7 @@ Theoretical-formal accounts based on movement, however, have difficulty finding 
 
 [^formal-ignores-individual]: Of course, theoretical-formal accounts *by design* do not engage deeply with the individual language user. We therefore regard  "skipping" the individual as a side effect of the theory, rather than a flaw.
 
-### Probabilistic accounts {#sec-probabilistic-accounts}
+### Probabilistic and lexical accounts {#sec-probabilistic-accounts}
 
 Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and do not root the origin of word order variation strictly in geography. Instead, they attempt to explain verb cluster variation using probabilistic models [see @sec-introduction]. In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
 
