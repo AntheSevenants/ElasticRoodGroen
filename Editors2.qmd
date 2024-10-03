@@ -1,0 +1,55 @@
+---
+bibliography: references.bib
+csl: chicago-author-date.csl
+---
+
+
+# Letter to the editor and reviewers
+
+Dear editor and reviewers,
+
+First, we would again like to thank you for your feedback on our manuscript. We especially appreciate the detail with which you have studied our changes and commented on the manuscript.
+
+Like last time, we would like to address the concerns by reviewer 1 and reviewer 2 jointly. We will treat the comments they have in common as well as their individual concerns further in this text.
+
+To make it more clear which parts of the manuscript have been changed, we have highlighted all new or adapted parts of the text in blue.
+
+## Readability of tables and extra definitions
+
+Reviewer 1 asked for clearer table structures and extra clarifications in some tables. We agree that these changes improve the readability of the article. Both Table 1 and Table 2 have been augmented in this regard.
+
+## Bayesian correlation measures
+
+Reviewer 1 asked for more robust evidence to prove the link between our results and those of De Sutter et al. (2005). While we are happy to provide more information on our statistical power, we do worry about further technical "bloat" in the manuscript by introducing the Bayesian framework -- something we specifically want to avoid given previous comments on the manuscript. As a compromise, we have included the Bayesian Pearson's and Kendall's coefficients and Bayesian Credible Intervals in the Appendix.
+
+## Lexical-semantic database data loss and arithmetic
+
+Reviewer 1 was confused about two things in the lexical-semantic analysis. First, the fact that we exclude a large share of the data in our analysis. We have added an extra explanation detailing the issues with Cornetto, the lexical database used. In this database, not all verbs are semantically tagged, likely due to budget constraints in the Cornetto project. Therefore, we can only use the part of Cornetto that has annotations for semantics. To make matters worse, the more specific semantic annotation is available for an even smaller subset of the data. Because it would be a waste to only analyse this very small subset, we opted to have two analyses: one on the subset of semantically annotated verbs, and one on the subset of *precisely* annotated verbs. Note that general and precise semantic tags are not mutually exclusive: all verbs with precise semantic tags also have general semantic tags, but this is not the case in the other direction. This also explains why summing up the number of verbs for each type of tag leads to a number seemingly bigger than the number of verbs included in the analysis: some verbs carry both tags.
+
+## Mix-up methodological lines and theory
+
+Reviewer 2 pointed out that the introduction in the previous version of the manuscript did not *actually* introduce theoretical baselines, but rather confused different types of methodology with theory. We agree that more theoretical work needed to be done. Therefore, we have reworked the introduction in the following ways:
+
+- We now speak of "methodological lines" instead of "theoretical lines".
+- However, we now also explicitly link these methodological lines to typical theoretical pairings. As such, we now specify that regression analysis is typically used to support probabilistic grammar, while collostructional analysis is often used within the scope of CxG. Of course, this does not mean that these associations are set in stone or *requirements* in any way, but they provide guidance nonetheless.
+- In addition, we have also included a brief formal-theoretic account of morphosyntactic variation. These types of theories also attempt to capture variation to a certain extent, and should therefore also be part of the theoretic overview.
+- We now explicitly call attention to the parallels between the introduction of the article and the different ways the variation between the red green word order has been treated. In this way, we have devised a more rigid theoretical structure within the paper as a whole, which should strengthen its appeal for the journal.
+
+The theoretical value of the contribution is expanded upon in the discussion.
+
+## The discussion is too brief and does not revisit all theoretical points
+
+Both reviewer 1 and 2 found that the discussion of our article was inadequate: it was too short, and was only loosely connected to the introduction. In our revised version of the manuscript, we now revisit the usage-based methodological lines introduced in the introduction, their problems discussed in further paragraphs, and then the way in which our elastic net methodology attempts to solve these issues. In addition, we now specifically highlight in what way the affordances of the elastic net technique feed back into linguistic theory. This also further contributes to the structure of the manuscript *and* the theoretical aspect of the contribution.
+
+## Section 3.1 is disconnected from the rest of the manuscript
+
+Reviewer 2 was happy to see a discussion of formal treatments of the red-green variation in Dutch, but felt that the section stood on its own too much. By also including the formal view on variation in the introduction, the presence of this section is now expected and even necessary.
+
+## Section 3.1 could refer to theoretical grounds for explaining the variation between red and green
+
+Reviewer 2 mentioned that there is theoretical-formal work addressing specifically the *source* of the variation between the red and green word order in Dutch. Indeed, @barbiers_merging_2018 attempt to solve the issue that movement-based approaches have (there not really being a trigger for movement) by using a different formal mechanism. We have updated the theoretical overview to include this formal solution.
+
+We hope to have addressed the issues raised by the reviewers in a sufficient manner.
+
+All the best,  
+The authors
