@@ -249,7 +249,9 @@ green_example
 
 [^gloss-source]: All examples reference the SoNaR corpus [@oostdijk_d-coi_2008] part they come from.
 
-This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses. Crucially, a difference in word order does not appear to entail a difference in meaning [@bloem_processing_2021, 2]. In the following sections, we give an overview of how the three lines of research detailed in the introduction treat this variation.
+This alternance is also possible in main clauses with three or more verbs, but it is best known in subordinate clauses.[^modals] Crucially, a difference in word order does not appear to entail a difference in meaning [@bloem_processing_2021, 2]. In the following sections, we give an overview of how the three lines of research detailed in the introduction treat this variation.
+
+[^modals]: Clusters can also feature modal verbs, but as these are considered distinct from non-modal clusters [@bloem_processing_2021 119], we do not treat them in this study.
 
 ### Formal accounts
 
@@ -327,7 +329,7 @@ Both @de_sutter_rood_2005 and @bloem_processing_2021 also explored the lexical i
 
 #### Influence of auxiliary verb
 
-Finally, the auxiliary verb used in tandem with the verb cluster also has an influence on the choice between the red and green order. @de_sutter_rood_2005 [257] found that the green word order is more likely when a verbal cluster occurs with auxiliary verb *zijn* 'to be', than when it occurs with *hebben* 'to have' or *worden* 'to become'. Because *zijn* is a copular verb in Dutch, it is strongly associated with adjectival contexts which, as already stated, can only appear in the green word order in subordinate clauses (e.g. *omdat een marsman groen is*, 'because a martian is green'). An analogy process thus carries over this preference to verb cluster order. The other auxiliaries (*hebben* and *worden*), comparatively, are more associated with the red word order. We see the same tendencies in @bloem_processing_2021 [25].
+Finally, the auxiliary verb used in tandem with the verb cluster also has an influence on the choice between the red and green order. @de_sutter_rood_2005 [257] found that the green word order is more likely when a verbal cluster occurs with auxiliary verb *zijn* 'to be', than when it occurs with *hebben* 'to have' or *worden* 'to become'. Because *zijn* is a copular verb in Dutch, it is strongly associated with adjectival contexts which, as already stated, can only appear in the green word order in subordinate clauses (e.g. *omdat een marsman groen is*, 'because a martian is green'). An analogy process thus carries over this preference to verb cluster order. The other auxiliaries (*hebben* and *worden*), comparatively, are more associated with the red word order. We see the same tendencies in @bloem_processing_2021 [25]. It is also possible to find a modal verb (e.g. *kunnen*, 'to be able to') as the auxiliary verb. In such clusters, the red order is most prevalent [@bloem_processing_2021 119]. We do not treat modal clusters in this study.
 
 ## Data
 
