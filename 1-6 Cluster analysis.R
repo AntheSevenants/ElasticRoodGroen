@@ -6,9 +6,24 @@ library(ggplot2)
 
 # Read coefficients output
 cl_df <- read.csv("output/RoodGroenAnthe_coefficients_infused_vectors.csv")
+sem_df <- read.csv("output/RoodGroenAnthe_coefficients_semantics_full.csv")
 
 cl_df$order <- ifelse(cl_df$coefficient < 0, "green",
                       ifelse(cl_df$coefficient > 0, "red", NA))
+
+cl_df <- merge(cl_df, sem_df[c(
+  "feature",
+  "valency",
+  "control",
+  "attributive",
+  "spatial",
+  "cognitive",
+  "dynamic",
+  "ValenceVsNeutral"
+)], by="feature", all.x=T)
+
+cl_df$valenced_numeric <- as.numeric(factor(cl_df$ValenceVsNeutral, levels=c("neutral", "valenced"))) - 1
+cl_df$cognitive_numeric <- as.numeric(factor(cl_df$cognitive, levels=c("False", "True"))) - 1
 
 cluster_stats <- function(grouping_col) {
   cl_df %>%
@@ -44,6 +59,8 @@ cluster_plot <- function(cluster_stats) {
   # Extract cluster ids
   cluster_ids <- cluster_stats[[1]]
   
+  #View(cluster_stats)
+  
   ggplot(cluster_stats,
          aes(
            fill = name,
@@ -72,8 +89,13 @@ cluster_plot <- function(cluster_stats) {
     xlab("Cluster ID") +
     ylab("Percentage") +
     scale_y_continuous(labels = percent) +
-    guides(linetype = guide_legend(title="Dominant colour"))
+    guides(linetype = guide_legend(title="Dominant colour"), fill= guide_legend(title="Verb preferences"))
 }
+
+cluster_stats("non_zero.kmeans.full") %>% lm(greenness ~ valence + cognitive, data=.) %>% summary
+
+cluster_stats("non_zero.kmeans.full") %>% cor.test(.$greenness, .$valence, data=.)
+cluster_stats("non_zero.kmeans.full") %>% cor.test(.$greenness, .$cognitive, data=.)
 
 #cluster_stats("non_zero.kmeans.full") 
 
