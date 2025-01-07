@@ -66,7 +66,7 @@ formatd <- function(number, nsmall=2) {
 }
 
 formatp <- function(number) {
-    label_percent()(number)
+    label_percent(suffix=" %")(number)
 }
 
 suppress_gloss <- FALSE
@@ -84,17 +84,19 @@ The third methodological line is characterised by a focus on one specific aspect
 
 [^formal]: In formal theories of language, the lexicon is often seen as an entity wholly separate from syntax.
 
-The issue with these two lines of research is that they inadvertently have a bias for one specific type of predictor. The type of analysis typically carried out with regression analysis promotes the use of high-level, clear-cut predictors, while the lexical frequency research with collostructional analysis is solely focussed on lexical items. This puts these different models into a pickle, as they are forced into highlighting only part of the phenomena under scrutiny. Of course, the choice between these two approaches has its peculiar repercussions, as predictors of different natures are never present as equals in the same models, which means linguistic conclusions are usually only centred around one or the other -- never both at once. Naturally, these results are still valid in the strict sense, but they never paint a full picture. In this article, we will showcase elastic net regression, a regression technique which can handle both high-level and lexical predictors at once in a single model. We will demonstrate this technique through a case study of a morphosyntactic alternance in Dutch. Later, we will come back to the repercussions of elastic net for CxG as a theoretical concept, and the affordances it brings. First, however, we will discuss previous attempts to bring the lexical dimension into models of variation.
+The issue with these previous two lines of research is that they inadvertently have a bias for one specific type of predictor. The type of analysis typically carried out with regression analysis promotes the use of high-level, clear-cut predictors, while the lexical frequency research with collostructional analysis is solely focussed on lexical items. This puts these different models into a pickle, as they are forced into highlighting only part of the phenomena under scrutiny. Of course, the choice between these two approaches has its peculiar repercussions, as predictors of different natures are never present as equals in the same models, which means linguistic conclusions are usually only centred around one or the other -- never both at once. Naturally, these results are still valid in the strict sense, but they never paint a full picture.
+
+In this article, we will showcase elastic net regression, a regression technique which can handle both high-level and lexical predictors at once in a single model. We will demonstrate this technique through a case study of a morphosyntactic alternance in Dutch. Later, we will come back to the repercussions of elastic net for CxG as a theoretical concept, and the affordances it brings. First, however, we will discuss previous attempts to bring the lexical dimension into models of variation.
 
 ### Previous lexical effects research
 
 There are several techniques available which attempt to model lexical influence in some way, but these techniques have not been without major drawbacks. One option explored by @bloem_processing_2021 is to investigate the unexplained variation or so-called *residuals* of each data point in a logistic regression analysis. The idea is that the mean residuals for a specific type (e.g. the residuals for all data points with the same word) hint at the lexical association of that type towards an option of a specific alternance [@bloem_processing_2021 118, 135]. While this approach to measuring lexical-semantic effects has been shown to work, it lumps together unexplained variation and lexical-semantic effects into one category, which is statistically infelicitous. Philosophically, it also still regards lexical items as "lesser" predictors, since they are not included in the main analysis and are only considered in a post-hoc manner.
 
-A current state-of-the-art analysis would attempt to use random effects in a mixed-effects logistic regression [cf. @gries_most_2015]. In such an approach, specific lexical verbs partaking in an alternance are seen as levels of a factor for which, usually, one extra parameter is fitted, as a random factor. This would result in a correction term for each type separately, which would indicate how specific words contribute towards the choice between two constructions. However, as @van_de_velde_investigating_2019 [168-169] argue, there are generally two issues with this approach. The first issue is that using random effects in this way is, strictly speaking, conceptually unsound. Random effects are meant to account for structural associations in the data, to avoid Type I errors. If one were to use the by-word corrections from the random factor as a variable of interest, to boost the statistical power of the analysis (avoiding Type II errors), this would amount to making one's model less conservative, letting Type I errors sneak in via the backdoor. If the lexical verbs are a variable of interest, one should make them part of the *fixed effects structure* and have them function on the same level as the high-level predictors.
+A current state-of-the-art analysis would attempt to use random effects in a mixed-effects logistic regression [c.f. @gries_most_2015]. In such an approach, specific lexical verbs partaking in an alternance are seen as levels of a factor for which, usually, one extra parameter is fitted, as a random factor. This would result in a correction term for each type separately, which would indicate how specific words contribute towards the choice between two constructions. However, as @van_de_velde_investigating_2019 [168-169] argue, there are generally two issues with this approach. The first issue is that using random effects in this way is, strictly speaking, conceptually unsound. Random effects are meant to account for structural associations in the data, to avoid Type I errors. If one were to use the by-word corrections from the random factor as a variable of interest, to boost the statistical power of the analysis (avoiding Type II errors), this would amount to making one's model less conservative, letting Type I errors sneak in via the backdoor. If the lexical verbs are a variable of interest, one should make them part of the *fixed effects structure* and have them function on the same level as the high-level predictors.
 
 This brings us to the second issue raised by @van_de_velde_investigating_2019; there are *many* possible lexical types, and word distribution is notoriously skewed [@zipf_psycho-biology_1965]. As @bloem_processing_2021 [117] says, this results in "an impossible task when there are many unique \[words\] -- you can't create a line from a single data point" -- and models will fail to converge given too many lexical types. A possible solution to this problem of high dimensionality would be to use some sort of "semantic binning", i.e. by grouping individual words into larger semantic categories. However, this means we lose the ability to look at lexical effects at the level of individual words, and this also introduces bias into the analysis at the level of the grouping itself, unless you use clusters, like in @levshina_radically_2014 or @van_de_velde_investigating_2019.
 
-In collostructional analysis [@gries_collostructional_2013], the lexicon takes the center stage. The technique can compute precise lemma-level preferences for the choice between two constructions, but it does not feature multifactorial control. This means that it is difficult to focus purely on the lexical influence proper, as there can be interference from other (un)known factors that cannot be taken into account in the model.
+In collostructional analysis [@gries_collostructional_2013], the lexicon takes the centre stage. The technique can compute precise lemma-level preferences for the choice between two constructions, but it does not feature multifactorial control. This means that it is difficult to focus purely on the lexical influence proper, as there can be interference from other (un)known factors that cannot be taken into account in the model.
 
 Currently, then, there is no technique which handles both high-level predictors and lexical items as full-fledged predictors of equal value. In this article, we demonstrate elastic net regression, a new methodology which is able to process predictors of various nature on an equal footing. To demonstrate this technique, we will build an all-encompassing, holistic model of the so-called "red" and "green" word order in Dutch, with both the high-level predictors found in previous research as well as lexical items. In an attempt to find patterns in the semantic preferences of the verbs occurring in the verbal clusters, we will make use of semantic vectors as well as a lexical-semantic database. First, however, we will explain what the elastic net technique does and why it is so useful for fairer research on morphosyntactic variation.
 
@@ -108,11 +110,11 @@ In addition, model coefficients can be shrunk to the extent that they are reduce
 
 When we speak of elastic net regression, we actually mean the combination of "lasso regression" and "ridge regression". Both are penalised regression techniques, but their exact operationalisations are different.
 
-Lasso regression attenuates predictions through the use of the so-called L1-norm.[^lnote] In lasso regression's objective function, the coefficients of the model are optimised for maximum likelihood, like in a traditional regression fitting procedure. Additionally, however, the absolute values of the coefficients are also used as a *penalty* to the same objective function. An additional parameter lambda ($\lambda$) controls how severe this penalty is. The following equation shows the lasso objective function for a binary response variable [adapted from @friedman_regularization_2010]:
+Lasso regression attenuates predictions through the use of the so-called L1-norm.[^lnote] In lasso regression's objective function, the coefficients of the model are optimised for maximum likelihood, like in a traditional regression fitting procedure. Additionally, however, the absolute values of the coefficients are also used as a *penalty* to the same objective function. An additional parameter lambda ($\lambda$) controls how severe this penalty is. @eq-lasso shows the lasso objective function for a binary response variable [adapted from @friedman_regularization_2010].
 $$
 \min_{(\beta_0, \beta) \in \mathbb{R}^{p+1}} \underbrace{ - \biggl[ \frac{1}{N} \cdot \sum_{i=1}^N y_i \cdot (\beta_0 + x_i^T \cdot \beta) - \log (1+e^{(\beta_0+x_i^T \cdot \beta)})\biggr] }_{\text{negative log-likelihood of logistic regression}} + 
  \underbrace{\biggl[ \lambda \cdot \lvert \beta \rvert \biggr]}_{ \text{regularization penalty }}
-$$
+$$ {#eq-lasso}
 
 [^lnote]: The L1- and L2-norm (further down) are mathematical concepts that are not to be confused with the terms L1 and L2 referring to language acquisition. We will not use L1 and L2 in this latter context in this article.
 
@@ -141,11 +143,11 @@ $$
 
 ::::
 
-Ridge regression, lasso's sibling, attenuates predictions through the L2-norm. This procedure is comparable to the L1 used in lasso regression. For ridge regression, the coefficients are *squared* to serve as a penalty. Here as well, the severity of the penalty is controlled using the additional parameter lambda. We show the ridge objective function for a binary response variable [adapted from @friedman_regularization_2010]:
+Ridge regression, lasso's sibling, attenuates predictions through the L2-norm. This procedure is comparable to the L1 used in lasso regression. For ridge regression, the coefficients are *squared* to serve as a penalty. Here as well, the severity of the penalty is controlled using the additional parameter lambda. We show the ridge objective function for a binary response variable [adapted from @friedman_regularization_2010] in @eq-ridge.
 $$
 \min_{(\beta_0, \beta) \in \mathbb{R}^{p+1}} \underbrace{ - \biggl[ \frac{1}{N} \cdot \sum_{i=1}^N y_i \cdot (\beta_0 + x_i^T \cdot \beta) - \log (1+e^{(\beta_0+x_i^T \cdot \beta)})\biggr] }_{\text{negative log-likelihood of logistic regression}} + 
  \underbrace{\biggl[ \lambda \cdot \beta^2 \biggr]}_{ \text{regularization penalty }}
-$$
+$$ {#eq-ridge}
 
 ::: {layout-ncol="2"}
 
@@ -178,11 +180,11 @@ While both lasso and ridge regression shrink coefficients, only lasso regression
 
 Both lasso and ridge regression use the lambda parameter to determine the severity of the penalty applied during the model fitting process. This lambda value can range from $0$ (no penalty) to $+\infty$ (maximal penalty). The question then arises how one decides what value to use for lambda in order to obtain the best possible model. To compute lambda, we typically rely on *k-fold cross-validation*, a common practice in the machine learning field. We divide our dataset into *k* "folds", effectively "slices" of data. For example, in 10-fold cross validation, the dataset will be divided into ten parts. First, we use the nine folds to fit the model ("training set") and try a wide array of different lambda values. To examine how well each lambda value performs, we predict values using the fitted model and test how much the predictions deviate from the real values in the remaining fold ("testing set"). We then repeat this process nine more times, each time with a different fold used as a testing set. This enables us to get a global estimation of how well each possible lambda value performs, which helps combat overfitting. The lambda value which produces the best predictions across all fold combinations is chosen to fit a model on the *entire* dataset.
 
-We saw earlier that lasso and ridge regression both have their own strengths. Elastic net regression leverages those strengths and *combines* both techniques. This means that both L1 and L2 regularisation are used at the same time, with an additional parameter alpha ($\alpha$) regulating the split between lasso and ridge penalty [adapted from @friedman_regularization_2010]:
+We saw earlier that lasso and ridge regression both have their own strengths. Elastic net regression leverages those strengths and *combines* both techniques. This means that both L1 and L2 regularisation are used at the same time, with an additional parameter alpha ($\alpha$) regulating the split between lasso and ridge penalty. @eq-elastic-net shows this [adapted from @friedman_regularization_2010].
 $$
 \min_{(\beta_0, \beta) \in \mathbb{R}^{p+1}} \underbrace{ - \biggl[ \frac{1}{N} \cdot \sum_{i=1}^N y_i \cdot (\beta_0 + x_i^T \cdot \beta) - \log (1+e^{(\beta_0+x_i^T \cdot \beta)}) \biggr] }_{\text{negative log-likelihood of logistic regression}} +
  \underbrace{\lambda \cdot  \biggl[ \alpha \cdot \|\beta\|_1 + (1-\alpha) \cdot \|\beta\|_2^2/2  \biggr] }_{\text{regularization penalty}}
-$$
+$$ {#eq-elastic-net}
 
 ::: {layout-ncol="2"}
 
@@ -213,13 +215,13 @@ $$
 
 ::::
 
-Alpha values range between $0$ (only ridge) and $1$ (only lasso). Values between $0$ and $1$ dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. There is no optimality algorithm for selecting the best alpha, so the best alpha value is decided by testing ranges of different alphas, for example by making models from $\alpha = 0$ to $\alpha = 1$ in increments of $0.2$ (resulting in eight models total). For each of those models, a loss is computed, a measure of the difference between a model's predictions and the actual data. The model with the alpha which produces the lowest loss, so the smallest difference between the real data and the predictions, is chosen.
+Alpha values range between 0 (only ridge) and 1 (only lasso). Values between 0 and 1 dictate ridge-lasso splits. In this way, ridge and lasso can be deployed optimally for the problem at hand. There is no optimality algorithm for selecting the best alpha, so the best alpha value is decided by testing ranges of different alphas, for example by making models from $\alpha = 0$ to $\alpha = 1$ in increments of 0.2 (resulting in six models total). For each of those models, a loss is computed, a measure of the difference between a model's predictions and the actual data. The model with the alpha which produces the lowest loss, so the smallest difference between the real data and the predictions, is chosen.
 
 ## "Red" and "green" word order in Dutch subordinate sentences
 
-As mentioned before, we will showcase the elastic net regression technique through a case study on morphosyntactic variation in Dutch. Traditionally in linguistics, there are long-standing theories that "different forms must have [also] different meanings" [@haiman_iconicity_1980, 515-516], be it denotationally, pragmatically or socially [@croft_construction_2010, 472]. In this regard, the verbal clusters found in many Germanic languages, constructions which feature multiple verbal items [@wurmbrand_verb_2017, 4611], are especially interesting: they often feature variation which is essentially free, without any true meaning differences. More specifically in Dutch, we find the alternance between the "red" and "green" word order, a very well-researched morphosyntactic alternance in Dutch. The gist is that in verbal clusters, two verb orders are possible:
+As mentioned before, we will showcase the elastic net regression technique through a case study on morphosyntactic variation in Dutch. Traditionally in linguistics, there are long-standing theories that "different forms must [also] have different meanings" [@haiman_iconicity_1980, 515-516], be it denotationally, pragmatically or socially [@croft_construction_2010, 472]. In this regard, the verbal clusters found in many Germanic languages, constructions which feature multiple verbal items [@wurmbrand_verb_2017, 4611], are especially interesting: they often feature variation which is essentially free, without any true meaning differences. More specifically in Dutch, we find the alternance between the "red" and "green" word order, a very well-researched morphosyntactic alternance in Dutch. The gist is that in verbal clusters, two verb orders are possible, exemplified in @exm-red and @exm-green.
 
-```{r, red-gloss}
+```{r #exm-red}
 #| tbl-cap: Red word order example
 if (!suppress_gloss) {
 red_example <- as_gloss(
@@ -233,7 +235,7 @@ red_example
 }
 ```
 
-```{r, green-gloss}
+```{r #exm-green}
 if (!suppress_gloss) {
 #| tbl-cap: Green word order example
 green_example <- as_gloss(
@@ -255,29 +257,29 @@ This alternance is also possible in main clauses with three or more verbs, but i
 
 ### Formal accounts
 
-Verb cluster variation such as the red and green word order are of high interest to formal syntactic theorists, since they pose fundamental challenges to the formal syntactic apparatus. More specifically, in formal linguistic theory, a choice can be made to opt either for a head-initial or a head-final syntactic design [@augustinus_complement_2015, 46]. In a head-initial design, the head of a phrase is always generated first in that phrase, with its complements coming second. In contrast, in a head-final design, the complements of a phrase come first, and the head of those complements comes after. The choice between head-initial or head-final has repercussions for the so-called "base order" in verb clusters. A head-initial design generates the red word order in Dutch by default: the auxiliary, which serves as the head in the verbal phrase, is generated first, and selects the participle as its complement. A head-final design generates the green word order in Dutch by default: the auxiliary is generated last, and the participle it selects as its complement comes before it. West-Germanic languages are commonly thought of as head-final [@wurmbrand_verb_2017, 4614], but head-initial accounts also exist [@zwart1993dutch].
+Verb cluster variation such as the red and green word order is of high interest to formal syntactic theorists, since they pose fundamental challenges to the formal syntactic apparatus. More specifically, in formal linguistic theory, a choice can be made to opt either for a head-initial or a head-final syntactic design [@augustinus_complement_2015, 46]. In a head-initial design, the head of a phrase is always generated first in that phrase, with its complements coming second. In contrast, in a head-final design, the complements of a phrase come first, and the head of those complements comes after. The choice between head-initial or head-final has repercussions for the so-called "base order" in verb clusters. A head-initial design generates the red word order in Dutch by default: the auxiliary, which serves as the head in the verbal phrase, is generated first, and selects the participle as its complement. A head-final design generates the green word order in Dutch by default: the auxiliary is generated last, and the participle it selects as its complement comes before it. West-Germanic languages are commonly thought of as head-final [@wurmbrand_verb_2017, 4614], but head-initial accounts also exist [@zwart1993dutch].
 
-Of course, a formal grammar should be able to cover both word orders which naturally occur in Dutch, regardless of head location. @wurmbrand_verb_2017 shows two strategies to achieve this coverage. The first strategy is to ignore verb cluster word order variation as being part of the syntax. In this strategy, the actual verb cluster order is determined only *after* the sentence deep structure is generated [@wurmbrand2004syntactic] -- so-called linearisation (i.e. the conversion from a hierarchy into a linear string of words). The post-syntactic procedure is done through a mechanism called "Flip". This mechanism swaps sister nodes, such as an auxiliary and a participle under the same node. Through this technique, any of our two word orders can be derived, regardless of the base order. This post-syntactic strategy is motivated on semantic terms: a change in order has no fundamental semantic consequences, and therefore the distinction is not considered important to have represented in the actual, deep syntax tree.
+Of course, a formal grammar should be able to cover both word orders which naturally occur in Dutch, regardless of head location. @wurmbrand_verb_2017 shows two strategies to achieve this coverage. The first strategy is to ignore verb cluster word order variation as being part of the syntax. In this strategy, the actual verb cluster order is determined only *after* the sentence deep structure is generated [@wurmbrand2004syntactic] -- a process called linearisation (i.e. the conversion from a hierarchy into a linear string of words). The post-syntactic procedure is done through a mechanism called Flip. This mechanism swaps sister nodes, such as an auxiliary and a participle under the same node. Through this technique, any of our two word orders can be derived, regardless of the base order. This post-syntactic strategy is motivated on semantic terms: a change in order has no fundamental semantic consequences, and therefore the distinction is not considered important to have represented in the actual, deep syntax tree.
 
 The second strategy is to use movement, a common device in formal syntactic theory where elements in the deep structure move to other locations, sometimes iteratively, as the result of some language-internal trigger. There is no shortage of possible movements, regardless of head location. For example, in a head-final architecture (corresponding to the green word order), the red word order can be derived through *verb raising* [@evers_transformational_1975], a process in which the participle moves upwards to the auxiliary and attaches to the right.
 
-Theoretical-formal accounts based on movement, however, have difficulty finding an explanation for the occurrence of either the red or green word order. While there are ample theoretical devices to derive any word order from any base order, even for highly complex verbal clusters, there are no theoretical grounds for explaining the possible variation between red and green. Crucially, if the choice between two variants is free, there cannot be a trigger for movement, yet movement is compulsory in order to be able to derive the non-base word order. [@barbiers_merging_2018] avoid this issue by advocating for a "Merge" operation rather than movement, as Merge does not entail a specific order by itself. The difference between both orders is resolved also outside the syntax tree, just like for Flip, when the tree is linearised. Whether a verb cluster is linearised leftward (red word order) or rightward (green word order) is, according to them, dictated on geographical terms. While this formal solution is elegant, it ignores the supposed freedom of choice that is granted to language users, regardless of their geographical location.[^formal-ignores-individual]
+Theoretical-formal accounts based on movement, however, have difficulty finding an explanation for the occurrence of either the red or green word order. While there are ample theoretical devices to derive any word order from any base order, even for highly complex verbal clusters, there are no theoretical grounds for explaining the possible variation between red and green. Crucially, if the choice between two variants is free, there cannot be a trigger for movement, yet movement is compulsory in order to be able to derive the non-base word order. [@barbiers_merging_2018] avoid this issue by advocating for a Merge operation rather than movement, as Merge does not entail a specific order by itself. The difference between both orders is also resolved outside the syntax tree, just like for Flip, when the tree is linearised. Whether a verb cluster is linearised leftward (red word order) or rightward (green word order) is, according to them, dictated on geographical terms. While this formal solution is elegant, it ignores the supposed freedom of choice that is granted to language users, regardless of their geographical location.[^formal-ignores-individual]
 
 [^formal-ignores-individual]: Of course, theoretical-formal accounts *by design* do not engage deeply with the individual language user. We therefore regard  "skipping" the individual as a side effect of the theory, rather than a flaw.
 
 ### Probabilistic and lexical accounts {#sec-probabilistic-accounts}
 
-Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and do not root the origin of word order variation strictly in geography. Instead, they attempt to explain verb cluster variation using probabilistic models [see @sec-introduction]. In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
+Usage-based studies of the red-green phenomenon are not subject to the aforementioned theoretical movement issues, and do not root the origin of word order variation strictly in geography. Instead, they attempt to explain verb cluster variation using probabilistic models (see @sec-introduction). In this section, we will give an overview of the different probabilistic influences that have been found so far for the red and green word order.
 
 #### Influence of lectal factors
 
-Context is an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Conversely, formal, unidirectional and edited language favours the red word order.
+"Lectal" factors [todo Geeraerts] are an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Conversely, formal, unidirectional and edited language favours the red word order.
 
 #### Influence of prosody
 
-Another source of influence is that of prosody. The most important prosodical influence [@de_sutter_rood_2005, 305] stems from the so-called "separable verbs" in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two adjacent stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider the following example:
+Another source of influence is that of prosody. The most important prosodical influence [@de_sutter_rood_2005, 305] stems from the so-called "separable verbs" in Dutch. These verbs, comparable to phrasal verbs in English, have a preposition which can be detached from the root.[^separable-example] These word-initial prepositions always carry stress, giving rise to a chain of two adjacent stresses. @de_sutter_rood_2005 [154] found that speakers often choose the red order over the green order in order to avoid this chain. Consider @exm-prosody-green.
 
-```{r, prosody-green-gloss}
+```{r #exm-prosody-green}
 #| tbl-cap: Green word order prosody example
 if (!suppress_gloss) {
 prosody_green_example <- as_gloss(
@@ -291,9 +293,9 @@ prosody_green_example
 }
 ```
 
-If both *definitief* 'definitively' and *afgedwongen* 'enforced' are stressed, as they would typically be in Dutch, there would be two consecutive stresses. If one uses the red word order, this chain of stresses can be avoided:
+If both *definitief* 'definitively' and *afgedwongen* 'enforced' are stressed, as they would typically be in Dutch, there would be two consecutive stresses. If one uses the red word order, this chain of stresses can be avoided (@exm-prosody-red).
 
-```{r, prosody-red-gloss}
+```{r #exm-prosody-red}
 #| tbl-cap: Red word order prosody example
 if (!suppress_gloss) {
 prosody_red_example <- as_gloss(
@@ -321,9 +323,9 @@ Another influence on the choice between red and green is priming. @de_sutter_roo
 
 #### Influence of semantics {#sec-semantics-influence}
 
-Despite extensive research on red and green, semantics is an underdeveloped researched area for this alternance [@bloem_processing_2021]. The most extensive semantic research concerns macroscopic research of some semantic feature, in this case *adjectiveness*. It has been found that the more a participle is used as an adjective, the more likely this participle is to be used in the green order [@de_sutter_rood_2005, 233-242]. This is logical, since adjectives can only appear in the green order in subordinate clauses. The choice between red and green is thus "contaminated" by the syntactic rules of the adjective [@pijpops_constructional_2018, 286-290]. Adjectiveness is thought to be the most important language-internal factor in deciding between the red and green word order [@de_sutter_rood_2005, 305], which shows that semantics is indeed an important factor to include in a morphosyntactic analysis.
+Despite extensive research on red and green, semantics is an underdeveloped research area for this alternance [@bloem_processing_2021]. The most extensive semantic research concerns macroscopic research of some semantic feature, in this case *adjectiveness*. It has been found that the more a participle is used as an adjective, the more likely this participle is to be used in the green order [@de_sutter_rood_2005, 233-242]. This is logical, since adjectives can only appear in the green order in subordinate clauses. The choice between red and green is thus "contaminated" by the syntactic rules of the adjective [@pijpops_constructional_2018, 286-290]. Adjectiveness is thought to be the most important language-internal factor in deciding between the red and green word order [@de_sutter_rood_2005, 305], which shows that semantics is indeed an important factor to include in a morphosyntactic analysis.
 
-Another semantic factor is the difference between "dynamic" and "stative" verbs. In the *Algemene Nederlandse Spraakkunst* [@haeseryn_30321_1997, 'General Dutch Grammar'], a descriptive reference grammar of Dutch, dynamic verbs are characterised as encoding an activity or process, while stative verbs are characterised as encoding states. @pardoen1991interpretatie launched the idea that the green order yields a stative interpretation of a verb cluster, while the red order yields a dynamic interpretation. @de_sutter_rood_2005 state the precarious nature of the evidence for Pardoen's hypothesis, as it is largely based on introspection [-@de_sutter_rood_2005, 203]. In addition, through a disctinctive collexeme analysis, they find that certain words like *geweest* ('been') or *gehad* ('had') associate strongly with the red word order, yet they find it difficult to see how one would frame a dynamic interpretation of these intrinsically stative verbs. As such, they argue that the aforementioned association posited by Pardoen may not be very strict, or that it should at least be interpreted separately from the semantics of the main verb. @de_sutter_rood_2005 thus do not reject the hypothesis by @pardoen1991interpretatie entirely, and instead opt to call for modifications to the original, strict idea.
+Another semantic factor is the difference between "dynamic" and "stative" verbs. In the *Algemene Nederlandse Spraakkunst* [@haeseryn_30321_1997, 'General Dutch Grammar'], a descriptive reference grammar of Dutch, dynamic verbs are characterised as encoding an activity or process, while stative verbs are characterised as encoding states. @pardoen1991interpretatie launched the idea that the green order yields a stative interpretation of a verb cluster, while the red order yields a dynamic interpretation. @de_sutter_rood_2005 [203] state the precarious nature of the evidence for Pardoen's hypothesis, as it is largely based on introspection. In addition, through a disctinctive collexeme analysis, they find that certain words like *geweest* ('been') or *gehad* ('had') associate strongly with the red word order, yet they find it difficult to see how one would frame a dynamic interpretation of these intrinsically stative verbs. As such, they argue that the aforementioned association posited by Pardoen may not be very strict, or that it should at least be interpreted separately from the semantics of the main verb. @de_sutter_rood_2005 thus do not reject the hypothesis by @pardoen1991interpretatie entirely, and instead opt to call for modifications to the original, strict idea.
 
 Both @de_sutter_rood_2005 and @bloem_processing_2021 also explored the lexical influence on the choice between red and green. In these studies, associations between certain verbs and a preference for either word order were found. In a further semantic analysis, @bloem_processing_2021 [131] looked at the semantic properties from the Cornetto semantic database for Dutch [@piek2013cornetto] and found no striking difference in the frequency distribution between red and green of verbs tagged as "dynamic". Instead, he found that verbs tagged as "cognitive" seem to appear in the green word order more often, as well as verbs rated as "negative" by an automatic sentiment analysis tool. However, these results must be interpreted with caution, as they are only based on 40 verbs and are not statistically underpinned either.
 
@@ -333,7 +335,7 @@ Finally, the auxiliary verb used in tandem with the verb cluster also has an inf
 
 ## Data
 
-For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. For more information about the data collection process see the Appendix.
+For our model, we collected all red and green verb clusters in subordinate clauses in the SoNaR corpus [@oostdijk_d-coi_2008] and SoNaR New Media corpus [@oostdijk_sonar_2014]. For more information about the data collection process, see @sec-corpus-querying and @sec-filtering-enriching.
 
 ```{r filtered-attestations-df-load}
 df_filtered <- read.csv("output/RoodGroenAnthe_sampled.csv")
@@ -343,7 +345,7 @@ df_filtered <- read.csv("output/RoodGroenAnthe_sampled.csv")
 types_count <- df_filtered$participle %>% unique %>% length
 ```
 
-After filtering invalid occurrences, `r nrow(df_filtered) %>% formatn` attestations of the red and green word order remained, belonging to `r types_count %>% formatn` unique types.[^types] `r subset(df_filtered, order == "red") %>% nrow %>% formatn` attestations belong to the red order, `r subset(df_filtered, order == "green") %>% nrow %>% formatn` to the green order. `r subset(df_filtered, country == "BE") %>% nrow %>% formatn` attestations come from Belgium, `r subset(df_filtered, country == "NL") %>% nrow %>% formatn` attestations from the Netherlands. The imbalance between Belgium and the Netherlands stems from an overall imbalance between Belgian and Netherlandic material in SoNaR. This highlights why it is so important to have a multifactorial technique, like elastic net regression, which can account for these kinds of issues. In a collostructional analysis, such variation would influence the results.
+After filtering invalid occurrences, `r nrow(df_filtered) %>% formatn` attestations of the red and green word order remained, belonging to `r types_count %>% formatn` unique types.[^types] `r subset(df_filtered, order == "red") %>% nrow %>% formatn` attestations belong to the red order, `r subset(df_filtered, order == "green") %>% nrow %>% formatn` belong to the green order. `r subset(df_filtered, country == "BE") %>% nrow %>% formatn` attestations come from Belgium, `r subset(df_filtered, country == "NL") %>% nrow %>% formatn` attestations come from the Netherlands. The imbalance between Belgium and the Netherlands stems from an overall imbalance between Belgian and Netherlandic material in SoNaR. This highlights why it is so important to have a multifactorial technique, like elastic net regression, which can account for these kinds of issues. In a collostructional analysis, such variation would influence the results.
 
 [^types]: Types, in this case, refer to verbal participles we find in the verb clusters.
 
@@ -362,7 +364,7 @@ editing_distribution <- xtabs(~ edited, data=df_filtered)
 editing_distribution_prop <- editing_distribution %>% prop.table()
 ```
 
-For an overview of the proportions and distributions of the high-level predictor values, see @fig-descriptive-plots. The operationalisation of our high-level predictors is available in the Appendix. The mean adjectiveness among all attestations is `r df_filtered$adjectiveness %>% mean() %>% formatd()` (median `r df_filtered$adjectiveness %>% median() %>% formatd()`). 
+For an overview of the proportions and distributions of the high-level predictor values, see @fig-descriptive-plots. The operationalisation of our high-level predictors is available in @sec-filtering-enriching and @sec-converting-dataset. The mean adjectiveness among all attestations is `r df_filtered$adjectiveness %>% mean() %>% formatd()` (median `r df_filtered$adjectiveness %>% median() %>% formatd()`). 
 Of all attestations, `r auxiliary_distribution[["hebben"]] %>% formatn` verb clusters (`r auxiliary_distribution_prop[["hebben"]] %>% formatp`) feature the auxiliary *hebben* 'to have' in the verb cluster, 
 `r auxiliary_distribution[["zijn"]] %>% formatn` (`r auxiliary_distribution_prop[["zijn"]] %>% formatp`) the auxiliary *zijn* 'to be' and 
 `r auxiliary_distribution[["worden"]] %>% formatn` (`r auxiliary_distribution_prop[["worden"]] %>% formatp`) the auxiliary *worden* 'to become'. 
@@ -439,15 +441,15 @@ alpha <- subset(model_meta$as.data.frame(), predicate == "alpha")[["object"]]
 lambda <- subset(model_meta$as.data.frame(), predicate == "lambda")[["object"]]
 ```
 
-The elastic net regression itself was carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). Our high-level predictors are based on the influences found in @sec-semantics-influence. `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary_type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are "traditional" in the sense that they have one coefficient each.
+The elastic net regression itself was carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). Our high-level predictors are based on the influences found in @sec-semantics-influence. `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are "traditional" in the sense that they have one coefficient each.
 
 In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several additional factors which were not previously mentioned, but which also contribute to the choice between red and green: syntactic depth, information value, definiteness, extraposition and inherence (collocations and multi-word units). These influences were not included for two reasons. Firstly, the measured effects for these influences are small compared to the influences we discussed above. This brings us to our second, more pragmatic reason: scope. The focus of this study is to build a rich, fair model with special attention for lexical influences as full predictors. Our high-level predictors of course also remain important, but they mainly serve as multifactorial control. A further operationalisation of a plethora of smaller effects would detract from the main goal of the study, and would foray into the area of diminishing returns as well. In fact, we have treated all language-internal factors deemed by @de_sutter_rood_2005 [305] to be the most important in deciding between red or green, which should provide ample multifactorial control.
 
 | predictor | explanation | type | possible values |
 | --- | --- | --- | --- |
 | participle | the participle in the verbal cluster | distributed binary values for each type | in verb cluster/not in verb cluster |
-| auxiliary_type | the type of the auxiliary in the verbal cluster | distributed binary values for each auxiliary | *zijn*, *hebben*, *worden* |
-| country | the country of the text in which the verbal cluster occurs | binary | BE/NL | 
+| auxiliary type | the type of the auxiliary in the verbal cluster | distributed binary values for each auxiliary | *zijn*, *hebben*, *worden* |
+| country | the country of the text	| binary | BE/NL | 
 | separable | whether the verbal cluster contains a separable verb as its main verb | binary | yes/no |
 | edited | whether the cluster appears in a text genre considered 'edited' | binary | yes/no |
 | adjectiveness | the percentage of adjective use of the participle in the verbal cluster | real number | $0$ to $1$ |
@@ -472,7 +474,7 @@ fancy_scientific <- function(l) {
 }
 ```
 
-ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss. Lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = $`r alpha %>% formatd(0)`$ (so-called "lasso regresion") and lambda = $`r lambda %>% fancy_scientific()`$.
+ElasticToolsR automatically finds the appropriate alpha and lambda values which deliver the best possible model. It does this by trying out many different alpha values, and then selecting the alpha value which produces the model with the lowest loss. For each attempted alpha value, lambda is decided using 10-fold cross validation for each attempted alpha value. Our model for the red and green order performs the best at alpha = $`r alpha %>% formatd(0)`$ (so-called "lasso regresion") and lambda = $`r lambda %>% fancy_scientific()`$.
 
 <!--
 
@@ -504,11 +506,11 @@ Out of the `r coefficients_count %>% formatn` coefficients in our elastic net mo
 coefficients were removed and 
 `r removed_distribution[["FALSE"]] %>% formatn` (`r removed_distribution_prop[["FALSE"]] %>% formatp`)
 coefficients were retained (@fig-coefficient-plots-1).
-All except for one removed coefficients belong to the `Participle` predictor, which means all but one of our "traditional" predictors were retained by the model.
+All removed coefficients except for one belong to the `Participle` predictor, which means all but one of our "traditional" predictors were retained by the model.
 
 #### Lexical effects {#sec-results-lexical}
 
-We will first, however, look at our `Participle` predictor. The coefficients corresponding to each of the types in the verb cluster attestations give us an idea of whether those participles tend to the red or green order. Since our model has the red word order as response variable $1$, positive coefficients show logit corrections towards the red word order, while negative coefficients show logit corrections towards the green word order, under multivariate control of known higher-order effects listed in @tbl-other-coefficients. We can interpret these attractions as lexical-semantic pulls.
+We will first, however, look at our `Participle` predictor. The coefficients corresponding to each of the types in the verb cluster attestations give us an idea of whether those participles tend to the red or the green order. Since our model has the red word order as response variable 1, positive coefficients show logit corrections towards the red word order, while negative coefficients show logit corrections towards the green word order, under multivariate control of the known higher-order effects listed in @tbl-other-coefficients. We can interpret these attractions as lexical-semantic pulls.
 Of the retained coefficients, 
 `r non_zero_distribution[["green"]] %>% formatn` (`r non_zero_distribution_prop[["green"]] %>% formatp`) 
 coefficients represent participles that tend to the green word order, and
@@ -547,7 +549,7 @@ boxplot(coefficient ~ order, col=c("green","red"), pch=19,
         horizontal=T, data=coefficients_non_zero)
 ```
 
-#### High-level effects and intercept
+#### Other effects and intercept
 
 Recall that we added eight high-level predictors under multifactorial control in order to make sure that we did not lump together variation from other sources into our lexical effects. As was mentioned before, all but one of these high-level predictors were retained by the elastic net regression, which means that they are useful to model the choice between the red and green word order. This is, of course, unsurprising, since we based ourselves on previous research for the selection of these predictors. @tbl-other-coefficients shows an overview of the high-level predictors and their coefficient values. Note that though elastic net regression does not provide significance levels, whether a predictor is retained also reflects the importance of that predictor in the model.
 
@@ -606,9 +608,9 @@ ds_na_count <- dim(ds_na)[[1]]
 ds_na_perc <- (ds_na_count / ds_total_count) %>% formatp
 ```
 
-First, we will compare our results to the significant Log Likelihood Ratios (LLRs) found in @de_sutter_rood_2005 [246]. For our comparison, we transformed all LLRs in favour of the green word order to be negative, while LLRs in favour of the red order remained positive. This transformation was made to be able to compare the LLR values, which are all positives, to our elastic net coefficients, the signs of which reflect a pull towards either order. Of the `r ds_total_count %>% formatn` participles with a significant LLR value in the semantic analysis of @de_sutter_rood_2005, `r ds_zero_count %>% formatn` (`r ds_zero_perc`) were eliminated in our elastic net model. This means that the elastic net technique disagrees that a semantic pull exists for these verbs. This difference likely stems from the aforementioned methodological differences in multifactorial control, or overfitting in the older techniques which do not apply cross-validation. An overview of the eliminated coefficients is given in the Appendix.
+First, we will compare our results to the significant Log Likelihood Ratios (LLRs) found in @de_sutter_rood_2005 [246]. For our comparison, we transformed all LLRs in favour of the green word order to be negative, while LLRs in favour of the red order remained positive. This transformation was made to be able to compare the LLR values, which are all positives, to our elastic net coefficients, the signs of which reflect a pull towards either order. Of the `r ds_total_count %>% formatn` participles with a significant LLR value in the semantic analysis of @de_sutter_rood_2005, `r ds_zero_count %>% formatn` (`r ds_zero_perc`) were eliminated in our elastic net model. This means that the elastic net technique disagrees that a semantic pull exists for these verbs. This difference likely stems from the aforementioned methodological differences in multifactorial control, or overfitting in the older techniques which do not apply cross-validation. An overview of the eliminated coefficients is given in @sec-comparison-tables, @tbl-comparison-ds-zero.
 
-There are also `r ds_na_count %>% formatn` participles (`r ds_na_perc`) which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these "participles" are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in the Appendix.
+There are also `r ds_na_count %>% formatn` participles (`r ds_na_perc`) which do not appear in our dataset, and therefore do not have an associated coefficient. Most of these "participles" are actually adjectives, and were likely removed because of our adjectiveness cut-off (see @sec-corpus-querying). An overview of the missing participles is given in @sec-comparison-tables, @tbl-comparison-ds-na.
 
 We computed the Pearson correlation between the modified LLR values and our elastic net coefficients and found a significant correlation $r$ of `r ds_cor$estimate %>% formatd(3)` ($p < 0.05$). The correlation shows that there is a fair degree of overlap between the LLR results and our results, though the results are not one to one. Again, it is reasonable to expect a difference in results as a consequence of the differences in methodology, but generally speaking, this correlation shows that our elastic net regression methodology yields comparable results. If we look at the correlation visually (@fig-comparison-ds), we also see that the data points in the top left and bottom right quadrants, i.e. participles which are associated with red in one technique and green in the other and vice versa, are close to the origin and few. This also shows that our results are generally in line with those of @de_sutter_rood_2005.
 
@@ -625,9 +627,9 @@ bloem_na_count <- dim(bloem_na)[[1]]
 bloem_na_perc <- (bloem_na_count / bloem_total_count) %>% formatp
 ```
 
-Next, we will compare our elastic net coefficients to the odds ratios (ORs) found in @bloem_processing_2021. We converted the ORs back into (continuous) logits, so we could compare them to our elastic net coefficients. Of the `r bloem_total_count %>% formatn` participles in Bloem's semantic analysis, `r bloem_zero_count %>% formatn` (`r bloem_zero_perc`) were eliminated in our elastic net model. Here again, this means that the elastic net technique finds no semantic pull, again likely due to differences in operationalisation. An sample of the eliminated coefficients is given in the Appendix.
+Next, we will compare our elastic net coefficients to the odds ratios (ORs) found in @bloem_processing_2021. We converted the ORs back into (continuous) logits, so we could compare them to our elastic net coefficients. Of the `r bloem_total_count %>% formatn` participles in Bloem's semantic analysis, `r bloem_zero_count %>% formatn` (`r bloem_zero_perc`) were eliminated in our elastic net model. Here again, this means that the elastic net technique finds no semantic pull, again likely due to differences in operationalisation. An sample of the eliminated coefficients is given in @sec-comparison-tables, @tbl-comparison-bloem-zero.
 
-There are also `r bloem_na_count %>% formatn` (`r bloem_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Some of these participles seem to be mis-taggings or noise. We provide a sample in the Appendix.
+There are also `r bloem_na_count %>% formatn` (`r bloem_na_perc`) participles which do not appear in our dataset, and therefore do not have an associated coefficient. Some of these participles seem to be mis-taggings or noise. We again provide a sample in @sec-comparison-tables, @tbl-comparison-bloem-na.
 
 We computed the Pearson correlation between the converted logits and our elastic net coefficients and found a significant correlation $r$ of `r bloem_cor$estimate %>% formatd(3)` ($p < 0.05$). The correlation again shows an overlap between previous results and our results, despite differences in methodology. If we look at the correlation visually (@fig-comparison-bloem), we see that both models are generally in agreement on whether a participle pulls towards red or green. Note that there are more data points in the top left and bottom right quadrants than in the previous comparison, but this is related to a much larger sample size.
 
@@ -636,7 +638,7 @@ We computed the Pearson correlation between the converted logits and our elastic
 quadrant_plot(df_bloem_nna$logit, df_bloem_nna$coefficient, "Logit", "Elastic net coefficient")
 ```
 
-For completeness' sake, we also provide Bayesian estimates for the correlations between our coefficients and the other values. These are provided in @sec-bayesian-correlations.
+For completeness' sake, we also provide Bayesian estimates for the correlations between our coefficients and the other values. These are provided in @sec-bayesian-correlations, @tbl-comparison-ds-bayes and @tbl-comparison-bloem-bayes.
 
 ## Attaching insights into meaning
 
@@ -648,7 +650,7 @@ In an attempt to find semantic patterns, we made use of semantic vectors. Semant
 
 As a basis for our semantic analysis, we used the big "COW" vectors for Dutch by @tulkens2016evaluating. These vectors are based on the COW corpus [@schafer-bildhauer-2012-building], a corpus compiled from .be and .nl websites, and were trained using the word2vec algorithm [@mikolov2013efficient]. We chose the COW vectors over vectors trained on other corpora discussed in @tulkens2016evaluating, as the COW vectors performed the best in downstream tasks, and can therefore be assumed to be the richest in semantic information. Note that we did not use the vectors of the participles, but rather those of the associated infinitives. The vectors of infinitives were available for more words, and can also be seen as semantically richer since they appear in more contexts.
 
-To find patterns among the semantic vectors, we attempted to cluster the data using the Partitioning Around Medoids (PAM) technique [@kaufman_partitioning_1990]. PAM selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the `cluster` package [@maechler_cluster_2022, `pam` function].
+To find patterns among the semantic vectors, we attempted to cluster the data using the "partitioning around medoids" (PAM) technique [@kaufman_partitioning_1990]. PAM selects a predefined number of data points as cluster centres and then builds clusters around those central points. We used the R implementation in the `cluster` package [@maechler_cluster_2022, `pam` function].
 
 PAM requires the number of clusters used to be chosen beforehand. Since we are modelling binary variation, it might seem intuitive to choose two clusters. However, there are two problems with this approach. The first problem is apparent when we attempt to plot the semantic vectors in a lower-dimensional space (see @fig-pam-viz). We see that the semantic space is, simply put, very busy. It is unrealistic to expect clear-cut subdivisions to appear in the data when we impose a structure that is very "global". With this we mean that it is difficult for just two clusters to capture the variation that is inherent in a semantic space. The second problem stems from a certain methodological naïveté. Indeed, it might be naïve to think that there is a clear-cut semantic feature that divides all or even most red and green verbs, and that this feature can be easily captured distributionally. This is especially the case given the inherent messiness of semantics.
 
@@ -857,7 +859,7 @@ semset_fit <- lm(
 semset_fit_tidy <- semset_fit %>% tidy()
 ```
 
-In our fine-grained analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. In short, we wanted to model whether the presence of specific semantic properties (i.e. the subject of the verb being capable of acting with volition, the verb expressing a changing situation...) influences the red or green preference of verbs. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
+In our fine-grained analysis, based on the smaller dataset, we modelled the elastic net coefficients of all verbs using the variables from @tbl-variables as predictors in a linear regression model. In short, we wanted to model whether the presence of specific semantic properties (i.e. the subject of the verb being capable of acting with volition, the verb expressing a changing situation ...) influences the red or green preference of verbs. @tbl-semset-regression shows the results of this regression model. Keep in mind that the results need to be interpreted with regards to the reference situation expressed as the "Intercept". In our case, this reference situation is:
 
 - a verb that is not tagged for "control", "attributive", "spatial", "cognitive" or "dynamic";
 - that is intransitive ("monovalent");
@@ -865,7 +867,7 @@ In our fine-grained analysis, based on the smaller dataset, we modelled the elas
 
 Our reference situation expresses a slight bias towards the red order.
 
-The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. Only adjustments with a p value below 0.05 have sufficient statistical evidence. We see that for verbs which are valenced (having either positive or negative associated emotions), there needs to be a small adjustment. The value for "valence: valenced" under the "coefficient" column (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`) shows this correction quantitavely. Like before, the negative signs indicates a correction towards the green word order, which in turn means that verbs with a certain emotional loading tend slightly more towards the green word order. Of all semantic properties (i.e. control, attributive, spatial ...), we see that the "cognitive" property reaches closest to significance, though it does not attain it. This is different from the analysis by @bloem_processing_2021, where verbs tagged cognitive *did* attain significance.
+The regression results show the differences to the elastic net coefficient of a verb when one of these elements changes. Only adjustments with a p value below 0.05 have sufficient statistical evidence. We see that for verbs which are valenced (having either positive or negative associated emotions), there needs to be a small adjustment. The value for "Valence: Valenced" under the "Estimate" column (`r semset_fit_tidy %>% filter(term == "valencevalenced") %>% .$estimate %>% formatd(3)`) shows this correction quantitavely. Like before, the negative signs indicates a correction towards the green word order, which in turn means that verbs with a certain emotional loading tend slightly more towards the green word order. Of all semantic properties (i.e. control, attributive, spatial ...), we see that the "cognitive" property reaches closest to significance, though it does not attain it. This is different from the analysis by @bloem_processing_2021, where verbs tagged "cognitive" *did* attain significance.
 
 ```{r tbl-semset-regresion}
 #| label: tbl-semset-regression
@@ -946,21 +948,27 @@ While our results show that, methodologically, elastic net regression works as e
 
 At the same time, by introducing a method that takes the lexicon seriously, we bring CxG further than just breaking down the barrier between syntax and lexicon. Currently, much of the research around CxG does not go beyond two basic assumptions: that multiword patterns exist, against the atomic view of the lexicon consisting of just words, and that syntactic constructions are partially filled with concrete lexical material [e.g. @israel_way_1996]. Our provided elastic net technique moves the goalpost in several ways. First of all, it allows one to investigate the role of the lexicon in abstract templates on a much bigger scale than before [expanding upon studies like those by @bossuyt_oppassen_2019; @colleman_verb_2009]. In addition, it also operates on a highly quantitative level, and does this under multifactorial control. As such, elastic net is an excellent tool for researchers interested in lexical effects as part of a more elaborate and intensive CxG framework.
 
-While our study has shown the feasibility and usefulness of a monolothic elastic net model, there are still further steps to be taken in order to arrive at a deeper understanding of the influence of the lexicon on morphosyntactic variation. Indeed, though our model shows that lexical influence exists, we do not have an all-encompassing explanation for all lexical patterns we see in our specific case study. The vector-based clusterings show semantic structures, but are difficult to interpret; the regression analyses based on the lexical-semantic database are interpretable, but their effects are small and the results are partially plagued by data scarcity. Perhaps many of the lexical patterns we find are too local to appear in our analysis, or we need to find other possible explanations of the variation we see in future research, e.g. phonological similarity.
+While our study has shown the feasibility and usefulness of a monolithic elastic net model, there are still further steps to be taken in order to arrive at a deeper understanding of the influence of the lexicon on morphosyntactic variation. Indeed, though our model shows that lexical influence exists, we do not have an all-encompassing explanation for all lexical patterns we see in our specific case study. The vector-based clusterings show semantic structures, but are difficult to interpret; the regression analyses based on the lexical-semantic database are interpretable, but their effects are small and the results are partially plagued by data scarcity. Perhaps many of the lexical patterns we find are too local to appear in our analysis, or we need to find other possible explanations of the variation we see in future research, e.g. phonological similarity.
 
 The difficulty in finding clear-cut patterns might also be the explanation itself. Indeed, the lexical specificity of a language can function as an aspect that is hard to master, and therefore has value as a social marker. As @hurford_origins_2014 [49] states, "the complexity of languages is a signal of group membership". In their computer simulation on human cooperation, @nettle_social_1997 have shown that it is beneficial to devise an adequately complex "distinctive code" [-@nettle_social_1997 98] in order to provide stability in large social groups. The lexical patterns we find here could be an example of such a social marker and distinctive code. We leave this evolutionary speculation to further research.
 
 Specifically for future elastic net regression research, it would be interesting to apply the elastic net technique to other morphosyntactic alternations, especially in other languages, to see how it holds up in these other contexts. This would also help address several of the questions remaining around the technique and the possible post-analyses. In this way, we will learn more about how language users choose between equivalent variants, and in what way the lexicon contributes towards this choice.
 
+## Acknowledgments {#acknowledgements .appendix}
+
+We would like to thank Jelke Bloem for providing the odds ratio data from his study and Jeroen van Craenenbroeck for his advice on formal syntax. We truly appreciate their help.
+
+**Funding:** We are grateful to Fonds Wetenschappelijk Onderzoek (G059922N) for supporting this study.
+
 ## Appendix {#appendix .appendix}
 
 ### Try it yourself
 
-- Misschien ook een aansporing om zelf naar de coëfficiënten te kijken met Rekker — met automatische link
+To aid the analysis of the elastic net coefficients, a Javascript-based interactive analysis tool, Rekker, was developed (TODO). You can look at the dataset and elastic net results yourself by visiting [anthesevenants.github.io/Rekker/](anthesevenants.github.io/Rekker/).
 
 ### Corpus and querying {#sec-corpus-querying}
 
-To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR Corpus [@oostdijk_d-coi_2008] and SoNaR New Media Corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ("treebank") in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
+To compute the semantic pull of the different verbs in the red and green word order, we collected all red and green verb clusters in subordinate clauses in the SoNaR corpus [@oostdijk_d-coi_2008] and SoNaR New Media corpus [@oostdijk_sonar_2014]. Since we are interested in syntactic alternances, we needed a syntactically informed corpus format ("treebank") in order to reliably find the attestations we need. While the SoNaR corpus does not ship with syntactic information, much of the corpus material from SoNaR is also included in the Lassy corpus [@van_noord_large_2013], which *is* syntactically annotated using Alpino [@van_noord_at_2006]. We retrieved the syntactic information from SoNaR available in Lassy, and parsed the remaining sentences using Alpino ourselves. This left us with a fully syntactically informed SoNaR corpus, ready to be queried for red and green word orders.
 
 ```{r}
 df_original <- read.csv("RoodGroenAnthe.csv")
@@ -971,13 +979,13 @@ In order to query the syntactic information of the entire SoNaR corpus, we used 
 [^gretel]: In addition, the SoNaR corpus included in the GrETEL web interface is parsed using an older version of Alpino, which results in unreliable annotations.
 
 
-### Filtering and enriching
+### Filtering and enriching {#sec-filtering-enriching}
 
 ```{r}
 filtering_numbers <- read.csv("output/filtering_numbers.csv")
 ```
 
-The results were further filtered in order to guarantee the quality of the attestations. In short, duplicates were removed, tokenisation errors were fixed (i.e. removing superfluous punctuation from participles) and obvious tagging mistakes were removed (e.g. words such as *zgn* 'so-called' and *gemiddeld* 'average' were removed). In addition, wrong participle endings (e.g. *gebeurt* instead of *gebeurd* 'happened') were corrected using *naive-dt-fix* [@sevenants_naive-dt-fix_2023], a library for the R language designed for this study. This library automatically corrects wrong participle endings by relying on the relative frequencies of all possible spellings. The most frequent spelling is seen as the correct spelling and is used as a correction.[^dt] Declensed words were also removed (e.g. *geplaatst**e***). Past participles cannot be declensed in Dutch, so all declensed forms in the corpus tagged as participles are, in fact, mis-tagged adjectives. We also removed all verb clusters with an auxiliary other than *hebben*, *zijn* or *worden* and removed all attestations without a sentence ID (which we need to compute priming). In addition, all types occurring less than 10 times were removed in order to guarantee a stable estimate for the semantic pulls of each type. As a result of these operations, `r subset(filtering_numbers, name == "first_removal")[1,][["no_items"]] %>% formatn` attestations were removed.
+The mattenklopper results were further filtered in order to guarantee the quality of the attestations. In short, duplicates were removed, tokenisation errors were fixed (i.e. removing superfluous punctuation from participles) and obvious tagging mistakes were removed (e.g. words such as *zgn* 'so-called' and *gemiddeld* 'average' were removed). In addition, wrong participle endings (e.g. *gebeurt* instead of *gebeurd* 'happened') were corrected using *naive-dt-fix* [@sevenants_naive-dt-fix_2023], a library for the R language designed for this study. This library automatically corrects wrong participle endings by relying on the relative frequencies of all possible spellings. The most frequent spelling is seen as the correct spelling and is used as a correction.[^dt] Declensed words were also removed (e.g. *geplaatst**e***). Past participles cannot be declensed in Dutch, so all declensed forms in the corpus tagged as participles are, in fact, mis-tagged adjectives. We also removed all verb clusters with an auxiliary other than *hebben*, *zijn* or *worden* and removed all attestations without a sentence ID (which we need to compute priming). In addition, all types occurring less than 10 times were removed in order to guarantee a stable estimate for the semantic pulls of each type. As a result of these operations, `r subset(filtering_numbers, name == "first_removal")[1,][["no_items"]] %>% formatn` attestations were removed.
 
 [^dt]: Some participles are so often misspelled that they are seen as the correct spelling by the program. These cases are overruled by a built-in list of "problematic" participles which have their correct spellings enforced.
 
@@ -1030,7 +1038,7 @@ Because the Alpino syntactic parser marks separable verbs by infixing an undersc
 
 To compute the length of the middle field, we calculated the number of words between the start of the clause and the verbal cluster itself. This information is based on the tokenisation of the SoNaR corpus.
 
-We included frequency information from the SUBTLEX dataset [@keuleers_subtlex-nl_2010] in order be able to assess the effect of frequency. Because frequency is typically Zipfian [@zipf_psycho-biology_1965], we transformed the frequency information using the natural logarithm for a multitude of reasons: (i) to compress the frequency variation among the types in our dataset (ii) to make the distribution of priming more normal (iii) because it makes the distribution more psychologically real.
+We included frequency information from the SUBTLEX dataset [@keuleers_subtlex-nl_2010] in order be able to assess the effect of frequency. Because frequency is typically Zipfian [@zipf_psycho-biology_1965], we transformed the frequency information using the natural logarithm for a multitude of reasons: (1) to compress the frequency variation among the types in our dataset (2) to make the distribution of priming more normal (3) because it makes the distribution more psychologically real.
 
 Priming information is also important to include. To obtain priming information, we relied on the sentence IDs included in the SoNaR corpus. Consider the following example:
 
@@ -1049,9 +1057,9 @@ We computed the ratio between the number of red and green primes and used Laplac
 
 As a final step, we removed all participles for which no adjectiveness value was defined, as these were found *not* to be participles but mis-taggings. For the same reason, participles with an adjectiveness value of over 0.9 were removed. In addition, all attestations for which no region information was defined were also removed, because they lack the information required for the multifactorial analysis. As a result of these two steps, another `r subset(filtering_numbers, name == "second_removal")[1,][["no_items"]] %>% formatn` items were removed.
 
-#### Converting the dataset
+### Converting the dataset {#sec-converting-dataset}
 
-To compute the semantic preference of the participles found in our attestations, we used elastic net regression, the technique detailed in @sec-elastic-net-regression. In contrast to regular regression techniques, a tabular dataset cannot be used "as-is" for analysis with elastic net. Instead, the dataset has to be supplied in a matrix form. Consider the following toy example:
+To compute the semantic preference of the participles found in our attestations, we used elastic net regression, the technique detailed in @sec-elastic-net-regression. In contrast to regular regression techniques, a tabular dataset cannot be used "as-is" for analysis with elastic net. Instead, the dataset has to be supplied in a matrix form. Consider the toy example in @tbl-toy-example.
 
 | Word order | Participle | Country | Adjectiveness |
 |---|---|---|---|
@@ -1059,7 +1067,9 @@ To compute the semantic preference of the participles found in our attestations,
 | red | mislukt | The Netherlands | 0.4 |
 | green | gebeurd | Belgium | 0.1 |
 
-In the matrix form, each multidimensional column is converted so that each unique value of that column becomes its own predictor. In our case, all unique values of the column `Participle` will become binary predictors, each predictor indicating whether that participle occurs in the verb cluster or not. This means our matrix will be inherently sparse, since each verbal cluster can only feature one participle. Binary predictors such as `Country` are also converted to a binary column in the matrix, and simply indicate a deviation from the reference level. For example, if `is_BE` is a binary column, a Belgian attestation will be encoded as `1`, and a Netherlandic attestation as `0`. The `Adjectiveness` column is numeric and can be adopted as-is. The response variable `Word order` is also encoded as a binary variable, as is typical in logistic regression, but it is not a part of the input matrix. The input matrix for our toy example would look as follows:
+: Toy example dataset to illustrate the workings of elastic net regression. {#tbl-toy-example}
+
+In the matrix form, each multidimensional column is converted so that each unique value of that column becomes its own predictor. In our case, all unique values of the column `Participle` will become binary predictors, each predictor indicating whether that participle occurs in the verb cluster or not. This means our matrix will be inherently sparse, since each verbal cluster can only feature one participle. Binary predictors such as `Country` are also converted to a binary column in the matrix, and simply indicate a deviation from the reference level. For example, if `is_BE` is a binary column, a Belgian attestation will be encoded as `1`, and a Netherlandic attestation as `0`. The `Adjectiveness` column is numeric and can be adopted as-is. The response variable `Word order` is also encoded as a binary variable, as is typical in logistic regression, but it is not a part of the input matrix. The input matrix for our toy example would is given in @tbl-example-input-matrix. The response variables would be encoded as [0, 1, 0] with the red order as response variable 1.
 
 | is_gebroken | is_mislukt | is_gebeurd | is_BE | adjectiveness |
 |---|---|---|---|---|
@@ -1067,13 +1077,15 @@ In the matrix form, each multidimensional column is converted so that each uniqu
 | 0 | 1 | 0 | 0 | 0.4 |
 | 0 | 0 | 1 | 1 | 0.1 |
 
+: Example input matrix to illustrate the workings of elastic net regression. {#tbl-example-input-matrix}
+
 The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
 
 To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert "traditional" datasets to the matrix format detailed above in seconds.
 
 ### Bayesian correlations {#sec-bayesian-correlations}
 
-To provide more robust evidence for the correlation between our elastic net coefficients and the results of previous studies, we have also computed the Bayesian correlations between the two, complete with their credible intervals (CI).
+To provide more robust evidence for the correlation between our elastic net coefficients and the results of previous studies, we have also computed the Bayesian correlations between the two, complete with their credible intervals (CI), according to TODO. The results are given in @tbl-comparison-ds-bayes and @tbl-comparison-bloem-bayes.
 
 | Measure | Estimate | CI |
 | --- | --- | --- |
@@ -1087,7 +1099,9 @@ To provide more robust evidence for the correlation between our elastic net coef
 | Kendall | `r bloem_cor_ken_bayes$r %>% formatd(3)` |`r bloem_cor_ken_bayes_ci$lowerCI %>% formatd(3)`-`r bloem_cor_ken_bayes_ci$upperCI %>% formatd(3)` |
 : The Bayesian correlation results for the comparison between Bloem's OR values and our elastic net coefficients {#tbl-comparison-bloem-bayes}
 
-### Comparison tables
+### Comparison tables {#sec-comparison-tables}
+
+The following tables show the inconsistenties between our results and those of @de_sutter_rood_2005 and @bloem_processing_2021.
 
 ```{r #tbl-comparison-ds-zero}
 #| label: tbl-comparison-ds-zero
