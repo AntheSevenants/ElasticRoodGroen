@@ -23,7 +23,7 @@ format:
     toc: false
 editor: source
 title-block-banner: true
-bibliography: references.bib
+bibliography: references_latex.bib
 toc: true
 toc-depth: 4
 toc-location: left
@@ -80,7 +80,7 @@ Whenever there are "alternate ways of saying the same thing" [@labov_sociolingui
 
 The second methodological line is characterised by a focus on high-level, general predictors, stemming from actual language use. In such analyses, we find predictors with a limited number of levels, sometimes pooled from more narrow categories. Theoretically, they align most with "probabilistic grammar", the idea that "variation [...] is sensitive to multiple and sometimes competing constraints which influence linguistic choice-making" [@grafmiller_general_2018, 1]. To discover these constraints, (mixed-effects) regression analysis [e.g. @gries_most_2015] is typically used.
 
-The third methodological line is characterised by a focus on one specific aspect of language use: frequency, and frequency only. In such analyses, the pull of lexical items towards a specific morphosyntactic variant is computed. This practice fits within the larger theoretical framework of Construction Grammar (CxG): as CxG advocates for a continuum between lexicon and syntax rather than a strict division [@hoffmann_construction_2013] [^formal], multi-word units are promoted to a position of special interest. These multi-word chunks represent supposed semi-conventionalised, intermediate-level cognitive units of language, often abstracted to degrees of underspecification. To discover these constructions and find out the slot-filling tendencies of different words, collostructional analysis [@gries_collostructional_2013] is typically used (or derivatives of this technique).
+The third methodological line is characterised by a focus on one specific aspect of language use: frequency, and frequency only. In such analyses, the pull of lexical items towards a specific morphosyntactic variant is computed. This practice fits within the larger theoretical framework of Construction Grammar (CxG): as CxG advocates for a continuum between lexicon and syntax rather than a strict division [@hoffmann_construction_2013] [^formal], multi-word units are promoted to a position of special interest. These multi-word chunks represent supposed semi-conventionalised, intermediate-level cognitive units of language, often abstracted to degrees of underspecification. To discover these constructions and find out the slot-filling tendencies of different words, collostructional analysis [@stefanowitsch_collostructional_2013] is typically used (or derivatives of this technique).
 
 [^formal]: In formal theories of language, the lexicon is often seen as an entity wholly separate from syntax.
 
@@ -96,7 +96,7 @@ A current state-of-the-art analysis would attempt to use random effects in a mix
 
 This brings us to the second issue raised by @van_de_velde_investigating_2019; there are *many* possible lexical types, and word distribution is notoriously skewed [@zipf_psycho-biology_1965]. As @bloem_processing_2021 [117] says, this results in "an impossible task when there are many unique \[words\] -- you can't create a line from a single data point" -- and models will fail to converge given too many lexical types. A possible solution to this problem of high dimensionality would be to use some sort of "semantic binning", i.e. by grouping individual words into larger semantic categories. However, this means we lose the ability to look at lexical effects at the level of individual words, and this also introduces bias into the analysis at the level of the grouping itself, unless you use clusters, like in @levshina_radically_2014 or @van_de_velde_investigating_2019.
 
-In collostructional analysis [@gries_collostructional_2013], the lexicon takes the centre stage. The technique can compute precise lemma-level preferences for the choice between two constructions, but it does not feature multifactorial control. This means that it is difficult to focus purely on the lexical influence proper, as there can be interference from other (un)known factors that cannot be taken into account in the model.
+In collostructional analysis [@stefanowitsch_collostructional_2013], the lexicon takes the centre stage. The technique can compute precise lemma-level preferences for the choice between two constructions, but it does not feature multifactorial control. This means that it is difficult to focus purely on the lexical influence proper, as there can be interference from other (un)known factors that cannot be taken into account in the model.
 
 Currently, then, there is no technique which handles both high-level predictors and lexical items as full-fledged predictors of equal value. In this article, we demonstrate elastic net regression, a new methodology which is able to process predictors of various nature on an equal footing. To demonstrate this technique, we will build an all-encompassing, holistic model of the so-called "red" and "green" word order in Dutch, with both the high-level predictors found in previous research as well as lexical items. In an attempt to find patterns in the semantic preferences of the verbs occurring in the verbal clusters, we will make use of semantic vectors as well as a lexical-semantic database. First, however, we will explain what the elastic net technique does and why it is so useful for fairer research on morphosyntactic variation.
 
@@ -273,7 +273,7 @@ Usage-based studies of the red-green phenomenon are not subject to the aforement
 
 #### Influence of lectal factors
 
-"Lectal" factors [todo Geeraerts] are an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Conversely, formal, unidirectional and edited language favours the red word order.
+"Lectal" factors [@geeraerts_lectal_2005] are an important influence in the choice between the red and green word order, with a general distinction between two types of contexts. The first is the *regional* context: @de_sutter_rood_2005 [68] found that the red word order is much less preferred in Belgium than in the Netherlands, a result corroborated by @bloem_processing_2021 [206]. The second context is register: in spoken, interactional and unedited language use, the green order is much more prevalent [@de_sutter_rood_2005, 81-87]. Conversely, formal, unidirectional and edited language favours the red word order.
 
 #### Influence of prosody
 
@@ -441,7 +441,7 @@ alpha <- subset(model_meta$as.data.frame(), predicate == "alpha")[["object"]]
 lambda <- subset(model_meta$as.data.frame(), predicate == "lambda")[["object"]]
 ```
 
-The elastic net regression itself was carried using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). Our high-level predictors are based on the influences found in @sec-semantics-influence. `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are "traditional" in the sense that they have one coefficient each.
+The elastic net regression itself was carried out using ElasticToolsR [@sevenants_elastictoolsr_2023], an R library written for this study which acts as a wrapper around the excellent *glmnet* package for R [@friedman_regularization_2010]. We built nine predictors into our model (see @tbl-predictors). Our high-level predictors are based on the influences found in @sec-semantics-influence. `participle` is distributed among `r types_count %>% formatn` different coefficients: one for each type. `auxiliary type` works in the same way: there are separate coefficients for *hebben*, *zijn* and *worden*. The other predictors are "traditional" in the sense that they have one coefficient each.
 
 In both @de_sutter_rood_2005 and @bloem_processing_2021 we find several additional factors which were not previously mentioned, but which also contribute to the choice between red and green: syntactic depth, information value, definiteness, extraposition and inherence (collocations and multi-word units). These influences were not included for two reasons. Firstly, the measured effects for these influences are small compared to the influences we discussed above. This brings us to our second, more pragmatic reason: scope. The focus of this study is to build a rich, fair model with special attention for lexical influences as full predictors. Our high-level predictors of course also remain important, but they mainly serve as multifactorial control. A further operationalisation of a plethora of smaller effects would detract from the main goal of the study, and would foray into the area of diminishing returns as well. In fact, we have treated all language-internal factors deemed by @de_sutter_rood_2005 [305] to be the most important in deciding between red or green, which should provide ample multifactorial control.
 
@@ -937,7 +937,7 @@ Syntactically, the coarse-grained semantic analysis shows there to be a differen
 
 ## Discussion
 
-In the introduction to this article, we raised several issues about the current leading practices in variationist research taking into account the lexicon. Probabilistic grammar-adjacent research attempts to include lexical variation as part of the random effects structure in a mixed-effects regression model [@gries_most_2015], but this solution is both statistically and conceptually flawed. CxG-centred research lets the lexicon take the spotlight with collostructional analysis [@gries_collostructional_2013], but fails to control for other factors.
+In the introduction to this article, we raised several issues about the current leading practices in variationist research taking into account the lexicon. Probabilistic grammar-adjacent research attempts to include lexical variation as part of the random effects structure in a mixed-effects regression model [@gries_most_2015], but this solution is both statistically and conceptually flawed. CxG-centred research lets the lexicon take the spotlight with collostructional analysis [@stefanowitsch_collostructional_2013], but fails to control for other factors.
 
 To the end of theoretical and methodological reconciliation between these two lines of research, we introduced elastic net regression. We presented elastic net regression as a technique to build fairer models of morphosyntactic variation, as it allows lexical items to appear on the same level as traditional, high-level predictors, in contrast to the aforementioned statistical techniques. 
 In addition, affordances like the ability to disable certain levels of lexical item predictors, useful  to boost the quality of the model if necessary, make elastic net models robust against typical lexicon-related nuisances like Zipfian-related sparsity issues and overfitting. To demonstrate this, we built a model which attempts to explain the variation between red (auxiliary + participle) and green (participle + auxiliary) verbal clusters in Dutch.
@@ -964,7 +964,7 @@ We would like to thank Jelke Bloem for providing the odds ratio data from his st
 
 ### Try it yourself
 
-To aid the analysis of the elastic net coefficients, a Javascript-based interactive analysis tool, Rekker, was developed (TODO). You can look at the dataset and elastic net results yourself by visiting [anthesevenants.github.io/Rekker/](anthesevenants.github.io/Rekker/).
+To aid the analysis of the elastic net coefficients, a Javascript-based interactive analysis tool, Rekker, was developed [@sevenants_rekker_2023]. You can look at the dataset and elastic net results yourself by visiting [anthesevenants.github.io/Rekker/](anthesevenants.github.io/Rekker/).
 
 ### Corpus and querying {#sec-corpus-querying}
 
@@ -1079,13 +1079,11 @@ In the matrix form, each multidimensional column is converted so that each uniqu
 
 : Example input matrix to illustrate the workings of elastic net regression. {#tbl-example-input-matrix}
 
-The response variables would be encoded as [ 0, 1, 0 ] with the red order as the reference level.
-
 To facilitate the conversion process, we used *ElasticToolsR* [@sevenants_elastictoolsr_2023], an R library written for this study. It can automatically convert "traditional" datasets to the matrix format detailed above in seconds.
 
 ### Bayesian correlations {#sec-bayesian-correlations}
 
-To provide more robust evidence for the correlation between our elastic net coefficients and the results of previous studies, we have also computed the Bayesian correlations between the two, complete with their credible intervals (CI), according to TODO. The results are given in @tbl-comparison-ds-bayes and @tbl-comparison-bloem-bayes.
+To provide more robust evidence for the correlation between our elastic net coefficients and the results of previous studies, we have also computed the Bayesian correlations between the two, complete with their credible intervals (CI), according to @van_doorn_bayesian_2018. The results are given in @tbl-comparison-ds-bayes and @tbl-comparison-bloem-bayes.
 
 | Measure | Estimate | CI |
 | --- | --- | --- |
