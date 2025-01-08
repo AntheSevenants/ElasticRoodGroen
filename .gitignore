@@ -240,3 +240,12 @@ cython_debug/
 
 WorkingPaperShim.qmd
 *.rmarkdown
+*.docx
+*.pdf
+
+data2/
+editors
+
+wortel.qmd
+rap.R
+sem-test.R
